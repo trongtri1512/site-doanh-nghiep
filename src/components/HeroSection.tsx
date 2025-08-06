@@ -2,52 +2,33 @@ import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[600px] bg-gradient-to-r from-brand-yellow via-brand-yellow to-teal-400 overflow-hidden">
-      <div className="container mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left content */}
-        <div className="z-10">
-          <h1 className="text-4xl lg:text-6xl font-bold text-primary mb-8 leading-tight">
-            CHÀO MỪNG BẠN<br />
-            ĐẾN VỚI IMV<br />
-            VIETNAM
-          </h1>
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg"
-            size="lg"
-          >
-            Tìm hiểu thêm về Công ty chúng tôi
-          </Button>
-        </div>
+    <section className="relative min-h-[600px] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src="/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png"
+          alt="IMV Vietnam Modern Office"
+          className="w-full h-full object-cover"
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
+      </div>
 
-        {/* Right illustration area */}
-        <div className="relative">
-          <div className="grid grid-cols-1 gap-6">
-            {/* IMV Building Image */}
-            <div className="relative overflow-hidden rounded-lg shadow-lg">
-              <img 
-                src="/lovable-uploads/b393a4a5-1ed9-4996-937a-22c0768f1dd7.png"
-                alt="IMV Vietnam Office Building"
-                className="w-full h-48 object-cover"
-              />
-            </div>
-            
-            {/* Modern Office Building with Text Overlay */}
-            <div className="relative overflow-hidden rounded-lg shadow-lg group">
-              <img 
-                src="/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png"
-                alt="Modern Office Building"
-                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              {/* Text Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end">
-                <div className="p-4 w-full">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">Văn phòng hiện đại</h3>
-                    <p className="text-sm text-gray-700">Không gian làm việc chuyên nghiệp</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div className="container mx-auto px-6 py-20 relative z-10">
+        <div className="max-w-2xl">
+          {/* Text Content with Beautiful Frame */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+            <h1 className="text-4xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+              CHÀO MỪNG BẠN<br />
+              ĐẾN VỚI IMV<br />
+              VIETNAM
+            </h1>
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              size="lg"
+            >
+              Tìm hiểu thêm về Công ty chúng tôi
+            </Button>
           </div>
         </div>
       </div>
