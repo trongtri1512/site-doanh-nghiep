@@ -54,7 +54,7 @@ const MenusManagement = () => {
     }
   });
 
-  const mainMenuItems = menuItems.filter(item => item.menu_type === 'main');
+  const mainMenuItems = menuItems?.filter(item => item.menu_type === 'main') || [];
   const parentMenuItems = mainMenuItems.filter(item => !item.parent_id);
   const childMenuItems = mainMenuItems.filter(item => item.parent_id);
 
@@ -201,6 +201,7 @@ const MenusManagement = () => {
   };
 
   const addBrandMenu = () => {
+    console.log("Clicked add brand menu button");
     const data = {
       title: "Các nhãn hàng",
       url: "#",
@@ -291,6 +292,8 @@ const MenusManagement = () => {
     </Table>
   );
 
+  console.log("Rendering MenusManagement, menuItems:", menuItems, "mainMenuItems:", mainMenuItems);
+  
   return (
     <div className="space-y-6">
       <div>
@@ -314,8 +317,10 @@ const MenusManagement = () => {
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button onClick={() => {
+                    console.log("Clicked add menu button");
                     setEditingItem(null);
                     setFormData({ title: "", url: "", target: "_self", parentId: "" });
+                    setIsDialogOpen(true);
                   }}>
                     <Plus className="h-4 w-4 mr-2" />
                     Thêm menu
