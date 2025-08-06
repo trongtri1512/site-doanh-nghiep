@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,7 +16,6 @@ import { toast } from "sonner";
 const MenusManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [currentTab, setCurrentTab] = useState("main");
   const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "" });
   const queryClient = useQueryClient();
 
@@ -73,6 +72,7 @@ const MenusManagement = () => {
       toast.success("Đã thêm menu mới");
       setIsDialogOpen(false);
       setFormData({ title: "", url: "", target: "_self", parentId: "" });
+      setEditingItem(null);
     },
     onError: () => toast.error("Lỗi khi thêm menu")
   });
@@ -91,6 +91,7 @@ const MenusManagement = () => {
       toast.success("Đã cập nhật menu");
       setIsDialogOpen(false);
       setEditingItem(null);
+      setFormData({ title: "", url: "", target: "_self", parentId: "" });
     },
     onError: () => toast.error("Lỗi khi cập nhật menu")
   });
@@ -151,8 +152,13 @@ const MenusManagement = () => {
   };
 
   const handleSubmit = () => {
-    if (!formData.title || (!formData.url && !formData.parentId)) {
-      toast.error("Vui lòng điền đầy đủ thông tin");
+    if (!formData.title) {
+      toast.error("Vui lòng nhập tiêu đề menu");
+      return;
+    }
+
+    if (!formData.url && !formData.parentId) {
+      toast.error("Vui lòng nhập URL hoặc chọn làm menu con");
       return;
     }
 
@@ -192,6 +198,18 @@ const MenusManagement = () => {
       const otherItem = mainMenuItems[currentIndex + 1];
       reorderMutation.mutate({ id: otherItem.id, newOrder: item.display_order });
     }
+  };
+
+  const addBrandMenu = () => {
+    const data = {
+      title: "Các nhãn hàng",
+      url: "#",
+      target: "_self",
+      menu_type: 'main',
+      parent_id: null,
+      display_order: mainMenuItems.length + 1
+    };
+    createMutation.mutate(data);
   };
 
   const MenuTable = ({ items, type, onEdit, onDelete }: any) => (
@@ -289,83 +307,100 @@ const MenusManagement = () => {
                 Quản lý các mục menu chính hiển thị trên header. Chọn menu cha để tạo dropdown.
               </CardDescription>
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={() => setEditingItem(null)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Thêm menu
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{editingItem ? "Chỉnh sửa menu" : "Thêm menu mới"}</DialogTitle>
-                  <DialogDescription>
-                    {editingItem ? "Cập nhật thông tin menu" : "Tạo một mục menu mới cho navigation chính"}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Tiêu đề</Label>
-                    <Input 
-                      id="title" 
-                      placeholder="Nhập tiêu đề menu"
-                      value={formData.title}
-                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="url">URL</Label>
-                    <Input 
-                      id="url" 
-                      placeholder="/duong-dan hoặc chọn nhãn hàng bên dưới"
-                      value={formData.url}
-                      onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="parentId">Menu cha (tùy chọn)</Label>
-                    <Select value={formData.parentId} onValueChange={(value) => setFormData(prev => ({ ...prev, parentId: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn menu cha để tạo dropdown" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Không có (menu chính)</SelectItem>
-                        {parentMenuItems.map((parent) => (
-                          <SelectItem key={parent.id} value={parent.id}>
-                            {parent.title}
-                          </SelectItem>
+            <div className="flex gap-2">
+              <Button onClick={addBrandMenu} variant="outline">
+                Thêm Menu Nhãn hàng
+              </Button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button onClick={() => {
+                    setEditingItem(null);
+                    setFormData({ title: "", url: "", target: "_self", parentId: "" });
+                  }}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Thêm menu
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{editingItem ? "Chỉnh sửa menu" : "Thêm menu mới"}</DialogTitle>
+                    <DialogDescription>
+                      {editingItem ? "Cập nhật thông tin menu" : "Tạo một mục menu mới cho navigation chính"}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Tiêu đề</Label>
+                      <Input 
+                        id="title" 
+                        placeholder="Nhập tiêu đề menu"
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="url">URL</Label>
+                      <Input 
+                        id="url" 
+                        placeholder="/duong-dan hoặc chọn nhãn hàng bên dưới"
+                        value={formData.url}
+                        onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="parentId">Menu cha (tùy chọn)</Label>
+                      <Select value={formData.parentId} onValueChange={(value) => setFormData(prev => ({ ...prev, parentId: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn menu cha để tạo dropdown" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Không có (menu chính)</SelectItem>
+                          {parentMenuItems.map((parent) => (
+                            <SelectItem key={parent.id} value={parent.id}>
+                              {parent.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Hoặc chọn nhãn hàng</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        {brandItems.map((brand: any) => (
+                          <Button
+                            key={brand.id}
+                            variant="outline"
+                            size="sm"
+                            type="button"
+                            onClick={() => setFormData(prev => ({ 
+                              ...prev, 
+                              title: brand.title,
+                              url: brand.url 
+                            }))}
+                            className="justify-start"
+                          >
+                            {brand.title}
+                          </Button>
                         ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Hoặc chọn nhãn hàng</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      {brandItems.map((brand: any) => (
-                        <Button
-                          key={brand.id}
-                          variant="outline"
-                          size="sm"
-                          type="button"
-                          onClick={() => setFormData(prev => ({ 
-                            ...prev, 
-                            title: brand.title,
-                            url: brand.url 
-                          }))}
-                          className="justify-start"
-                        >
-                          {brand.title}
-                        </Button>
-                      ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Hủy</Button>
-                  <Button onClick={handleSubmit}>{editingItem ? "Cập nhật" : "Thêm"}</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                  <DialogFooter>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setIsDialogOpen(false);
+                        setEditingItem(null);
+                        setFormData({ title: "", url: "", target: "_self", parentId: "" });
+                      }}
+                    >
+                      Hủy
+                    </Button>
+                    <Button onClick={handleSubmit}>{editingItem ? "Cập nhật" : "Thêm"}</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
