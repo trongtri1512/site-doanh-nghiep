@@ -1,6 +1,7 @@
 import { Search, Globe, ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +11,7 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { settings } = useSiteSettings();
 
   return (
     <header className="w-full bg-primary text-white sticky top-0 z-50">
@@ -20,12 +22,12 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1 hover:underline">
               <Globe size={16} />
-              Unilever Vietnam
+              {settings.site_title || "IMV Vietnam"}
               <ChevronDown size={14} />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Unilever Vietnam</DropdownMenuItem>
-              <DropdownMenuItem>Unilever Global</DropdownMenuItem>
+              <DropdownMenuItem>{settings.site_title || "IMV Vietnam"}</DropdownMenuItem>
+              <DropdownMenuItem>IMV Global</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="hover:underline">Thay đổi địa điểm</button>
@@ -40,8 +42,8 @@ const Header = () => {
       <nav className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png" 
-            alt="IMV Logo" 
+            src={settings.site_logo || "/lovable-uploads/7b254a6b-841e-44ed-ba5d-5a43caa59b9a.png"} 
+            alt={`${settings.site_title || "IMV"} Logo`} 
             className="h-12 w-auto brightness-0 invert"
             style={{ filter: 'brightness(0) invert(1)' }}
           />

@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 const HeroSection = () => {
+  const { settings } = useSiteSettings();
   return (
     <section className="relative min-h-[600px] overflow-hidden">
       {/* Background Image */}
@@ -22,10 +24,12 @@ const HeroSection = () => {
               <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl animate-fade-in" 
                     style={{textShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)'}}>
                 CHÀO MỪNG BẠN<br />
-                ĐẾN VỚI IMV<br />
-                VIETNAM
+                ĐẾN VỚI {settings.site_title?.toUpperCase() || "IMV VIETNAM"}
               </span>
             </h1>
+            <p className="text-xl text-white/90 mb-6 leading-relaxed">
+              {settings.site_description || "Nâng tầm cuộc sống, vững vàng tương lai"}
+            </p>
             <Button 
               className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
