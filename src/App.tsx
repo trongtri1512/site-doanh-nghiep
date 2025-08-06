@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Pigeon from "./pages/brands/Pigeon";
 import Verites from "./pages/brands/Verites";
 import InstaxCamera from "./pages/brands/InstaxCamera";
+import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/brands/pigeon" element={<Pigeon />} />
           <Route path="/brands/verites" element={<Verites />} />
           <Route path="/brands/instax-camera" element={<InstaxCamera />} />
+          <Route path="/brands/fujifilm-image" element={<FujifilmImage />} />
           <Route path="/brands/etsuko" element={<Etsuko />} />
           <Route path="/brands/astalift" element={<Astalift />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -29,6 +29,13 @@ const Index = () => {
       logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
     },
     {
+      name: "Fujifilm Image",
+      description: "Giải pháp in ảnh chuyên nghiệp và giấy in cao cấp",
+      category: "Ảnh & In ấn",
+      link: "/brands/fujifilm-image",
+      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
+    },
+    {
       name: "Verites",
       description: "Thương hiệu nước hoa Việt Nam cho giới trẻ",
       category: "Mỹ phẩm",

@@ -66,6 +66,9 @@ const Header = () => {
                 <a href="/brands/instax-camera">Instax Camera</a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <a href="/brands/fujifilm-image">Fujifilm Image</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <a href="/brands/etsuko">Etsuko</a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -99,6 +102,7 @@ const Header = () => {
               <a href="/brands/pigeon" className="block pl-4 text-sm hover:underline">Pigeon</a>
               <a href="/brands/verites" className="block pl-4 text-sm hover:underline">Verites</a>
               <a href="/brands/instax-camera" className="block pl-4 text-sm hover:underline">Instax Camera</a>
+              <a href="/brands/fujifilm-image" className="block pl-4 text-sm hover:underline">Fujifilm Image</a>
               <a href="/brands/etsuko" className="block pl-4 text-sm hover:underline">Etsuko</a>
               <a href="/brands/astalift" className="block pl-4 text-sm hover:underline">Astalift</a>
             </div>
