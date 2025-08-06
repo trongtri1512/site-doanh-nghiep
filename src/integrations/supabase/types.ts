@@ -133,6 +133,42 @@ export type Database = {
         }
         Relationships: []
       }
+      menu_items: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          menu_type: string
+          target: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          menu_type: string
+          target?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          menu_type?: string
+          target?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       news: {
         Row: {
           author: string

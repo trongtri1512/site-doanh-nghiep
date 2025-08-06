@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,47 +8,145 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, GripVertical } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const MenusManagement = () => {
-  const [mainMenuItems, setMainMenuItems] = useState([
-    { id: 1, title: "Trang chủ", url: "/", order: 1, active: true },
-    { id: 2, title: "Về chúng tôi", url: "/about", order: 2, active: true },
-    { id: 3, title: "Tin tức", url: "/news", order: 3, active: true },
-    { id: 4, title: "Nghề nghiệp", url: "/careers", order: 4, active: true },
-  ]);
-
-  const [brandMenuItems, setBrandMenuItems] = useState([
-    { id: 1, title: "Pigeon", url: "/brands/pigeon", order: 1, active: true },
-    { id: 2, title: "Verites", url: "/brands/verites", order: 2, active: true },
-    { id: 3, title: "Instax Camera", url: "/brands/instax-camera", order: 3, active: true },
-    { id: 4, title: "Fujifilm Image", url: "/brands/fujifilm-image", order: 4, active: true },
-    { id: 5, title: "Etsuko", url: "/brands/etsuko", order: 5, active: true },
-    { id: 6, title: "Astalift", url: "/brands/astalift", order: 6, active: true },
-  ]);
-
-  const [topBarMenuItems, setTopBarMenuItems] = useState([
-    { id: 1, title: "Tiếng Việt", url: "#", order: 1, active: true },
-    { id: 2, title: "English", url: "#", order: 2, active: true },
-    { id: 3, title: "Tìm kiếm", url: "#", order: 3, active: true },
-    { id: 4, title: "Liên hệ", url: "/contact", order: 4, active: true },
-  ]);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
   const [currentTab, setCurrentTab] = useState("main");
+  const [formData, setFormData] = useState({ title: "", url: "", target: "_self" });
+  const queryClient = useQueryClient();
+
+  // Fetch menu items from database
+  const { data: menuItems = [] } = useQuery({
+    queryKey: ['menu-items'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('*')
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Fetch brands for brand menu
+  const { data: brandItems = [] } = useQuery({
+    queryKey: ['brands-admin'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data.map(brand => ({
+        id: brand.id,
+        title: brand.name,
+        url: `/brands/${brand.slug}`,
+        order: brand.display_order,
+        active: brand.active,
+        type: 'brands'
+      }));
+    }
+  });
+
+  const mainMenuItems = menuItems.filter(item => item.menu_type === 'main');
+
+  // Mutations for CRUD operations
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const { error } = await supabase
+        .from('menu_items')
+        .insert([data]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
+      toast.success("Đã thêm menu mới");
+      setIsDialogOpen(false);
+      setFormData({ title: "", url: "", target: "_self" });
+    },
+    onError: () => toast.error("Lỗi khi thêm menu")
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: any) => {
+      const { error } = await supabase
+        .from('menu_items')
+        .update(data)
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
+      toast.success("Đã cập nhật menu");
+      setIsDialogOpen(false);
+      setEditingItem(null);
+    },
+    onError: () => toast.error("Lỗi khi cập nhật menu")
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('menu_items')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
+      toast.success("Đã xóa menu");
+    },
+    onError: () => toast.error("Lỗi khi xóa menu")
+  });
+
+  useEffect(() => {
+    if (editingItem) {
+      setFormData({
+        title: editingItem.title || "",
+        url: editingItem.url || "",
+        target: editingItem.target || "_self"
+      });
+    }
+  }, [editingItem]);
 
   const handleEdit = (item: any, type: string) => {
     setEditingItem({ ...item, type });
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number, type: string) => {
+  const handleDelete = (id: string, type: string) => {
     if (type === "main") {
-      setMainMenuItems(items => items.filter(item => item.id !== id));
-    } else if (type === "brands") {
-      setBrandMenuItems(items => items.filter(item => item.id !== id));
-    } else if (type === "topbar") {
-      setTopBarMenuItems(items => items.filter(item => item.id !== id));
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!formData.title || !formData.url) {
+      toast.error("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+
+    const data = {
+      title: formData.title,
+      url: formData.url,
+      target: formData.target,
+      menu_type: 'main',
+      display_order: mainMenuItems.length + 1
+    };
+
+    if (editingItem) {
+      updateMutation.mutate({ id: editingItem.id, data });
+    } else {
+      createMutation.mutate(data);
     }
   };
 
@@ -66,19 +164,19 @@ const MenusManagement = () => {
       <TableBody>
         {items.map((item: any) => (
           <TableRow key={item.id}>
-            <TableCell>
-              <div className="flex items-center space-x-2">
-                <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                <span>{item.order}</span>
-              </div>
-            </TableCell>
+             <TableCell>
+               <div className="flex items-center space-x-2">
+                 <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                 <span>{item.display_order || item.order}</span>
+               </div>
+             </TableCell>
             <TableCell className="font-medium">{item.title}</TableCell>
             <TableCell className="font-mono text-sm">{item.url}</TableCell>
-            <TableCell>
-              <Badge variant={item.active ? "default" : "secondary"}>
-                {item.active ? "Hiển thị" : "Ẩn"}
-              </Badge>
-            </TableCell>
+             <TableCell>
+               <Badge variant={item.is_active || item.active ? "default" : "secondary"}>
+                 {item.is_active || item.active ? "Hiển thị" : "Ẩn"}
+               </Badge>
+             </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end space-x-2">
                 <Button
@@ -107,13 +205,12 @@ const MenusManagement = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Quản lý Menu</h1>
-        <p className="text-muted-foreground">Chỉnh sửa menu chính, menu top bar và menu nhãn hàng</p>
+        <p className="text-muted-foreground">Chỉnh sửa menu chính và menu nhãn hàng. Top Menu đã được xóa.</p>
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
         <TabsList>
           <TabsTrigger value="main">Menu chính</TabsTrigger>
-          <TabsTrigger value="topbar">Menu Top bar</TabsTrigger>
           <TabsTrigger value="brands">Menu nhãn hàng</TabsTrigger>
         </TabsList>
 
@@ -127,33 +224,43 @@ const MenusManagement = () => {
                     Quản lý các mục menu chính hiển thị trên header
                   </CardDescription>
                 </div>
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button>
+                    <Button onClick={() => setEditingItem(null)}>
                       <Plus className="h-4 w-4 mr-2" />
                       Thêm menu
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Thêm menu mới</DialogTitle>
+                      <DialogTitle>{editingItem ? "Chỉnh sửa menu" : "Thêm menu mới"}</DialogTitle>
                       <DialogDescription>
-                        Tạo một mục menu mới cho navigation chính
+                        {editingItem ? "Cập nhật thông tin menu" : "Tạo một mục menu mới cho navigation chính"}
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="title">Tiêu đề</Label>
-                        <Input id="title" placeholder="Nhập tiêu đề menu" />
+                        <Input 
+                          id="title" 
+                          placeholder="Nhập tiêu đề menu"
+                          value={formData.title}
+                          onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        />
                       </div>
                       <div>
                         <Label htmlFor="url">URL</Label>
-                        <Input id="url" placeholder="/duong-dan" />
+                        <Input 
+                          id="url" 
+                          placeholder="/duong-dan"
+                          value={formData.url}
+                          onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                        />
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline">Hủy</Button>
-                      <Button>Thêm</Button>
+                      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Hủy</Button>
+                      <Button onClick={handleSubmit}>{editingItem ? "Cập nhật" : "Thêm"}</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -170,59 +277,6 @@ const MenusManagement = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="topbar">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Menu Top bar</CardTitle>
-                  <CardDescription>
-                    Quản lý các mục menu hiển thị trên thanh top bar (ngôn ngữ, tìm kiếm, liên hệ)
-                  </CardDescription>
-                </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm menu top bar
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Thêm menu top bar mới</DialogTitle>
-                      <DialogDescription>
-                        Tạo một mục menu mới cho top bar (ngôn ngữ, tiện ích)
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="topbar-title">Tiêu đề</Label>
-                        <Input id="topbar-title" placeholder="Nhập tiêu đề menu" />
-                      </div>
-                      <div>
-                        <Label htmlFor="topbar-url">URL</Label>
-                        <Input id="topbar-url" placeholder="/duong-dan hoặc #" />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline">Hủy</Button>
-                      <Button>Thêm</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <MenuTable
-                items={topBarMenuItems}
-                type="topbar"
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="brands">
           <Card>
             <CardHeader>
@@ -230,47 +284,22 @@ const MenusManagement = () => {
                 <div>
                   <CardTitle>Menu nhãn hàng</CardTitle>
                   <CardDescription>
-                    Quản lý các nhãn hàng hiển thị trong dropdown menu
+                    Menu nhãn hàng được quản lý từ trang "Quản lý Nhãn hàng". Chuyển đến đó để thêm/sửa/xóa nhãn hàng.
                   </CardDescription>
                 </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm nhãn hàng
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Thêm nhãn hàng mới</DialogTitle>
-                      <DialogDescription>
-                        Tạo một nhãn hàng mới trong menu dropdown
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="brand-title">Tên nhãn hàng</Label>
-                        <Input id="brand-title" placeholder="Nhập tên nhãn hàng" />
-                      </div>
-                      <div>
-                        <Label htmlFor="brand-url">URL</Label>
-                        <Input id="brand-url" placeholder="/brands/ten-nhan-hang" />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline">Hủy</Button>
-                      <Button>Thêm</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <Button asChild>
+                  <a href="/admin/brands">
+                    Quản lý Nhãn hàng
+                  </a>
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
               <MenuTable
-                items={brandMenuItems}
+                items={brandItems}
                 type="brands"
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onEdit={() => {}}
+                onDelete={() => {}}
               />
             </CardContent>
           </Card>
