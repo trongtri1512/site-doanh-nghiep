@@ -52,7 +52,7 @@ const Index = () => {
                 className="group bg-card rounded-lg p-6 border border-border hover:shadow-lg transition-all duration-300 hover:border-primary/20"
               >
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors overflow-hidden">
+                  <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src={brand.image_url || "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"}
                       alt={brand.name}
