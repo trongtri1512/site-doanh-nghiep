@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +17,7 @@ const MenusManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [currentTab, setCurrentTab] = useState("main");
-  const [formData, setFormData] = useState({ title: "", url: "", target: "_self" });
+  const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "" });
   const queryClient = useQueryClient();
 
   // Fetch menu items from database
@@ -55,6 +56,8 @@ const MenusManagement = () => {
   });
 
   const mainMenuItems = menuItems.filter(item => item.menu_type === 'main');
+  const parentMenuItems = mainMenuItems.filter(item => !item.parent_id);
+  const childMenuItems = mainMenuItems.filter(item => item.parent_id);
 
   // Mutations for CRUD operations
   const createMutation = useMutation({
@@ -69,7 +72,7 @@ const MenusManagement = () => {
       queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
       toast.success("Đã thêm menu mới");
       setIsDialogOpen(false);
-      setFormData({ title: "", url: "", target: "_self" });
+      setFormData({ title: "", url: "", target: "_self", parentId: "" });
     },
     onError: () => toast.error("Lỗi khi thêm menu")
   });
@@ -130,7 +133,8 @@ const MenusManagement = () => {
       setFormData({
         title: editingItem.title || "",
         url: editingItem.url || "",
-        target: editingItem.target || "_self"
+        target: editingItem.target || "_self",
+        parentId: editingItem.parent_id || ""
       });
     }
   }, [editingItem]);
@@ -147,16 +151,17 @@ const MenusManagement = () => {
   };
 
   const handleSubmit = () => {
-    if (!formData.title || !formData.url) {
+    if (!formData.title || (!formData.url && !formData.parentId)) {
       toast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
 
     const data = {
       title: formData.title,
-      url: formData.url,
+      url: formData.url || '#',
       target: formData.target,
       menu_type: 'main',
+      parent_id: formData.parentId || null,
       display_order: mainMenuItems.length + 1
     };
 
@@ -209,7 +214,15 @@ const MenusManagement = () => {
                  <span>{item.display_order || item.order}</span>
                </div>
              </TableCell>
-            <TableCell className="font-medium">{item.title}</TableCell>
+            <TableCell className="font-medium">
+              {item.parent_id && <span className="text-muted-foreground mr-2">↳</span>}
+              {item.title}
+              {!item.parent_id && items.filter((i: any) => i.parent_id === item.id).length > 0 && (
+                <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  Dropdown
+                </span>
+              )}
+            </TableCell>
             <TableCell className="font-mono text-sm">{item.url}</TableCell>
              <TableCell>
                <Badge variant={item.is_active || item.active ? "default" : "secondary"}>
@@ -315,28 +328,44 @@ const MenusManagement = () => {
                           value={formData.url}
                           onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
                         />
-                      </div>
-                      <div>
-                        <Label>Hoặc chọn nhãn hàng</Label>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                          {brandItems.map((brand: any) => (
-                            <Button
-                              key={brand.id}
-                              variant="outline"
-                              size="sm"
-                              type="button"
-                              onClick={() => setFormData(prev => ({ 
-                                ...prev, 
-                                title: brand.title,
-                                url: brand.url 
-                              }))}
-                              className="justify-start"
-                            >
-                              {brand.title}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
+                       </div>
+                       <div>
+                         <Label htmlFor="parentId">Menu cha (tùy chọn)</Label>
+                         <Select value={formData.parentId} onValueChange={(value) => setFormData(prev => ({ ...prev, parentId: value }))}>
+                           <SelectTrigger>
+                             <SelectValue placeholder="Chọn menu cha để tạo dropdown" />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="">Không có (menu chính)</SelectItem>
+                             {parentMenuItems.map((parent) => (
+                               <SelectItem key={parent.id} value={parent.id}>
+                                 {parent.title}
+                               </SelectItem>
+                             ))}
+                           </SelectContent>
+                         </Select>
+                       </div>
+                       <div>
+                         <Label>Hoặc chọn nhãn hàng</Label>
+                         <div className="grid grid-cols-2 gap-2 mt-2">
+                           {brandItems.map((brand: any) => (
+                             <Button
+                               key={brand.id}
+                               variant="outline"
+                               size="sm"
+                               type="button"
+                               onClick={() => setFormData(prev => ({ 
+                                 ...prev, 
+                                 title: brand.title,
+                                 url: brand.url 
+                               }))}
+                               className="justify-start"
+                             >
+                               {brand.title}
+                             </Button>
+                           ))}
+                         </div>
+                       </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Hủy</Button>

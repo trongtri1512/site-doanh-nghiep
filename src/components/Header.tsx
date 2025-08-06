@@ -15,8 +15,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
 
-  // Fetch menu items from database
-  const { data: mainMenuItems = [] } = useQuery({
+  // Fetch all menu items from database
+  const { data: allMenuItems = [] } = useQuery({
     queryKey: ['menu-items-main'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -30,6 +30,14 @@ const Header = () => {
       return data;
     }
   });
+
+  // Organize menu items into parent-child structure
+  const parentMenuItems = allMenuItems.filter(item => !item.parent_id);
+  const childMenuItems = allMenuItems.filter(item => item.parent_id);
+  
+  const getChildItems = (parentId: string) => {
+    return childMenuItems.filter(child => child.parent_id === parentId);
+  };
 
   // Fetch brand menu items from brands table
   const { data: brandMenuItems = [] } = useQuery({
@@ -62,11 +70,33 @@ const Header = () => {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-8">
-          {mainMenuItems.map((item) => (
-            <a key={item.id} href={item.url} className="hover:underline font-medium" target={item.target}>
-              {item.title}
-            </a>
-          ))}
+          {parentMenuItems.map((item) => {
+            const children = getChildItems(item.id);
+            
+            if (children.length > 0) {
+              return (
+                <DropdownMenu key={item.id}>
+                  <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-medium">
+                    {item.title}
+                    <ChevronDown size={14} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {children.map((child) => (
+                      <DropdownMenuItem key={child.id} asChild>
+                        <a href={child.url} target={child.target}>{child.title}</a>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            } else {
+              return (
+                <a key={item.id} href={item.url} className="hover:underline font-medium" target={item.target}>
+                  {item.title}
+                </a>
+              );
+            }
+          })}
           {brandMenuItems.length > 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-semibold">
@@ -99,11 +129,28 @@ const Header = () => {
       {isMenuOpen && (
         <div className="lg:hidden bg-primary border-t border-white/20">
           <div className="px-6 py-4 space-y-4">
-            {mainMenuItems.map((item) => (
-              <a key={item.id} href={item.url} className="block hover:underline" target={item.target}>
-                {item.title}
-              </a>
-            ))}
+            {parentMenuItems.map((item) => {
+              const children = getChildItems(item.id);
+              
+              if (children.length > 0) {
+                return (
+                  <div key={item.id} className="space-y-2">
+                    <div className="font-semibold">{item.title}</div>
+                    {children.map((child) => (
+                      <a key={child.id} href={child.url} className="block pl-4 text-sm hover:underline" target={child.target}>
+                        {child.title}
+                      </a>
+                    ))}
+                  </div>
+                );
+              } else {
+                return (
+                  <a key={item.id} href={item.url} className="block hover:underline" target={item.target}>
+                    {item.title}
+                  </a>
+                );
+              }
+            })}
             {brandMenuItems.length > 0 && (
               <div className="space-y-2">
                 <div className="font-semibold">Các nhãn hàng</div>

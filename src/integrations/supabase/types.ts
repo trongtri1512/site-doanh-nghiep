@@ -140,6 +140,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           menu_type: string
+          parent_id: string | null
           target: string | null
           title: string
           updated_at: string
@@ -151,6 +152,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           menu_type: string
+          parent_id?: string | null
           target?: string | null
           title: string
           updated_at?: string
@@ -162,12 +164,21 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           menu_type?: string
+          parent_id?: string | null
           target?: string | null
           title?: string
           updated_at?: string
           url?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       news: {
         Row: {
