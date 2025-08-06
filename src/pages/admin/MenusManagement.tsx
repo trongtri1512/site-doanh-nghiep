@@ -225,7 +225,7 @@ const MenusManagement = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {items.map((item: any) => (
+        {items?.map((item: any) => (
           <TableRow key={item.id}>
              <TableCell>
                <div className="flex items-center space-x-2">
@@ -294,6 +294,9 @@ const MenusManagement = () => {
 
   console.log("Rendering MenusManagement, menuItems:", menuItems, "mainMenuItems:", mainMenuItems);
   
+  if (!menuItems) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="space-y-6">
       <div>
@@ -360,7 +363,7 @@ const MenusManagement = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="">Không có (menu chính)</SelectItem>
-                          {parentMenuItems.map((parent) => (
+                          {parentMenuItems?.map((parent) => (
                             <SelectItem key={parent.id} value={parent.id}>
                               {parent.title}
                             </SelectItem>
@@ -371,7 +374,7 @@ const MenusManagement = () => {
                     <div>
                       <Label>Hoặc chọn nhãn hàng</Label>
                       <div className="grid grid-cols-2 gap-2 mt-2">
-                        {brandItems.map((brand: any) => (
+                        {brandItems?.map((brand: any) => (
                           <Button
                             key={brand.id}
                             variant="outline"
