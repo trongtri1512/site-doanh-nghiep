@@ -23,6 +23,7 @@ import BannerManagement from "./pages/admin/BannerManagement";
 // Admin imports
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
+import UserManagement from "./pages/admin/UserManagement";
 import MenusManagement from "./pages/admin/MenusManagement";
 import HeaderManagement from "./pages/admin/HeaderManagement";
 import HomepageManagement from "./pages/admin/HomepageManagement";
@@ -61,6 +62,7 @@ const App = () => (
           <Route path="/admin/auth" element={<AdminAuth />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<UserManagement />} />
             <Route path="banner" element={<BannerManagement />} />
             <Route path="menus" element={<MenusManagement />} />
             <Route path="header" element={<HeaderManagement />} />

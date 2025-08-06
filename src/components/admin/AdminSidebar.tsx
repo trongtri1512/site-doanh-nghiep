@@ -12,7 +12,8 @@ import {
   Home,
   LogOut,
   Link,
-  SquareActivity
+  SquareActivity,
+  Shield
 } from "lucide-react";
 import {
   Sidebar,
@@ -29,6 +30,7 @@ import {
 
 const adminMenuItems = [
   { title: "Tổng quan", url: "/admin", icon: Home },
+  { title: "Quản lý người dùng", url: "/admin/users", icon: Shield },
   { title: "Quản lý Banner", url: "/admin/banner", icon: Image },
   { title: "Quản lý Menu", url: "/admin/menus", icon: Menu },
   { title: "Header & Logo", url: "/admin/header", icon: Image },
