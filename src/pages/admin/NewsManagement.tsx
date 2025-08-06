@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,55 +6,28 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Image, Calendar } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Image, Calendar, Upload } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const NewsManagement = () => {
-  const [news, setNews] = useState([
-    {
-      id: 1,
-      title: "Ra mắt sản phẩm mới từ Pigeon",
-      slug: "ra-mat-san-pham-moi-tu-pigeon",
-      category: "Sản phẩm",
-      excerpt: "Pigeon giới thiệu dòng sản phẩm chăm sóc trẻ em mới nhất với công nghệ tiên tiến...",
-      content: "Nội dung đầy đủ bài viết...",
-      image: "/placeholder.svg",
-      author: "Admin",
-      publishDate: "2024-01-15",
-      status: "published",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Hội thảo làm đẹp cùng Verites",
-      slug: "hoi-thao-lam-dep-cung-verites",
-      category: "Sự kiện",
-      excerpt: "Tham gia hội thảo làm đẹp với các chuyên gia từ Verites Nhật Bản...",
-      content: "Nội dung đầy đủ bài viết...",
-      image: "/placeholder.svg",
-      author: "Marketing Team",
-      publishDate: "2024-01-10",
-      status: "published",
-      featured: false
-    },
-    {
-      id: 3,
-      title: "Xu hướng chụp ảnh với Instax 2024",
-      slug: "xu-huong-chup-anh-voi-instax-2024",
-      category: "Xu hướng",
-      excerpt: "Khám phá những xu hướng chụp ảnh mới nhất với máy ảnh Instax...",
-      content: "Nội dung đầy đủ bài viết...",
-      image: "/placeholder.svg",
-      author: "Content Team",
-      publishDate: "2024-01-05",
-      status: "draft",
-      featured: false
-    }
-  ]);
-
+  const [news, setNews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingNews, setEditingNews] = useState(null);
+  const [editingNews, setEditingNews] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    slug: "",
+    category: "",
+    excerpt: "",
+    content: "",
+    author: "Admin",
+    publishDate: "",
+    status: "draft",
+    featured: false
+  });
 
   const categories = [
     "Sản phẩm",
@@ -62,6 +35,8 @@ const NewsManagement = () => {
     "Xu hướng",
     "Tin tức công ty",
     "Hướng dẫn",
+    "Thương hiệu",
+    "Thành tích",
     "Khác"
   ];
 
@@ -71,25 +46,205 @@ const NewsManagement = () => {
     { value: "archived", label: "Lưu trữ", variant: "outline" }
   ];
 
+  // Load news from Supabase
+  useEffect(() => {
+    loadNews();
+  }, []);
+
+  const loadNews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('news')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setNews(data || []);
+    } catch (error) {
+      console.error('Error loading news:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể tải danh sách tin tức",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      slug: "",
+      category: "",
+      excerpt: "",
+      content: "",
+      author: "Admin",
+      publishDate: "",
+      status: "draft",
+      featured: false
+    });
+    setEditingNews(null);
+  };
+
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[đ]/g, "d")
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, "-")
+      .trim();
+  };
+
   const handleEdit = (newsItem: any) => {
     setEditingNews(newsItem);
+    setFormData({
+      title: newsItem.title,
+      slug: newsItem.slug,
+      category: newsItem.category,
+      excerpt: newsItem.excerpt || "",
+      content: newsItem.content || "",
+      author: newsItem.author,
+      publishDate: newsItem.published_at ? newsItem.published_at.split('T')[0] : "",
+      status: newsItem.status,
+      featured: newsItem.featured
+    });
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setNews(news.filter(item => item.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: "Đã xóa tin tức",
+      });
+      
+      loadNews();
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể xóa tin tức",
+        variant: "destructive",
+      });
+    }
   };
 
-  const toggleFeatured = (id: number) => {
-    setNews(news.map(item => 
-      item.id === id ? { ...item, featured: !item.featured } : item
-    ));
+  const toggleFeatured = async (id: string, currentFeatured: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .update({ featured: !currentFeatured })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: `Đã ${!currentFeatured ? "đặt" : "bỏ"} tin tức nổi bật`,
+      });
+      
+      loadNews();
+    } catch (error) {
+      console.error('Error updating featured status:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái nổi bật",
+        variant: "destructive",
+      });
+    }
   };
 
-  const updateStatus = (id: number, newStatus: string) => {
-    setNews(news.map(item => 
-      item.id === id ? { ...item, status: newStatus } : item
-    ));
+  const updateStatus = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .update({ status: newStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: "Đã cập nhật trạng thái",
+      });
+      
+      loadNews();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSubmit = async (status: string = 'draft') => {
+    if (!formData.title || !formData.category) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin bắt buộc",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const slug = formData.slug || generateSlug(formData.title);
+
+    try {
+      const newsData = {
+        title: formData.title,
+        slug,
+        category: formData.category,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        author: formData.author,
+        published_at: formData.publishDate ? new Date(formData.publishDate).toISOString() : null,
+        status,
+        featured: formData.featured
+      };
+
+      let error;
+      if (editingNews) {
+        ({ error } = await supabase
+          .from('news')
+          .update(newsData)
+          .eq('id', editingNews.id));
+      } else {
+        ({ error } = await supabase
+          .from('news')
+          .insert([newsData]));
+      }
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: editingNews ? "Đã cập nhật tin tức" : "Đã tạo tin tức mới",
+      });
+
+      setIsDialogOpen(false);
+      resetForm();
+      loadNews();
+    } catch (error) {
+      console.error('Error saving news:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể lưu tin tức",
+        variant: "destructive",
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -108,9 +263,12 @@ const NewsManagement = () => {
           <h1 className="text-3xl font-bold">Quản lý Tin tức</h1>
           <p className="text-muted-foreground">Tạo và quản lý bài viết tin tức</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingNews(null)}>
+            <Button onClick={resetForm}>
               <Plus className="h-4 w-4 mr-2" />
               Thêm tin tức
             </Button>
@@ -127,10 +285,18 @@ const NewsManagement = () => {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="news-title">Tiêu đề</Label>
+                  <Label htmlFor="news-title">Tiêu đề *</Label>
                   <Input
                     id="news-title"
-                    defaultValue={editingNews?.title || ""}
+                    value={formData.title}
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        title,
+                        slug: generateSlug(title)
+                      }));
+                    }}
                     placeholder="Nhập tiêu đề bài viết"
                   />
                 </div>
@@ -138,7 +304,8 @@ const NewsManagement = () => {
                   <Label htmlFor="news-slug">Slug (URL)</Label>
                   <Input
                     id="news-slug"
-                    defaultValue={editingNews?.slug || ""}
+                    value={formData.slug}
+                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
                     placeholder="tieu-de-bai-viet"
                   />
                 </div>
@@ -146,8 +313,11 @@ const NewsManagement = () => {
               
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="news-category">Danh mục</Label>
-                  <Select defaultValue={editingNews?.category || ""}>
+                  <Label htmlFor="news-category">Danh mục *</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Chọn danh mục" />
                     </SelectTrigger>
@@ -164,7 +334,8 @@ const NewsManagement = () => {
                   <Label htmlFor="news-author">Tác giả</Label>
                   <Input
                     id="news-author"
-                    defaultValue={editingNews?.author || "Admin"}
+                    value={formData.author}
+                    onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
                     placeholder="Tên tác giả"
                   />
                 </div>
@@ -173,7 +344,8 @@ const NewsManagement = () => {
                   <Input
                     id="news-date"
                     type="date"
-                    defaultValue={editingNews?.publishDate || ""}
+                    value={formData.publishDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, publishDate: e.target.value }))}
                   />
                 </div>
               </div>
@@ -182,7 +354,8 @@ const NewsManagement = () => {
                 <Label htmlFor="news-excerpt">Tóm tắt</Label>
                 <Textarea
                   id="news-excerpt"
-                  defaultValue={editingNews?.excerpt || ""}
+                  value={formData.excerpt}
+                  onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
                   placeholder="Tóm tắt ngắn gọn về bài viết"
                   rows={3}
                 />
@@ -192,7 +365,8 @@ const NewsManagement = () => {
                 <Label htmlFor="news-content">Nội dung</Label>
                 <Textarea
                   id="news-content"
-                  defaultValue={editingNews?.content || ""}
+                  value={formData.content}
+                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                   placeholder="Nội dung đầy đủ bài viết"
                   rows={10}
                 />
@@ -202,20 +376,30 @@ const NewsManagement = () => {
                 <Label>Hình ảnh đại diện</Label>
                 <div className="mt-2">
                   <Button variant="outline" className="w-full">
-                    <Image className="h-4 w-4 mr-2" />
+                    <Upload className="h-4 w-4 mr-2" />
                     Tải lên hình ảnh
                   </Button>
                 </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+                />
+                <Label htmlFor="featured">Đặt làm tin tức nổi bật</Label>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Hủy
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => handleSubmit('draft')}>
                 Lưu nháp
               </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>
+              <Button onClick={() => handleSubmit('published')}>
                 Xuất bản
               </Button>
             </DialogFooter>
@@ -231,29 +415,32 @@ const NewsManagement = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Hình ảnh</TableHead>
-                <TableHead>Tiêu đề</TableHead>
-                <TableHead>Danh mục</TableHead>
-                <TableHead>Tác giả</TableHead>
-                <TableHead>Ngày xuất bản</TableHead>
-                <TableHead>Nổi bật</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead className="text-right">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {news.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-12 h-12 object-cover rounded"
-                    />
-                  </TableCell>
+          {loading ? (
+            <div className="text-center py-8">Đang tải...</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Hình ảnh</TableHead>
+                  <TableHead>Tiêu đề</TableHead>
+                  <TableHead>Danh mục</TableHead>
+                  <TableHead>Tác giả</TableHead>
+                  <TableHead>Ngày xuất bản</TableHead>
+                  <TableHead>Nổi bật</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead className="text-right">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {news.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <img
+                        src={item.image_url || "/placeholder.svg"}
+                        alt={item.title}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    </TableCell>
                   <TableCell className="font-medium max-w-xs">
                     <div className="truncate">{item.title}</div>
                     <div className="text-sm text-muted-foreground truncate">
@@ -267,14 +454,16 @@ const NewsManagement = () => {
                   <TableCell>
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-3 w-3" />
-                      <span className="text-sm">{item.publishDate}</span>
+                      <span className="text-sm">
+                        {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <Button
                       variant={item.featured ? "default" : "outline"}
                       size="sm"
-                      onClick={() => toggleFeatured(item.id)}
+                      onClick={() => toggleFeatured(item.id, item.featured)}
                     >
                       {item.featured ? "Nổi bật" : "Thường"}
                     </Button>
@@ -323,8 +512,9 @@ const NewsManagement = () => {
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
