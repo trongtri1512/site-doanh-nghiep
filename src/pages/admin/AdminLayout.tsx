@@ -6,7 +6,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 const AdminLayout = () => {
   return (
     <ProtectedRoute requireAdmin={true}>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={true}>
         <div className="min-h-screen flex w-full bg-background">
           <AdminSidebar />
           <main className="flex-1 p-6">

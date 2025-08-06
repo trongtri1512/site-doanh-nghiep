@@ -51,6 +51,7 @@ export function AdminSidebar() {
       <Sidebar
         className={state === "collapsed" ? "w-14" : "w-60"}
         collapsible="icon"
+        variant="sidebar"
       >
         <div className="p-4 border-b">
           <SidebarTrigger />
