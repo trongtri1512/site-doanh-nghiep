@@ -39,20 +39,6 @@ const Header = () => {
     return childMenuItems.filter(child => child.parent_id === parentId);
   };
 
-  // Fetch brand menu items from brands table
-  const { data: brandMenuItems = [] } = useQuery({
-    queryKey: ['brands-menu'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('brands')
-        .select('name, slug')
-        .eq('active', true)
-        .order('display_order', { ascending: true });
-      
-      if (error) throw error;
-      return data;
-    }
-  });
 
   return (
     <header className="w-full bg-primary text-white sticky top-0 z-50">
@@ -97,21 +83,6 @@ const Header = () => {
               );
             }
           })}
-          {brandMenuItems.length > 0 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-semibold">
-                Các nhãn hàng
-                <ChevronDown size={14} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {brandMenuItems.map((brand) => (
-                  <DropdownMenuItem key={brand.slug} asChild>
-                    <a href={`/brands/${brand.slug}`}>{brand.name}</a>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -151,16 +122,6 @@ const Header = () => {
                 );
               }
             })}
-            {brandMenuItems.length > 0 && (
-              <div className="space-y-2">
-                <div className="font-semibold">Các nhãn hàng</div>
-                {brandMenuItems.map((brand) => (
-                  <a key={brand.slug} href={`/brands/${brand.slug}`} className="block pl-4 text-sm hover:underline">
-                    {brand.name}
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       )}
