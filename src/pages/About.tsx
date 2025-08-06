@@ -1,14 +1,16 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Users, Target, Eye, Award, Globe, TrendingUp } from "lucide-react";
+import { ArrowLeft, Users, Target, Eye, Globe, TrendingUp, Building } from "lucide-react";
 import { Link } from "react-router-dom";
+import imvBuilding from "@/assets/imv-building.png";
+import ourBusiness from "@/assets/our-business.png";
 
 const About = () => {
   const achievements = [
     {
       icon: <Globe className="text-primary" size={32} />,
-      title: "15+",
-      subtitle: "Thương hiệu quốc tế"
+      title: "25+",
+      subtitle: "Năm kinh nghiệm"
     },
     {
       icon: <Users className="text-primary" size={32} />,
@@ -16,70 +18,55 @@ const About = () => {
       subtitle: "Nhân viên chuyên nghiệp"
     },
     {
+      icon: <Building className="text-primary" size={32} />,
+      title: "15+",
+      subtitle: "Thương hiệu quốc tế"
+    },
+    {
       icon: <TrendingUp className="text-primary" size={32} />,
-      title: "20+",
-      subtitle: "Năm kinh nghiệm"
-    },
-    {
-      icon: <Award className="text-primary" size={32} />,
-      title: "100+",
-      subtitle: "Đối tác tin cậy"
+      title: "1000+",
+      subtitle: "Điểm bán trên toàn quốc"
     }
   ];
 
-  const services = [
+  const brands = [
     {
-      title: "Ảnh & In Ấn",
-      description: "Phân phối độc quyền các sản phẩm máy ảnh, máy in và giải pháp in ấn từ Fujifilm",
-      brands: ["Fujifilm Instax", "Fujifilm Imaging"]
+      category: "Ảnh & In Ấn",
+      description: "Các sản phẩm máy ảnh, máy in và giải pháp in ấn chuyên nghiệp",
+      items: ["FUJIFILM Instax", "FUJIFILM Photo Imaging", "FUJIFILM Printing Solutions"]
     },
     {
-      title: "Chăm Sóc Mẹ & Bé",
-      description: "Cung cấp các sản phẩm chăm sóc mẹ và bé an toàn, chất lượng cao",
-      brands: ["Pigeon", "Etsuko"]
+      category: "Chăm Sóc Mẹ & Bé", 
+      description: "Sản phẩm chăm sóc mẹ và bé an toàn, chất lượng từ Nhật Bản",
+      items: ["Pigeon", "Etsuko", "Các sản phẩm chăm sóc trẻ em"]
     },
     {
-      title: "Mỹ Phẩm",
-      description: "Phân phối các thương hiệu mỹ phẩm cao cấp và sản phẩm chăm sóc da",
-      brands: ["Astalift", "Verites"]
+      category: "Mỹ Phẩm & Chăm Sóc Da",
+      description: "Thương hiệu mỹ phẩm cao cấp và sản phẩm chăm sóc da tiên tiến",
+      items: ["ASTALIFT", "Verites", "Các thương hiệu skincare premium"]
     },
     {
-      title: "Chẩn Đoán Hình Ảnh Y Tế",
-      description: "Cung cấp thiết bị và giải pháp chẩn đoán hình ảnh y tế tiên tiến",
-      brands: ["Fujifilm Medical"]
+      category: "Y Tế & Chẩn Đoán Hình Ảnh",
+      description: "Thiết bị y tế và giải pháp chẩn đoán hình ảnh hiện đại",
+      items: ["FUJIFILM Medical Systems", "Thiết bị X-ray", "Hệ thống chẩn đoán"]
     }
   ];
 
-  const timeline = [
+  const partnerships = [
     {
-      year: "2004",
-      title: "Thành lập công ty",
-      description: "IMV được thành lập với tầm nhìn trở thành nhà phân phối hàng đầu các thương hiệu quốc tế tại Việt Nam"
+      name: "FUJIFILM Holdings Corporation",
+      description: "Đối tác chiến lược toàn cầu về công nghệ ảnh, y tế và mỹ phẩm",
+      since: "2008"
     },
     {
-      year: "2008",
-      title: "Mở rộng thị trường",
-      description: "Ký kết hợp tác với Fujifilm và bắt đầu phân phối các sản phẩm ảnh & in ấn"
+      name: "Pigeon Corporation",
+      description: "Thương hiệu chăm sóc mẹ và bé hàng đầu từ Nhật Bản",
+      since: "2012"
     },
     {
-      year: "2012",
-      title: "Đa dạng hóa sản phẩm",
-      description: "Mở rộng sang lĩnh vực chăm sóc mẹ & bé với thương hiệu Pigeon"
-    },
-    {
-      year: "2016",
-      title: "Phát triển mỹ phẩm",
-      description: "Khởi động mảng mỹ phẩm với Astalift và các thương hiệu chăm sóc da"
-    },
-    {
-      year: "2020",
-      title: "Chuyển đổi số",
-      description: "Đầu tư mạnh vào công nghệ và chuyển đổi số để nâng cao trải nghiệm khách hàng"
-    },
-    {
-      year: "2024",
-      title: "Mở rộng toàn quốc",
-      description: "Thiết lập mạng lưới phân phối toàn quốc với hơn 1000 điểm bán"
+      name: "Các đối tác quốc tế khác",
+      description: "Mạng lưới đối tác rộng khắp từ Nhật Bản, Hàn Quốc, Châu Âu",
+      since: "2004"
     }
   ];
 
@@ -97,22 +84,45 @@ const About = () => {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-foreground mb-6">Về chúng tôi</h1>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-xl text-muted-foreground mb-8">
-                Công ty Cổ phần Quốc tế Minh Việt (IMV) được thành lập năm 2004, là nhà phân phối 
-                độc quyền của nhiều thương hiệu uy tín hàng đầu thế giới tại thị trường Việt Nam.
-              </p>
-              <div className="grid md:grid-cols-4 gap-6">
-                {achievements.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="flex justify-center mb-3">
-                      {item.icon}
-                    </div>
-                    <div className="text-3xl font-bold text-foreground mb-1">{item.title}</div>
-                    <div className="text-muted-foreground text-sm">{item.subtitle}</div>
-                  </div>
-                ))}
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
+              <div className="text-left">
+                <h2 className="text-2xl font-bold text-foreground mb-4">
+                  IMV - CÔNG TY CỔ PHẦN QUỐC TẾ MINH VIỆT
+                </h2>
+                <p className="text-lg text-primary font-semibold mb-4">
+                  Đối tác đáng tin cậy tại thị trường Việt Nam
+                </p>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  Với hơn 25 năm kinh nghiệm, IMV là một doanh nghiệp sản xuất và phân phối có vốn đầu tư 
+                  nước ngoài hàng đầu tại Việt Nam. Chúng tôi cam kết đồng hành cùng các thương hiệu trong 
+                  hành trình phát triển, thúc đẩy đổi mới sáng tạo và nuôi dưỡng thế hệ trẻ tài năng – 
+                  tạo nên một hệ sinh thái hợp tác năng động.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Từ ý tưởng đến tay người tiêu dùng, chúng tôi cung cấp cơ sở hạ tầng, mạng lưới đối tác 
+                  và hiểu biết sâu sắc về thị trường để biến những sản phẩm xuất sắc thành những thương hiệu 
+                  được yêu mến tại Việt Nam.
+                </p>
               </div>
+              <div>
+                <img 
+                  src={imvBuilding} 
+                  alt="IMV Building" 
+                  className="w-full h-96 object-cover rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-4 gap-6">
+              {achievements.map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="flex justify-center mb-3">
+                    {item.icon}
+                  </div>
+                  <div className="text-3xl font-bold text-foreground mb-1">{item.title}</div>
+                  <div className="text-muted-foreground text-sm">{item.subtitle}</div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -143,23 +153,30 @@ const About = () => {
             </div>
           </div>
 
-          {/* Services */}
+          {/* Our Business */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-foreground text-center mb-12">
-              Lĩnh vực hoạt động
+            <h2 className="text-3xl font-bold text-foreground text-center mb-8">
+              Lĩnh vực kinh doanh
             </h2>
+            <div className="text-center mb-8">
+              <img 
+                src={ourBusiness} 
+                alt="Our Business Overview" 
+                className="w-full max-w-4xl mx-auto rounded-lg shadow-lg"
+              />
+            </div>
             <div className="grid md:grid-cols-2 gap-8">
-              {services.map((service, index) => (
+              {brands.map((brand, index) => (
                 <div key={index} className="border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{service.title}</h3>
-                  <p className="text-muted-foreground mb-4">{service.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {service.brands.map((brand, brandIndex) => (
+                  <h3 className="text-xl font-semibold text-foreground mb-3">{brand.category}</h3>
+                  <p className="text-muted-foreground mb-4">{brand.description}</p>
+                  <div className="space-y-2">
+                    {brand.items.map((item, itemIndex) => (
                       <span 
-                        key={brandIndex}
-                        className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
+                        key={itemIndex}
+                        className="inline-block mr-2 mb-2 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
                       >
-                        {brand}
+                        {item}
                       </span>
                     ))}
                   </div>
@@ -168,70 +185,23 @@ const About = () => {
             </div>
           </div>
 
-          {/* Timeline */}
+          {/* Strategic Partnerships */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-foreground text-center mb-12">
-              Hành trình phát triển
-            </h2>
-            <div className="relative">
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-primary/20"></div>
-              <div className="space-y-8">
-                {timeline.map((item, index) => (
-                  <div key={index} className="relative flex items-start gap-6">
-                    <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center relative z-10">
-                      <div className="w-3 h-3 bg-white rounded-full"></div>
-                    </div>
-                    <div className="flex-1 pb-8">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-lg font-bold text-primary">{item.year}</span>
-                        <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-                      </div>
-                      <p className="text-muted-foreground">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Values */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-foreground text-center mb-12">
-              Giá trị cốt lõi
+              Đối tác chiến lược
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Award className="text-primary" size={32} />
+              {partnerships.map((partner, index) => (
+                <div key={index} className="text-center bg-muted/30 rounded-lg p-6">
+                  <div className="mb-4">
+                    <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-sm rounded-full">
+                      Từ năm {partner.since}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-3">{partner.name}</h3>
+                  <p className="text-muted-foreground text-sm">{partner.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Chất lượng</h3>
-                <p className="text-muted-foreground">
-                  Cam kết mang đến những sản phẩm và dịch vụ chất lượng cao nhất, 
-                  đáp ứng mọi mong đợi của khách hàng.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="text-primary" size={32} />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Tận tâm</h3>
-                <p className="text-muted-foreground">
-                  Luôn đặt khách hàng làm trung tâm, phục vụ với tất cả sự nhiệt huyết 
-                  và chuyên nghiệp.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="text-primary" size={32} />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">Đổi mới</h3>
-                <p className="text-muted-foreground">
-                  Không ngừng học hỏi, cải tiến và ứng dụng công nghệ mới để nâng cao 
-                  hiệu quả hoạt động.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
 
