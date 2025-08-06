@@ -1,18 +1,12 @@
-# Welcome to your Lovable project
+# Welcome to your IMV Demo project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/a82a6e85-ea15-47ac-b256-08b7419efd8a
+**URL**: https://imv.trongtri.com
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/a82a6e85-ea15-47ac-b256-08b7419efd8a) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
