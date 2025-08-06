@@ -84,16 +84,7 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <a href="#" className="hover:underline">Tin tức</a>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 hover:underline">
-              Cơ hội nghề nghiệp
-              <ChevronDown size={14} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Việc làm</DropdownMenuItem>
-              <DropdownMenuItem>Thực tập</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <a href="/careers" className="hover:underline">Cơ hội nghề nghiệp</a>
           <a href="#" className="hover:underline">Về chúng tôi</a>
         </div>
 
@@ -123,7 +114,7 @@ const Header = () => {
             </div>
             <a href="#" className="block hover:underline">Phát triển bền vững</a>
             <a href="#" className="block hover:underline">Tin tức</a>
-            <a href="#" className="block hover:underline">Cơ hội nghề nghiệp</a>
+            <a href="/careers" className="block hover:underline">Cơ hội nghề nghiệp</a>
             <a href="#" className="block hover:underline">Về chúng tôi</a>
           </div>
         </div>
