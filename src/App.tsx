@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Careers from "./pages/Careers";
@@ -14,6 +15,7 @@ import InstaxCamera from "./pages/brands/InstaxCamera";
 import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
+import AdminAuth from "./pages/AdminAuth";
 
 // Admin imports
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -30,7 +32,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -46,7 +49,8 @@ const App = () => (
           <Route path="/brands/etsuko" element={<Etsuko />} />
           <Route path="/brands/astalift" element={<Astalift />} />
           
-          {/* Admin Routes */}
+          {/* Admin Auth Route */}
+          <Route path="/admin/auth" element={<AdminAuth />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="menus" element={<MenusManagement />} />
@@ -63,6 +67,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

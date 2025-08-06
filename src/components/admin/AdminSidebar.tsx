@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Menu,
   Layout,
@@ -8,7 +9,8 @@ import {
   Users,
   Info,
   Settings,
-  Home
+  Home,
+  LogOut
 } from "lucide-react";
 import {
   Sidebar,
@@ -37,6 +39,7 @@ const adminMenuItems = [
 
 export function AdminSidebar() {
   const { state } = useSidebar();
+  const { user, signOut } = useAuth();
 
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     isActive 
@@ -52,7 +55,10 @@ export function AdminSidebar() {
         <div className="p-4 border-b">
           <SidebarTrigger />
           {state !== "collapsed" && (
-            <h2 className="font-bold text-lg mt-2">Admin Panel</h2>
+            <div className="mt-2">
+              <h2 className="font-bold text-lg">Admin Panel</h2>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            </div>
           )}
         </div>
 
@@ -71,6 +77,24 @@ export function AdminSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <button 
+                      onClick={signOut}
+                      className="w-full flex items-center space-x-2 text-destructive hover:bg-destructive/10"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      {state !== "collapsed" && <span>Đăng xuất</span>}
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
