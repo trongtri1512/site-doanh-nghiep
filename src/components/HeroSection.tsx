@@ -21,13 +21,24 @@ const HeroSection = () => {
 
         {/* Right illustration area */}
         <div className="relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* Decorative bubbles */}
-            <div className="absolute w-4 h-4 bg-white/30 rounded-full animate-pulse" style={{top: '20%', left: '10%'}}></div>
-            <div className="absolute w-6 h-6 bg-white/20 rounded-full animate-pulse" style={{top: '40%', right: '20%', animationDelay: '0.5s'}}></div>
-            <div className="absolute w-3 h-3 bg-white/40 rounded-full animate-pulse" style={{bottom: '30%', left: '30%', animationDelay: '1s'}}></div>
-            <div className="absolute w-5 h-5 bg-white/25 rounded-full animate-pulse" style={{top: '60%', right: '40%', animationDelay: '1.5s'}}></div>
-            <div className="absolute w-8 h-8 bg-white/15 rounded-full animate-pulse" style={{bottom: '20%', right: '10%', animationDelay: '2s'}}></div>
+          <div className="grid grid-cols-1 gap-6">
+            {/* IMV Building Image */}
+            <div className="relative overflow-hidden rounded-lg shadow-lg">
+              <img 
+                src="/lovable-uploads/b393a4a5-1ed9-4996-937a-22c0768f1dd7.png"
+                alt="IMV Vietnam Office Building"
+                className="w-full h-48 object-cover"
+              />
+            </div>
+            
+            {/* Modern Office Building Image */}
+            <div className="relative overflow-hidden rounded-lg shadow-lg">
+              <img 
+                src="/lovable-uploads/76170711-dd2d-4132-93e1-df62f46e595e.png"
+                alt="Modern Office Building"
+                className="w-full h-48 object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>
