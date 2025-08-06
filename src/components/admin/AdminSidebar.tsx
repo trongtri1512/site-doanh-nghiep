@@ -10,7 +10,9 @@ import {
   Info,
   Settings,
   Home,
-  LogOut
+  LogOut,
+  Link,
+  SquareActivity
 } from "lucide-react";
 import {
   Sidebar,
@@ -31,6 +33,8 @@ const adminMenuItems = [
   { title: "Quản lý Menu", url: "/admin/menus", icon: Menu },
   { title: "Header & Logo", url: "/admin/header", icon: Image },
   { title: "Giao diện trang chủ", url: "/admin/homepage", icon: Layout },
+  { title: "Quản lý Footer", url: "/admin/footer", icon: SquareActivity },
+  { title: "Menu Footer", url: "/admin/footer-menu", icon: Link },
   { title: "Nhãn hàng", url: "/admin/brands", icon: Package },
   { title: "Tin tức", url: "/admin/news", icon: Newspaper },
   { title: "Nghề nghiệp", url: "/admin/careers", icon: Users },
