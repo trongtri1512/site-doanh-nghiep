@@ -85,7 +85,7 @@ const Header = () => {
           </DropdownMenu>
           <a href="/news" className="hover:underline">Tin tức</a>
           <a href="/careers" className="hover:underline">Cơ hội nghề nghiệp</a>
-          <a href="#" className="hover:underline">Về chúng tôi</a>
+          <a href="/about" className="hover:underline">Về chúng tôi</a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -115,7 +115,7 @@ const Header = () => {
             <a href="#" className="block hover:underline">Phát triển bền vững</a>
             <a href="/news" className="block hover:underline">Tin tức</a>
             <a href="/careers" className="block hover:underline">Cơ hội nghề nghiệp</a>
-            <a href="#" className="block hover:underline">Về chúng tôi</a>
+            <a href="/about" className="block hover:underline">Về chúng tôi</a>
           </div>
         </div>
       )}

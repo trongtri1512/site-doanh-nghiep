@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Careers from "./pages/Careers";
 import News from "./pages/News";
+import About from "./pages/About";
 import Pigeon from "./pages/brands/Pigeon";
 import Verites from "./pages/brands/Verites";
 import InstaxCamera from "./pages/brands/InstaxCamera";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/news" element={<News />} />
+          <Route path="/about" element={<About />} />
           <Route path="/brands/pigeon" element={<Pigeon />} />
           <Route path="/brands/verites" element={<Verites />} />
           <Route path="/brands/instax-camera" element={<InstaxCamera />} />
