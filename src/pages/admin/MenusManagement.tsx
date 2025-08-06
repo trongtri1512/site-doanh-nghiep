@@ -16,7 +16,7 @@ import { toast } from "sonner";
 const MenusManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "" });
+  const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "none" });
   const queryClient = useQueryClient();
 
   // Fetch menu items from database
@@ -71,7 +71,7 @@ const MenusManagement = () => {
       queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
       toast.success("Đã thêm menu mới");
       setIsDialogOpen(false);
-      setFormData({ title: "", url: "", target: "_self", parentId: "" });
+      setFormData({ title: "", url: "", target: "_self", parentId: "none" });
       setEditingItem(null);
     },
     onError: () => toast.error("Lỗi khi thêm menu")
@@ -91,7 +91,7 @@ const MenusManagement = () => {
       toast.success("Đã cập nhật menu");
       setIsDialogOpen(false);
       setEditingItem(null);
-      setFormData({ title: "", url: "", target: "_self", parentId: "" });
+      setFormData({ title: "", url: "", target: "_self", parentId: "none" });
     },
     onError: () => toast.error("Lỗi khi cập nhật menu")
   });
@@ -135,7 +135,7 @@ const MenusManagement = () => {
         title: editingItem.title || "",
         url: editingItem.url || "",
         target: editingItem.target || "_self",
-        parentId: editingItem.parent_id || ""
+        parentId: editingItem.parent_id || "none"
       });
     }
   }, [editingItem]);
@@ -157,7 +157,7 @@ const MenusManagement = () => {
       return;
     }
 
-    if (!formData.url && !formData.parentId) {
+    if (!formData.url && formData.parentId === "none") {
       toast.error("Vui lòng nhập URL hoặc chọn làm menu con");
       return;
     }
@@ -167,7 +167,7 @@ const MenusManagement = () => {
       url: formData.url || '#',
       target: formData.target,
       menu_type: 'main',
-      parent_id: formData.parentId || null,
+      parent_id: formData.parentId === "none" ? null : formData.parentId,
       display_order: mainMenuItems.length + 1
     };
 
@@ -322,7 +322,7 @@ const MenusManagement = () => {
                   <Button onClick={() => {
                     console.log("Clicked add menu button");
                     setEditingItem(null);
-                    setFormData({ title: "", url: "", target: "_self", parentId: "" });
+                    setFormData({ title: "", url: "", target: "_self", parentId: "none" });
                     setIsDialogOpen(true);
                   }}>
                     <Plus className="h-4 w-4 mr-2" />
@@ -362,7 +362,7 @@ const MenusManagement = () => {
                           <SelectValue placeholder="Chọn menu cha để tạo dropdown" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Không có (menu chính)</SelectItem>
+                          <SelectItem value="none">Không có (menu chính)</SelectItem>
                           {parentMenuItems?.map((parent) => (
                             <SelectItem key={parent.id} value={parent.id}>
                               {parent.title}
@@ -399,7 +399,7 @@ const MenusManagement = () => {
                       onClick={() => {
                         setIsDialogOpen(false);
                         setEditingItem(null);
-                        setFormData({ title: "", url: "", target: "_self", parentId: "" });
+                        setFormData({ title: "", url: "", target: "_self", parentId: "none" });
                       }}
                     >
                       Hủy
