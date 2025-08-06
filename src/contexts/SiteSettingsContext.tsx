@@ -64,13 +64,37 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
       // Update document title and meta tags if available
       if (settingsObject.site_title) {
         document.title = settingsObject.site_title;
+        
+        // Update OG title
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) {
+          ogTitle.setAttribute('content', settingsObject.site_title);
+        }
       }
       
       if (settingsObject.site_description) {
+        // Update meta description
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription) {
           metaDescription.setAttribute('content', settingsObject.site_description);
         }
+        
+        // Update OG description
+        const ogDescription = document.querySelector('meta[property="og:description"]');
+        if (ogDescription) {
+          ogDescription.setAttribute('content', settingsObject.site_description);
+        }
+      }
+      
+      if (settingsObject.site_keywords) {
+        // Update meta keywords
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (!metaKeywords) {
+          metaKeywords = document.createElement('meta');
+          (metaKeywords as HTMLMetaElement).name = 'keywords';
+          document.head.appendChild(metaKeywords);
+        }
+        metaKeywords.setAttribute('content', settingsObject.site_keywords);
       }
       
       if (settingsObject.favicon) {
