@@ -56,7 +56,7 @@ const Index = () => {
                     <img 
                       src={brand.image_url || "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"}
                       alt={brand.name}
-                      className="w-10 h-10 object-contain group-hover:scale-110 transition-transform"
+                      className="w-full h-full object-contain group-hover:scale-110 transition-transform"
                     />
                   </div>
                   <span className="inline-block px-3 py-1 bg-accent text-accent-foreground text-xs rounded-full mb-3">
