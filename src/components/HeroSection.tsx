@@ -31,13 +31,22 @@ const HeroSection = () => {
               />
             </div>
             
-            {/* Modern Office Building Image */}
-            <div className="relative overflow-hidden rounded-lg shadow-lg">
+            {/* Modern Office Building with Text Overlay */}
+            <div className="relative overflow-hidden rounded-lg shadow-lg group">
               <img 
-                src="/lovable-uploads/76170711-dd2d-4132-93e1-df62f46e595e.png"
+                src="/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png"
                 alt="Modern Office Building"
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
               />
+              {/* Text Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end">
+                <div className="p-4 w-full">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">Văn phòng hiện đại</h3>
+                    <p className="text-sm text-gray-700">Không gian làm việc chuyên nghiệp</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
