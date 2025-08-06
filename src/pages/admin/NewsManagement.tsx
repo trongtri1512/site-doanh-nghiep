@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Image, Calendar, Upload } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Image, Calendar, Upload, Clock } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,8 +25,11 @@ const NewsManagement = () => {
     content: "",
     author: "Admin",
     publishDate: "",
+    scheduledDate: "",
     status: "draft",
-    featured: false
+    featured: false,
+    imageFile: null as File | null,
+    imageUrl: ""
   });
 
   const categories = [
@@ -43,6 +46,7 @@ const NewsManagement = () => {
   const statuses = [
     { value: "draft", label: "Nháp", variant: "secondary" },
     { value: "published", label: "Đã xuất bản", variant: "default" },
+    { value: "scheduled", label: "Lên lịch", variant: "outline" },
     { value: "archived", label: "Lưu trữ", variant: "outline" }
   ];
 
@@ -81,8 +85,11 @@ const NewsManagement = () => {
       content: "",
       author: "Admin",
       publishDate: "",
+      scheduledDate: "",
       status: "draft",
-      featured: false
+      featured: false,
+      imageFile: null,
+      imageUrl: ""
     });
     setEditingNews(null);
   };
@@ -108,8 +115,11 @@ const NewsManagement = () => {
       content: newsItem.content || "",
       author: newsItem.author,
       publishDate: newsItem.published_at ? newsItem.published_at.split('T')[0] : "",
+      scheduledDate: newsItem.scheduled_at ? newsItem.scheduled_at.split('T')[0] : "",
       status: newsItem.status,
-      featured: newsItem.featured
+      featured: newsItem.featured,
+      imageFile: null,
+      imageUrl: newsItem.image_url || ""
     });
     setIsDialogOpen(true);
   };
@@ -189,11 +199,84 @@ const NewsManagement = () => {
     }
   };
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error } = await supabase.storage
+        .from('news-images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data } = supabase.storage
+        .from('news-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể tải lên hình ảnh",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const imageUrl = await uploadImage(file);
+          if (imageUrl) {
+            setFormData(prev => ({ ...prev, imageUrl }));
+            toast({
+              title: "Thành công",
+              description: "Đã tải lên hình ảnh từ clipboard",
+            });
+          }
+        }
+      }
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const imageUrl = await uploadImage(file);
+    if (imageUrl) {
+      setFormData(prev => ({ ...prev, imageUrl }));
+      toast({
+        title: "Thành công",
+        description: "Đã tải lên hình ảnh",
+      });
+    }
+  };
+
   const handleSubmit = async (status: string = 'draft') => {
     if (!formData.title || !formData.category) {
       toast({
         title: "Lỗi",
         description: "Vui lòng điền đầy đủ thông tin bắt buộc",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate scheduled posts
+    if (status === 'scheduled' && !formData.scheduledDate) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn ngày lên lịch",
         variant: "destructive",
       });
       return;
@@ -209,7 +292,9 @@ const NewsManagement = () => {
         excerpt: formData.excerpt,
         content: formData.content,
         author: formData.author,
-        published_at: formData.publishDate ? new Date(formData.publishDate).toISOString() : null,
+        image_url: formData.imageUrl,
+        published_at: status === 'published' ? new Date().toISOString() : (formData.publishDate ? new Date(formData.publishDate).toISOString() : null),
+        scheduled_at: status === 'scheduled' ? new Date(formData.scheduledDate).toISOString() : null,
         status,
         featured: formData.featured
       };
@@ -281,7 +366,7 @@ const NewsManagement = () => {
                 Tạo hoặc chỉnh sửa bài viết tin tức
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-4 py-4" onPaste={handlePaste}>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="news-title">Tiêu đề *</Label>
@@ -347,6 +432,15 @@ const NewsManagement = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, publishDate: e.target.value }))}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="scheduled-date">Ngày lên lịch</Label>
+                  <Input
+                    id="scheduled-date"
+                    type="datetime-local"
+                    value={formData.scheduledDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, scheduledDate: e.target.value }))}
+                  />
+                </div>
               </div>
 
               <div>
@@ -373,11 +467,32 @@ const NewsManagement = () => {
 
               <div>
                 <Label>Hình ảnh đại diện</Label>
-                <div className="mt-2">
-                  <Button variant="outline" className="w-full">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Tải lên hình ảnh
-                  </Button>
+                <div className="mt-2 space-y-2">
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1" onClick={() => document.getElementById('image-upload')?.click()}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Tải lên hình ảnh
+                    </Button>
+                    <Button variant="outline" type="button">
+                      Paste ảnh (Ctrl+V)
+                    </Button>
+                  </div>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                  {formData.imageUrl && (
+                    <div className="mt-2">
+                      <img 
+                        src={formData.imageUrl} 
+                        alt="Preview" 
+                        className="w-32 h-32 object-cover rounded border"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -397,6 +512,9 @@ const NewsManagement = () => {
               </Button>
               <Button variant="outline" onClick={() => handleSubmit('draft')}>
                 Lưu nháp
+              </Button>
+              <Button variant="outline" onClick={() => handleSubmit('scheduled')}>
+                Lên lịch
               </Button>
               <Button onClick={() => handleSubmit('published')}>
                 Xuất bản
@@ -425,6 +543,7 @@ const NewsManagement = () => {
                   <TableHead>Danh mục</TableHead>
                   <TableHead>Tác giả</TableHead>
                   <TableHead>Ngày xuất bản</TableHead>
+                  <TableHead>Lên lịch</TableHead>
                   <TableHead>Nổi bật</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
@@ -455,6 +574,14 @@ const NewsManagement = () => {
                         <Calendar className="h-3 w-3" />
                         <span className="text-sm">
                           {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3" />
+                        <span className="text-sm">
+                          {item.scheduled_at ? new Date(item.scheduled_at).toLocaleString('vi-VN') : '-'}
                         </span>
                       </div>
                     </TableCell>
