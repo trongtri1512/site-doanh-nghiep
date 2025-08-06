@@ -31,16 +31,23 @@ import {
 const adminMenuItems = [
   { title: "Tổng quan", url: "/admin", icon: Home },
   { title: "Quản lý người dùng", url: "/admin/users", icon: Shield },
+  
+  // Nhóm Quản lý trang chủ
+  { title: "Giao diện trang chủ", url: "/admin/homepage-builder", icon: Layout },
   { title: "Quản lý Banner", url: "/admin/banner", icon: Image },
-  { title: "Quản lý Menu", url: "/admin/menus", icon: Menu },
-  { title: "Header & Logo", url: "/admin/header", icon: Image },
-  { title: "Giao diện trang chủ", url: "/admin/homepage", icon: Layout },
-  { title: "Quản lý Footer", url: "/admin/footer", icon: SquareActivity },
-  { title: "Menu Footer", url: "/admin/footer-menu", icon: Link },
   { title: "Nhãn hàng", url: "/admin/brands", icon: Package },
+  
+  // Nhóm Nội dung
   { title: "Tin tức", url: "/admin/news", icon: Newspaper },
   { title: "Nghề nghiệp", url: "/admin/careers", icon: Users },
   { title: "Về chúng tôi", url: "/admin/about", icon: Info },
+  
+  // Nhóm Giao diện
+  { title: "Quản lý Menu", url: "/admin/menus", icon: Menu },
+  { title: "Header & Logo", url: "/admin/header", icon: Image },
+  { title: "Quản lý Footer", url: "/admin/footer", icon: SquareActivity },
+  { title: "Menu Footer", url: "/admin/footer-menu", icon: Link },
+  
   { title: "Cài đặt", url: "/admin/settings", icon: Settings },
 ];
 
