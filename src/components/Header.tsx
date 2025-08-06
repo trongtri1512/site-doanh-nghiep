@@ -83,7 +83,7 @@ const Header = () => {
               <DropdownMenuItem>Báo cáo bền vững</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <a href="#" className="hover:underline">Tin tức</a>
+          <a href="/news" className="hover:underline">Tin tức</a>
           <a href="/careers" className="hover:underline">Cơ hội nghề nghiệp</a>
           <a href="#" className="hover:underline">Về chúng tôi</a>
         </div>
@@ -113,7 +113,7 @@ const Header = () => {
               <a href="/brands/astalift" className="block pl-4 text-sm hover:underline">Astalift</a>
             </div>
             <a href="#" className="block hover:underline">Phát triển bền vững</a>
-            <a href="#" className="block hover:underline">Tin tức</a>
+            <a href="/news" className="block hover:underline">Tin tức</a>
             <a href="/careers" className="block hover:underline">Cơ hội nghề nghiệp</a>
             <a href="#" className="block hover:underline">Về chúng tôi</a>
           </div>
