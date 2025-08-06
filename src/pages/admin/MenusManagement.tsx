@@ -17,13 +17,20 @@ const MenusManagement = () => {
     { id: 4, title: "Nghề nghiệp", url: "/careers", order: 4, active: true },
   ]);
 
-  const [topMenuItems, setTopMenuItems] = useState([
+  const [brandMenuItems, setBrandMenuItems] = useState([
     { id: 1, title: "Pigeon", url: "/brands/pigeon", order: 1, active: true },
     { id: 2, title: "Verites", url: "/brands/verites", order: 2, active: true },
     { id: 3, title: "Instax Camera", url: "/brands/instax-camera", order: 3, active: true },
     { id: 4, title: "Fujifilm Image", url: "/brands/fujifilm-image", order: 4, active: true },
     { id: 5, title: "Etsuko", url: "/brands/etsuko", order: 5, active: true },
     { id: 6, title: "Astalift", url: "/brands/astalift", order: 6, active: true },
+  ]);
+
+  const [topBarMenuItems, setTopBarMenuItems] = useState([
+    { id: 1, title: "Tiếng Việt", url: "#", order: 1, active: true },
+    { id: 2, title: "English", url: "#", order: 2, active: true },
+    { id: 3, title: "Tìm kiếm", url: "#", order: 3, active: true },
+    { id: 4, title: "Liên hệ", url: "/contact", order: 4, active: true },
   ]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,8 +45,10 @@ const MenusManagement = () => {
   const handleDelete = (id: number, type: string) => {
     if (type === "main") {
       setMainMenuItems(items => items.filter(item => item.id !== id));
-    } else {
-      setTopMenuItems(items => items.filter(item => item.id !== id));
+    } else if (type === "brands") {
+      setBrandMenuItems(items => items.filter(item => item.id !== id));
+    } else if (type === "topbar") {
+      setTopBarMenuItems(items => items.filter(item => item.id !== id));
     }
   };
 
@@ -98,12 +107,13 @@ const MenusManagement = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Quản lý Menu</h1>
-        <p className="text-muted-foreground">Chỉnh sửa menu chính và menu nhãn hàng</p>
+        <p className="text-muted-foreground">Chỉnh sửa menu chính, menu top bar và menu nhãn hàng</p>
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
         <TabsList>
           <TabsTrigger value="main">Menu chính</TabsTrigger>
+          <TabsTrigger value="topbar">Menu Top bar</TabsTrigger>
           <TabsTrigger value="brands">Menu nhãn hàng</TabsTrigger>
         </TabsList>
 
@@ -160,6 +170,59 @@ const MenusManagement = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="topbar">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Menu Top bar</CardTitle>
+                  <CardDescription>
+                    Quản lý các mục menu hiển thị trên thanh top bar (ngôn ngữ, tìm kiếm, liên hệ)
+                  </CardDescription>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Thêm menu top bar
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Thêm menu top bar mới</DialogTitle>
+                      <DialogDescription>
+                        Tạo một mục menu mới cho top bar (ngôn ngữ, tiện ích)
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="topbar-title">Tiêu đề</Label>
+                        <Input id="topbar-title" placeholder="Nhập tiêu đề menu" />
+                      </div>
+                      <div>
+                        <Label htmlFor="topbar-url">URL</Label>
+                        <Input id="topbar-url" placeholder="/duong-dan hoặc #" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline">Hủy</Button>
+                      <Button>Thêm</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <MenuTable
+                items={topBarMenuItems}
+                type="topbar"
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="brands">
           <Card>
             <CardHeader>
@@ -204,7 +267,7 @@ const MenusManagement = () => {
             </CardHeader>
             <CardContent>
               <MenuTable
-                items={topMenuItems}
+                items={brandMenuItems}
                 type="brands"
                 onEdit={handleEdit}
                 onDelete={handleDelete}
