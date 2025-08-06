@@ -238,7 +238,7 @@ const MenusManagement = () => {
                         {editingItem ? "Cập nhật thông tin menu" : "Tạo một mục menu mới cho navigation chính"}
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4">
+                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="title">Tiêu đề</Label>
                         <Input 
@@ -252,10 +252,31 @@ const MenusManagement = () => {
                         <Label htmlFor="url">URL</Label>
                         <Input 
                           id="url" 
-                          placeholder="/duong-dan"
+                          placeholder="/duong-dan hoặc chọn nhãn hàng bên dưới"
                           value={formData.url}
                           onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
                         />
+                      </div>
+                      <div>
+                        <Label>Hoặc chọn nhãn hàng</Label>
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          {brandItems.map((brand: any) => (
+                            <Button
+                              key={brand.id}
+                              variant="outline"
+                              size="sm"
+                              type="button"
+                              onClick={() => setFormData(prev => ({ 
+                                ...prev, 
+                                title: brand.title,
+                                url: brand.url 
+                              }))}
+                              className="justify-start"
+                            >
+                              {brand.title}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     <DialogFooter>
