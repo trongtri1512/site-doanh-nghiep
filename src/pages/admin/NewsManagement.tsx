@@ -87,7 +87,6 @@ const NewsManagement = () => {
     setEditingNews(null);
   };
 
-
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -441,77 +440,77 @@ const NewsManagement = () => {
                         className="w-12 h-12 object-cover rounded"
                       />
                     </TableCell>
-                  <TableCell className="font-medium max-w-xs">
-                    <div className="truncate">{item.title}</div>
-                    <div className="text-sm text-muted-foreground truncate">
-                      {item.excerpt}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{item.category}</Badge>
-                  </TableCell>
-                  <TableCell>{item.author}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="h-3 w-3" />
-                      <span className="text-sm">
-                        {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant={item.featured ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => toggleFeatured(item.id, item.featured)}
-                    >
-                      {item.featured ? "Nổi bật" : "Thường"}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Select 
-                      value={item.status} 
-                      onValueChange={(value) => updateStatus(item.id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statuses.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {status.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
+                    <TableCell className="font-medium max-w-xs">
+                      <div className="truncate">{item.title}</div>
+                      <div className="text-sm text-muted-foreground truncate">
+                        {item.excerpt}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{item.category}</Badge>
+                    </TableCell>
+                    <TableCell>{item.author}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-3 w-3" />
+                        <span className="text-sm">
+                          {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <Button
-                        variant="outline"
+                        variant={item.featured ? "default" : "outline"}
                         size="sm"
-                        onClick={() => window.open(`/news/${item.slug}`, '_blank')}
+                        onClick={() => toggleFeatured(item.id, item.featured)}
                       >
-                        <Eye className="h-4 w-4" />
+                        {item.featured ? "Nổi bật" : "Thường"}
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(item)}
+                    </TableCell>
+                    <TableCell>
+                      <Select 
+                        value={item.status} 
+                        onValueChange={(value) => updateStatus(item.id, value)}
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statuses.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(`/news/${item.slug}`, '_blank')}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           )}
