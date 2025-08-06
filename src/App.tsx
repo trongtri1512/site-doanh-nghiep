@@ -16,6 +16,7 @@ import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
 import AdminAuth from "./pages/AdminAuth";
+import BannerManagement from "./pages/admin/BannerManagement";
 
 // Admin imports
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/admin/auth" element={<AdminAuth />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="banner" element={<BannerManagement />} />
             <Route path="menus" element={<MenusManagement />} />
             <Route path="header" element={<HeaderManagement />} />
             <Route path="homepage" element={<HomepageManagement />} />

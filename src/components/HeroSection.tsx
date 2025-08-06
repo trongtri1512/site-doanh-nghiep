@@ -19,12 +19,15 @@ const HeroSection = () => {
           {/* Text Content with Beautiful Frame */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-              CHÀO MỪNG BẠN<br />
-              ĐẾN VỚI IMV<br />
-              VIETNAM
+              <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl animate-fade-in" 
+                    style={{textShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)'}}>
+                CHÀO MỪNG BẠN<br />
+                ĐẾN VỚI IMV<br />
+                VIETNAM
+              </span>
             </h1>
             <Button 
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
             >
               Tìm hiểu thêm về Công ty chúng tôi
