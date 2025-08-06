@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, GripVertical } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -108,6 +108,23 @@ const MenusManagement = () => {
     onError: () => toast.error("Lỗi khi xóa menu")
   });
 
+  // Mutation for reordering
+  const reorderMutation = useMutation({
+    mutationFn: async ({ id, newOrder }: { id: string, newOrder: number }) => {
+      const { error } = await supabase
+        .from('menu_items')
+        .update({ display_order: newOrder })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
+      toast.success("Đã cập nhật thứ tự menu");
+    },
+    onError: () => toast.error("Lỗi khi cập nhật thứ tự menu")
+  });
+
   useEffect(() => {
     if (editingItem) {
       setFormData({
@@ -150,6 +167,28 @@ const MenusManagement = () => {
     }
   };
 
+  const handleMoveUp = (item: any) => {
+    const currentIndex = mainMenuItems.findIndex(i => i.id === item.id);
+    if (currentIndex > 0) {
+      const newOrder = mainMenuItems[currentIndex - 1].display_order;
+      reorderMutation.mutate({ id: item.id, newOrder });
+      // Also update the other item
+      const otherItem = mainMenuItems[currentIndex - 1];
+      reorderMutation.mutate({ id: otherItem.id, newOrder: item.display_order });
+    }
+  };
+
+  const handleMoveDown = (item: any) => {
+    const currentIndex = mainMenuItems.findIndex(i => i.id === item.id);
+    if (currentIndex < mainMenuItems.length - 1) {
+      const newOrder = mainMenuItems[currentIndex + 1].display_order;
+      reorderMutation.mutate({ id: item.id, newOrder });
+      // Also update the other item
+      const otherItem = mainMenuItems[currentIndex + 1];
+      reorderMutation.mutate({ id: otherItem.id, newOrder: item.display_order });
+    }
+  };
+
   const MenuTable = ({ items, type, onEdit, onDelete }: any) => (
     <Table>
       <TableHeader>
@@ -177,24 +216,44 @@ const MenusManagement = () => {
                  {item.is_active || item.active ? "Hiển thị" : "Ẩn"}
                </Badge>
              </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onEdit(item, type)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onDelete(item.id, type)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
+             <TableCell className="text-right">
+               <div className="flex justify-end space-x-2">
+                 {type === "main" && (
+                   <>
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => handleMoveUp(item)}
+                       disabled={items.findIndex((i: any) => i.id === item.id) === 0}
+                     >
+                       <ChevronUp className="h-4 w-4" />
+                     </Button>
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => handleMoveDown(item)}
+                       disabled={items.findIndex((i: any) => i.id === item.id) === items.length - 1}
+                     >
+                       <ChevronDown className="h-4 w-4" />
+                     </Button>
+                   </>
+                 )}
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   onClick={() => onEdit(item, type)}
+                 >
+                   <Edit className="h-4 w-4" />
+                 </Button>
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   onClick={() => onDelete(item.id, type)}
+                 >
+                   <Trash2 className="h-4 w-4" />
+                 </Button>
+               </div>
+             </TableCell>
           </TableRow>
         ))}
       </TableBody>
