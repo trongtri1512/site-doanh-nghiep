@@ -45,7 +45,29 @@ const Header = () => {
 
         <div className="flex items-center gap-8">
           <a href="#" className="hover:underline">Tổng quan</a>
-          <a href="#" className="hover:underline font-semibold">Các nhãn hàng</a>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-semibold">
+              Các nhãn hàng
+              <ChevronDown size={14} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <a href="/brands/pigeon">Pigeon</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/brands/verites">Verites</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/brands/instax-camera">Instax Camera</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/brands/etsuko">Etsuko</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/brands/astalift">Astalift</a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1 hover:underline">
               Phát triển bền vững
