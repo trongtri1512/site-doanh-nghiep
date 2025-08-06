@@ -56,6 +56,96 @@ export type Database = {
         }
         Relationships: []
       }
+      careers_content: {
+        Row: {
+          content: string | null
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean
+          section_key: string
+          settings: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          section_key: string
+          settings?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean
+          section_key?: string
+          settings?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      careers_jobs: {
+        Row: {
+          benefits: string | null
+          created_at: string
+          deadline: string | null
+          department: string
+          description: string | null
+          experience: string | null
+          id: string
+          is_featured: boolean
+          job_type: string
+          location: string
+          requirements: string | null
+          salary: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: string | null
+          created_at?: string
+          deadline?: string | null
+          department: string
+          description?: string | null
+          experience?: string | null
+          id?: string
+          is_featured?: boolean
+          job_type: string
+          location: string
+          requirements?: string | null
+          salary?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: string | null
+          created_at?: string
+          deadline?: string | null
+          department?: string
+          description?: string | null
+          experience?: string | null
+          id?: string
+          is_featured?: boolean
+          job_type?: string
+          location?: string
+          requirements?: string | null
+          salary?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       footer_menu_items: {
         Row: {
           created_at: string

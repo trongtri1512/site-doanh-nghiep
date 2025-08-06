@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,61 +6,63 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, MapPin, Clock, DollarSign } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, MapPin, Clock, DollarSign, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const CareersManagement = () => {
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: "Nhân viên Kinh doanh",
-      department: "Kinh doanh",
-      location: "TP. Hồ Chí Minh",
-      type: "Toàn thời gian",
-      salary: "15-20 triệu",
-      experience: "2-3 năm",
-      description: "Phát triển và duy trì mối quan hệ với khách hàng...",
-      requirements: "- Tốt nghiệp Đại học chuyên ngành liên quan\n- Kinh nghiệm 2-3 năm trong lĩnh vực kinh doanh",
-      benefits: "- Lương cạnh tranh + thưởng\n- Bảo hiểm đầy đủ\n- Môi trường làm việc chuyên nghiệp",
-      postedDate: "2024-01-15",
-      deadline: "2024-02-15",
-      status: "active"
-    },
-    {
-      id: 2,
-      title: "Marketing Executive",
-      department: "Marketing",
-      location: "Hà Nội",
-      type: "Toàn thời gian",
-      salary: "12-18 triệu", 
-      experience: "1-2 năm",
-      description: "Phụ trách các hoạt động marketing và truyền thông...",
-      requirements: "- Tốt nghiệp chuyên ngành Marketing, Communications\n- Kinh nghiệm 1-2 năm",
-      benefits: "- Mức lương hấp dẫn\n- Đào tạo chuyên sâu\n- Cơ hội thăng tiến",
-      postedDate: "2024-01-10",
-      deadline: "2024-02-10",
-      status: "active"
-    },
-    {
-      id: 3,
-      title: "Nhân viên Kho vận",
-      department: "Logistics",
-      location: "Bình Dương",
-      type: "Toàn thời gian",
-      salary: "8-12 triệu",
-      experience: "Không yêu cầu",
-      description: "Quản lý hàng hóa và các hoạt động kho vận...",
-      requirements: "- Tốt nghiệp THPT trở lên\n- Không yêu cầu kinh nghiệm",
-      benefits: "- Lương ổn định\n- Chế độ phúc lợi tốt\n- Đào tạo từ đầu",
-      postedDate: "2024-01-08",
-      deadline: "2024-02-08",
-      status: "paused"
-    }
-  ]);
+  const [isJobDialogOpen, setIsJobDialogOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState<any>(null);
+  const [jobFormData, setJobFormData] = useState({
+    title: "", department: "", location: "", job_type: "", salary: "",
+    experience: "", description: "", requirements: "", benefits: "", deadline: "", status: "active"
+  });
+  const [contentData, setContentData] = useState<any>({});
+  const queryClient = useQueryClient();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingJob, setEditingJob] = useState(null);
+  // Fetch careers content
+  const { data: careersContent, isLoading: contentLoading } = useQuery({
+    queryKey: ['careers-content'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('careers_content')
+        .select('*')
+        .order('display_order');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Fetch careers jobs
+  const { data: careersJobs, isLoading: jobsLoading } = useQuery({
+    queryKey: ['careers-jobs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('careers_jobs')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Initialize content data when loaded
+  useEffect(() => {
+    if (careersContent) {
+      const contentObj: any = {};
+      careersContent.forEach((item: any) => {
+        contentObj[item.section_key] = {
+          title: item.title || '',
+          content: item.content || ''
+        };
+      });
+      setContentData(contentObj);
+    }
+  }, [careersContent]);
 
   const departments = [
     "Kinh doanh",
@@ -94,19 +96,147 @@ const CareersManagement = () => {
     "Toàn quốc"
   ];
 
-  const handleEdit = (job: any) => {
+  // Mutations for content
+  const updateContentMutation = useMutation({
+    mutationFn: async (updates: any) => {
+      const promises = Object.entries(updates).map(async ([section_key, data]: [string, any]) => {
+        const { error } = await supabase
+          .from('careers_content')
+          .update({
+            title: data.title,
+            content: data.content
+          })
+          .eq('section_key', section_key);
+        if (error) throw error;
+      });
+      await Promise.all(promises);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['careers-content'] });
+      toast.success("Đã cập nhật nội dung trang");
+    },
+    onError: () => toast.error("Lỗi khi cập nhật nội dung")
+  });
+
+  // Mutations for jobs
+  const createJobMutation = useMutation({
+    mutationFn: async (jobData: any) => {
+      const { error } = await supabase
+        .from('careers_jobs')
+        .insert([jobData]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['careers-jobs'] });
+      toast.success("Đã thêm vị trí tuyển dụng mới");
+      setIsJobDialogOpen(false);
+      resetJobForm();
+    },
+    onError: () => toast.error("Lỗi khi thêm vị trí tuyển dụng")
+  });
+
+  const updateJobMutation = useMutation({
+    mutationFn: async ({ id, ...jobData }: any) => {
+      const { error } = await supabase
+        .from('careers_jobs')
+        .update(jobData)
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['careers-jobs'] });
+      toast.success("Đã cập nhật vị trí tuyển dụng");
+      setIsJobDialogOpen(false);
+      resetJobForm();
+    },
+    onError: () => toast.error("Lỗi khi cập nhật vị trí tuyển dụng")
+  });
+
+  const deleteJobMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('careers_jobs')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['careers-jobs'] });
+      toast.success("Đã xóa vị trí tuyển dụng");
+    },
+    onError: () => toast.error("Lỗi khi xóa vị trí tuyển dụng")
+  });
+
+  const handleEditJob = (job: any) => {
     setEditingJob(job);
-    setIsDialogOpen(true);
+    setJobFormData({
+      title: job.title,
+      department: job.department,
+      location: job.location,
+      job_type: job.job_type,
+      salary: job.salary || "",
+      experience: job.experience || "",
+      description: job.description || "",
+      requirements: job.requirements || "",
+      benefits: job.benefits || "",
+      deadline: job.deadline ? new Date(job.deadline).toISOString().split('T')[0] : "",
+      status: job.status
+    });
+    setIsJobDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setJobs(jobs.filter(job => job.id !== id));
+  const resetJobForm = () => {
+    setEditingJob(null);
+    setJobFormData({
+      title: "", department: "", location: "", job_type: "", salary: "",
+      experience: "", description: "", requirements: "", benefits: "", deadline: "", status: "active"
+    });
   };
 
-  const updateStatus = (id: number, newStatus: string) => {
-    setJobs(jobs.map(job => 
-      job.id === id ? { ...job, status: newStatus } : job
-    ));
+  const handleJobSubmit = () => {
+    if (!jobFormData.title || !jobFormData.department || !jobFormData.location || !jobFormData.job_type) {
+      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
+      return;
+    }
+
+    const submitData = {
+      ...jobFormData,
+      deadline: jobFormData.deadline ? new Date(jobFormData.deadline).toISOString() : null
+    };
+
+    if (editingJob) {
+      updateJobMutation.mutate({ id: editingJob.id, ...submitData });
+    } else {
+      createJobMutation.mutate(submitData);
+    }
+  };
+
+  const updateJobStatus = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('careers_jobs')
+        .update({ status: newStatus })
+        .eq('id', id);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ['careers-jobs'] });
+      toast.success("Đã cập nhật trạng thái");
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật trạng thái");
+    }
+  };
+
+  const handleContentChange = (section: string, field: string, value: string) => {
+    setContentData((prev: any) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveContent = () => {
+    updateContentMutation.mutate(contentData);
   };
 
   const getStatusBadge = (status: string) => {
@@ -118,273 +248,393 @@ const CareersManagement = () => {
     );
   };
 
+  if (contentLoading || jobsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Quản lý Nghề nghiệp</h1>
-          <p className="text-muted-foreground">Đăng tải và quản lý thông tin tuyển dụng</p>
-        </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingJob(null)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Thêm vị trí tuyển dụng
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingJob ? "Chỉnh sửa vị trí tuyển dụng" : "Thêm vị trí tuyển dụng mới"}
-              </DialogTitle>
-              <DialogDescription>
-                Tạo hoặc chỉnh sửa thông tin tuyển dụng
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="job-title">Tên vị trí</Label>
-                  <Input
-                    id="job-title"
-                    defaultValue={editingJob?.title || ""}
-                    placeholder="Nhập tên vị trí tuyển dụng"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="job-department">Phòng ban</Label>
-                  <Select defaultValue={editingJob?.department || ""}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn phòng ban" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map((dept) => (
-                        <SelectItem key={dept} value={dept}>
-                          {dept}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="job-location">Địa điểm</Label>
-                  <Select defaultValue={editingJob?.location || ""}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn địa điểm" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locations.map((location) => (
-                        <SelectItem key={location} value={location}>
-                          {location}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="job-type">Loại hình</Label>
-                  <Select defaultValue={editingJob?.type || ""}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn loại hình" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="job-salary">Mức lương</Label>
-                  <Input
-                    id="job-salary"
-                    defaultValue={editingJob?.salary || ""}
-                    placeholder="15-20 triệu"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="job-experience">Kinh nghiệm</Label>
-                  <Input
-                    id="job-experience"
-                    defaultValue={editingJob?.experience || ""}
-                    placeholder="2-3 năm"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="job-deadline">Hạn nộp hồ sơ</Label>
-                  <Input
-                    id="job-deadline"
-                    type="date"
-                    defaultValue={editingJob?.deadline || ""}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="job-status">Trạng thái</Label>
-                  <Select defaultValue={editingJob?.status || "active"}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statuses.map((status) => (
-                        <SelectItem key={status.value} value={status.value}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="job-description">Mô tả công việc</Label>
-                <Textarea
-                  id="job-description"
-                  defaultValue={editingJob?.description || ""}
-                  placeholder="Mô tả chi tiết về công việc"
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="job-requirements">Yêu cầu ứng viên</Label>
-                <Textarea
-                  id="job-requirements"
-                  defaultValue={editingJob?.requirements || ""}
-                  placeholder="Các yêu cầu về kinh nghiệm, kỹ năng..."
-                  rows={4}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="job-benefits">Quyền lợi</Label>
-                <Textarea
-                  id="job-benefits"
-                  defaultValue={editingJob?.benefits || ""}
-                  placeholder="Các quyền lợi và chế độ đãi ngộ"
-                  rows={4}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Hủy
-              </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>
-                {editingJob ? "Cập nhật" : "Thêm"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      <div>
+        <h1 className="text-3xl font-bold">Quản lý Nghề nghiệp</h1>
+        <p className="text-muted-foreground">Quản lý nội dung trang và thông tin tuyển dụng</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Danh sách vị trí tuyển dụng</CardTitle>
-          <CardDescription>
-            Quản lý tất cả vị trí đang tuyển dụng
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Vị trí</TableHead>
-                <TableHead>Phòng ban</TableHead>
-                <TableHead>Địa điểm</TableHead>
-                <TableHead>Loại hình</TableHead>
-                <TableHead>Mức lương</TableHead>
-                <TableHead>Hạn nộp</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead className="text-right">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {jobs.map((job) => (
-                <TableRow key={job.id}>
-                  <TableCell className="font-medium">
-                    <div>{job.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Kinh nghiệm: {job.experience}
+      <Tabs defaultValue="content" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="content">Quản lý trang</TabsTrigger>
+          <TabsTrigger value="jobs">Quản lý tuyển dụng</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="content" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Nội dung trang Nghề nghiệp</CardTitle>
+                  <CardDescription>Chỉnh sửa nội dung hiển thị trên trang tuyển dụng</CardDescription>
+                </div>
+                <Button onClick={handleSaveContent} disabled={updateContentMutation.isPending}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {updateContentMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Hero Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Phần Hero</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label>Tiêu đề chính</Label>
+                    <Input
+                      value={contentData.hero_title?.title || ''}
+                      onChange={(e) => handleContentChange('hero_title', 'title', e.target.value)}
+                      placeholder="Tiêu đề trang tuyển dụng"
+                    />
+                  </div>
+                  <div>
+                    <Label>Phụ đề</Label>
+                    <Input
+                      value={contentData.hero_subtitle?.content || ''}
+                      onChange={(e) => handleContentChange('hero_subtitle', 'content', e.target.value)}
+                      placeholder="Mô tả ngắn về trang tuyển dụng"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Why Join Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Tại sao nên làm việc với chúng tôi</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label>Tiêu đề</Label>
+                    <Input
+                      value={contentData.why_join_title?.content || ''}
+                      onChange={(e) => handleContentChange('why_join_title', 'content', e.target.value)}
+                      placeholder="Tại sao nên làm việc với chúng tôi"
+                    />
+                  </div>
+                  <div>
+                    <Label>Nội dung</Label>
+                    <Textarea
+                      value={contentData.why_join_content?.content || ''}
+                      onChange={(e) => handleContentChange('why_join_content', 'content', e.target.value)}
+                      placeholder="Mô tả về môi trường làm việc, văn hóa công ty..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefits Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Quyền lợi nhân viên</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label>Tiêu đề</Label>
+                    <Input
+                      value={contentData.benefits_title?.content || ''}
+                      onChange={(e) => handleContentChange('benefits_title', 'content', e.target.value)}
+                      placeholder="Quyền lợi nhân viên"
+                    />
+                  </div>
+                  <div>
+                    <Label>Nội dung</Label>
+                    <Textarea
+                      value={contentData.benefits_content?.content || ''}
+                      onChange={(e) => handleContentChange('benefits_content', 'content', e.target.value)}
+                      placeholder="Các quyền lợi, chế độ đãi ngộ dành cho nhân viên..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="jobs" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">Danh sách tuyển dụng</h2>
+              <p className="text-muted-foreground">Quản lý các vị trí đang tuyển dụng</p>
+            </div>
+            <Dialog open={isJobDialogOpen} onOpenChange={setIsJobDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={resetJobForm}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Thêm vị trí tuyển dụng
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingJob ? "Chỉnh sửa vị trí tuyển dụng" : "Thêm vị trí tuyển dụng mới"}
+                  </DialogTitle>
+                  <DialogDescription>
+                    Tạo hoặc chỉnh sửa thông tin tuyển dụng
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="job-title">Tên vị trí *</Label>
+                      <Input
+                        id="job-title"
+                        value={jobFormData.title}
+                        onChange={(e) => setJobFormData(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Nhập tên vị trí tuyển dụng"
+                      />
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{job.department}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{job.location}</span>
+                    <div>
+                      <Label htmlFor="job-department">Phòng ban *</Label>
+                      <Select value={jobFormData.department} onValueChange={(value) => setJobFormData(prev => ({ ...prev, department: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn phòng ban" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments.map((dept) => (
+                            <SelectItem key={dept} value={dept}>
+                              {dept}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{job.type}</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="job-location">Địa điểm *</Label>
+                      <Select value={jobFormData.location} onValueChange={(value) => setJobFormData(prev => ({ ...prev, location: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn địa điểm" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {locations.map((location) => (
+                            <SelectItem key={location} value={location}>
+                              {location}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <DollarSign className="h-3 w-3" />
-                      <span>{job.salary}</span>
+                    <div>
+                      <Label htmlFor="job-type">Loại hình *</Label>
+                      <Select value={jobFormData.job_type} onValueChange={(value) => setJobFormData(prev => ({ ...prev, job_type: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn loại hình" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {jobTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </TableCell>
-                  <TableCell>{job.deadline}</TableCell>
-                  <TableCell>
-                    <Select 
-                      value={job.status} 
-                      onValueChange={(value) => updateStatus(job.id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statuses.map((status) => (
-                          <SelectItem key={status.value} value={status.value}>
-                            {status.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`/careers/${job.id}`, '_blank')}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(job)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(job.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    <div>
+                      <Label htmlFor="job-salary">Mức lương</Label>
+                      <Input
+                        id="job-salary"
+                        value={jobFormData.salary}
+                        onChange={(e) => setJobFormData(prev => ({ ...prev, salary: e.target.value }))}
+                        placeholder="15-20 triệu"
+                      />
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="job-experience">Kinh nghiệm</Label>
+                      <Input
+                        id="job-experience"
+                        value={jobFormData.experience}
+                        onChange={(e) => setJobFormData(prev => ({ ...prev, experience: e.target.value }))}
+                        placeholder="2-3 năm"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="job-deadline">Hạn nộp hồ sơ</Label>
+                      <Input
+                        id="job-deadline"
+                        type="date"
+                        value={jobFormData.deadline}
+                        onChange={(e) => setJobFormData(prev => ({ ...prev, deadline: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="job-status">Trạng thái</Label>
+                      <Select value={jobFormData.status} onValueChange={(value) => setJobFormData(prev => ({ ...prev, status: value }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statuses.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="job-description">Mô tả công việc</Label>
+                    <Textarea
+                      id="job-description"
+                      value={jobFormData.description}
+                      onChange={(e) => setJobFormData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Mô tả chi tiết về công việc"
+                      rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="job-requirements">Yêu cầu ứng viên</Label>
+                    <Textarea
+                      id="job-requirements"
+                      value={jobFormData.requirements}
+                      onChange={(e) => setJobFormData(prev => ({ ...prev, requirements: e.target.value }))}
+                      placeholder="Các yêu cầu về kinh nghiệm, kỹ năng..."
+                      rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="job-benefits">Quyền lợi</Label>
+                    <Textarea
+                      id="job-benefits"
+                      value={jobFormData.benefits}
+                      onChange={(e) => setJobFormData(prev => ({ ...prev, benefits: e.target.value }))}
+                      placeholder="Các quyền lợi và chế độ đãi ngộ"
+                      rows={4}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsJobDialogOpen(false)}>
+                    Hủy
+                  </Button>
+                  <Button onClick={handleJobSubmit} disabled={createJobMutation.isPending || updateJobMutation.isPending}>
+                    {editingJob ? "Cập nhật" : "Thêm"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Danh sách vị trí tuyển dụng</CardTitle>
+              <CardDescription>
+                Quản lý tất cả vị trí đang tuyển dụng
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Vị trí</TableHead>
+                    <TableHead>Phòng ban</TableHead>
+                    <TableHead>Địa điểm</TableHead>
+                    <TableHead>Loại hình</TableHead>
+                    <TableHead>Mức lương</TableHead>
+                    <TableHead>Hạn nộp</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className="text-right">Thao tác</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {careersJobs?.map((job: any) => (
+                    <TableRow key={job.id}>
+                      <TableCell className="font-medium">
+                        <div>{job.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          Kinh nghiệm: {job.experience || 'Không yêu cầu'}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{job.department}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="h-3 w-3" />
+                          <span>{job.location}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{job.job_type}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          <DollarSign className="h-3 w-3" />
+                          <span>{job.salary || 'Thỏa thuận'}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {job.deadline ? new Date(job.deadline).toLocaleDateString('vi-VN') : '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Select 
+                          value={job.status} 
+                          onValueChange={(value) => updateJobStatus(job.id, value)}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {statuses.map((status) => (
+                              <SelectItem key={status.value} value={status.value}>
+                                {status.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(`/careers/${job.id}`, '_blank')}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditJob(job)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => deleteJobMutation.mutate(job.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
