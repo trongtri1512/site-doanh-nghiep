@@ -25,6 +25,7 @@ export type Database = {
           id: string
           image_url: string | null
           published_at: string | null
+          scheduled_at: string | null
           slug: string
           status: string
           title: string
@@ -40,6 +41,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           published_at?: string | null
+          scheduled_at?: string | null
           slug: string
           status?: string
           title: string
@@ -55,6 +57,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           published_at?: string | null
+          scheduled_at?: string | null
           slug?: string
           status?: string
           title?: string
@@ -115,6 +118,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_publish_scheduled_news: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _user_id: string
