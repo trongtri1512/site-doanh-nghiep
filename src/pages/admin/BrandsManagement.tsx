@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,76 +6,71 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Image } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Image, Home } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 const BrandsManagement = () => {
-  const [brands, setBrands] = useState([
-    {
-      id: 1,
-      name: "Pigeon",
-      slug: "pigeon",
-      category: "Chăm sóc trẻ em",
-      description: "Sản phẩm chăm sóc mẹ và bé từ Nhật Bản",
-      image: "/src/assets/pigeon-banner.jpg",
-      active: true,
-      featured: true
-    },
-    {
-      id: 2,
-      name: "Verites",
-      slug: "verites",
-      category: "Làm đẹp",
-      description: "Mỹ phẩm cao cấp từ Nhật Bản",
-      image: "/src/assets/verites-banner.jpg",
-      active: true,
-      featured: true
-    },
-    {
-      id: 3,
-      name: "Instax Camera",
-      slug: "instax-camera",
-      category: "Máy ảnh",
-      description: "Máy ảnh chụp lấy liền Fujifilm",
-      image: "/src/assets/instax-banner.jpg",
-      active: true,
-      featured: true
-    },
-    {
-      id: 4,
-      name: "Fujifilm Image",
-      slug: "fujifilm-image",
-      category: "Ảnh & In ấn",
-      description: "Giải pháp in ảnh chuyên nghiệp",
-      image: "/placeholder.svg",
-      active: true,
-      featured: true
-    },
-    {
-      id: 5,
-      name: "Etsuko",
-      slug: "etsuko",
-      category: "Thời trang",
-      description: "Thời trang Nhật Bản cho phụ nữ",
-      image: "/src/assets/etsuko-banner.jpg",
-      active: true,
-      featured: false
-    },
-    {
-      id: 6,
-      name: "Astalift",
-      slug: "astalift",
-      category: "Làm đẹp",
-      description: "Mỹ phẩm chống lão hóa Fujifilm",
-      image: "/src/assets/astalift-banner.png",
-      active: true,
-      featured: false
-    }
-  ]);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch brands from database
+  const { data: brands = [], isLoading } = useQuery({
+    queryKey: ['brands'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Update brand mutation
+  const updateBrandMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
+      const { error } = await supabase
+        .from('brands')
+        .update(updates)
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      toast({ title: "Cập nhật thành công" });
+    },
+    onError: () => {
+      toast({ title: "Có lỗi xảy ra", variant: "destructive" });
+    }
+  });
+
+  // Delete brand mutation
+  const deleteBrandMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('brands')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      toast({ title: "Xóa thành công" });
+    },
+    onError: () => {
+      toast({ title: "Có lỗi xảy ra", variant: "destructive" });
+    }
+  });
 
   const categories = [
     "Chăm sóc trẻ em",
@@ -91,27 +86,45 @@ const BrandsManagement = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setBrands(brands.filter(brand => brand.id !== id));
+  const handleDelete = (id: string) => {
+    if (confirm('Bạn có chắc chắn muốn xóa nhãn hàng này?')) {
+      deleteBrandMutation.mutate(id);
+    }
   };
 
-  const toggleFeatured = (id: number) => {
-    setBrands(brands.map(brand => 
-      brand.id === id ? { ...brand, featured: !brand.featured } : brand
-    ));
+  const toggleFeatured = (id: string) => {
+    const brand = brands.find(b => b.id === id);
+    if (brand) {
+      updateBrandMutation.mutate({
+        id,
+        updates: { featured: !brand.featured }
+      });
+    }
   };
 
-  const toggleActive = (id: number) => {
-    setBrands(brands.map(brand => 
-      brand.id === id ? { ...brand, active: !brand.active } : brand
-    ));
+  const toggleActive = (id: string) => {
+    const brand = brands.find(b => b.id === id);
+    if (brand) {
+      updateBrandMutation.mutate({
+        id,
+        updates: { active: !brand.active }
+      });
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Quản lý Nhãn hàng</h1>
+          <div className="flex items-center gap-4 mb-2">
+            <h1 className="text-3xl font-bold">Quản lý Nhãn hàng</h1>
+            <Link to="/" target="_blank">
+              <Button variant="outline" size="sm">
+                <Home className="h-4 w-4 mr-2" />
+                Xem trang chủ
+              </Button>
+            </Link>
+          </div>
           <p className="text-muted-foreground">Quản lý thông tin các nhãn hàng và sản phẩm</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -220,7 +233,7 @@ const BrandsManagement = () => {
                 <TableRow key={brand.id}>
                   <TableCell>
                     <img
-                      src={brand.image}
+                      src={brand.image_url}
                       alt={brand.name}
                       className="w-12 h-12 object-cover rounded"
                     />
@@ -247,11 +260,12 @@ const BrandsManagement = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
+                     <div className="flex justify-end space-x-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => window.open(`/brands/${brand.slug}`, '_blank')}
+                        title="Xem trang chi tiết"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -259,6 +273,7 @@ const BrandsManagement = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleEdit(brand)}
+                        title="Chỉnh sửa"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -266,6 +281,7 @@ const BrandsManagement = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(brand.id)}
+                        title="Xóa"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

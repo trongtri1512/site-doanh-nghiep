@@ -5,52 +5,25 @@ import StatsSection from "@/components/StatsSection";
 import NewsSection from "@/components/NewsSection";
 
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const brands = [
-    {
-      name: "Pigeon",
-      description: "Thương hiệu chăm sóc mẹ và bé hàng đầu từ Nhật Bản",
-      category: "Chăm sóc mẹ & bé",
-      link: "/brands/pigeon",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
-    },
-    {
-      name: "Astalift",
-      description: "Mỹ phẩm chống lão hóa cao cấp từ Fujifilm",
-      category: "Mỹ phẩm",
-      link: "/brands/astalift",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
-    },
-    {
-      name: "Instax",
-      description: "Máy ảnh chụp lấy liền phổ biến nhất thế giới",
-      category: "Ảnh & In ấn",
-      link: "/brands/instax-camera",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
-    },
-    {
-      name: "Fujifilm Image",
-      description: "Giải pháp in ảnh chuyên nghiệp và giấy in cao cấp",
-      category: "Ảnh & In ấn",
-      link: "/brands/fujifilm-image",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
-    },
-    {
-      name: "Verites",
-      description: "Thương hiệu nước hoa Việt Nam cho giới trẻ",
-      category: "Mỹ phẩm",
-      link: "/brands/verites",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
-    },
-    {
-      name: "Etsuko",
-      description: "Sản phẩm chăm sóc bé an toàn từ Nhật Bản",
-      category: "Chăm sóc mẹ & bé",
-      link: "/brands/etsuko",
-      logo: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"
+  // Fetch brands from database
+  const { data: brands = [] } = useQuery({
+    queryKey: ['brands-homepage'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('active', true)
+        .eq('featured', true)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
     }
-  ];
+  });
 
   return (
     <div className="min-h-screen">
@@ -72,16 +45,16 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {brands.map((brand, index) => (
+            {brands.map((brand) => (
               <Link 
-                key={index}
-                to={brand.link}
+                key={brand.id}
+                to={`/brands/${brand.slug}`}
                 className="group bg-card rounded-lg p-6 border border-border hover:shadow-lg transition-all duration-300 hover:border-primary/20"
               >
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <img 
-                      src={brand.logo}
+                      src={brand.image_url || "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png"}
                       alt={brand.name}
                       className="w-8 h-8 object-contain filter brightness-0 opacity-60 group-hover:opacity-80 transition-opacity"
                     />
