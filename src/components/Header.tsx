@@ -73,16 +73,6 @@ const Header = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 hover:underline">
-              Phát triển bền vững
-              <ChevronDown size={14} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Cam kết bền vững</DropdownMenuItem>
-              <DropdownMenuItem>Báo cáo bền vững</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
           <a href="/news" className="hover:underline">Tin tức</a>
           <a href="/careers" className="hover:underline">Cơ hội nghề nghiệp</a>
           <a href="/about" className="hover:underline">Về chúng tôi</a>
@@ -112,7 +102,6 @@ const Header = () => {
               <a href="/brands/etsuko" className="block pl-4 text-sm hover:underline">Etsuko</a>
               <a href="/brands/astalift" className="block pl-4 text-sm hover:underline">Astalift</a>
             </div>
-            <a href="#" className="block hover:underline">Phát triển bền vững</a>
             <a href="/news" className="block hover:underline">Tin tức</a>
             <a href="/careers" className="block hover:underline">Cơ hội nghề nghiệp</a>
             <a href="/about" className="block hover:underline">Về chúng tôi</a>
