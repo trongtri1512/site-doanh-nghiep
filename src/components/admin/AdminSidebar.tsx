@@ -48,8 +48,8 @@ export function AdminSidebar() {
 
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-primary text-primary-foreground font-medium" 
-      : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
+      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+      : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground";
 
   return (
     <Sidebar
@@ -57,18 +57,18 @@ export function AdminSidebar() {
       collapsible="icon"
       variant="sidebar"
     >
-      <div className="p-4 border-b mt-12">
+      <div className="p-4 border-b mt-12 border-sidebar-border">
         {state !== "collapsed" && (
           <div>
-            <h2 className="font-bold text-lg">Admin Panel</h2>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
+            <h2 className="font-bold text-lg text-sidebar-foreground">Admin Panel</h2>
+            <p className="text-sm text-sidebar-foreground/70">{user?.email}</p>
           </div>
         )}
       </div>
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Quản lý nội dung</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Quản lý nội dung</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminMenuItems.map((item) => (
@@ -92,7 +92,7 @@ export function AdminSidebar() {
                   <SidebarMenuButton asChild>
                     <button 
                       onClick={signOut}
-                      className="w-full flex items-center space-x-2 text-destructive hover:bg-destructive/10"
+                      className="w-full flex items-center space-x-2 text-destructive hover:bg-destructive/10 text-sidebar-foreground hover:text-destructive"
                     >
                       <LogOut className="h-4 w-4" />
                       {state !== "collapsed" && <span>Đăng xuất</span>}
