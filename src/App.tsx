@@ -15,6 +15,17 @@ import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
 
+// Admin imports
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/Dashboard";
+import MenusManagement from "./pages/admin/MenusManagement";
+import HeaderManagement from "./pages/admin/HeaderManagement";
+import HomepageManagement from "./pages/admin/HomepageManagement";
+import BrandsManagement from "./pages/admin/BrandsManagement";
+import NewsManagement from "./pages/admin/NewsManagement";
+import CareersManagement from "./pages/admin/CareersManagement";
+import AboutManagement from "./pages/admin/AboutManagement";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -34,6 +45,19 @@ const App = () => (
           <Route path="/brands/fujifilm-image" element={<FujifilmImage />} />
           <Route path="/brands/etsuko" element={<Etsuko />} />
           <Route path="/brands/astalift" element={<Astalift />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="menus" element={<MenusManagement />} />
+            <Route path="header" element={<HeaderManagement />} />
+            <Route path="homepage" element={<HomepageManagement />} />
+            <Route path="brands" element={<BrandsManagement />} />
+            <Route path="news" element={<NewsManagement />} />
+            <Route path="careers" element={<CareersManagement />} />
+            <Route path="about" element={<AboutManagement />} />
+          </Route>
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
