@@ -31,6 +31,7 @@ import CareersManagement from "./pages/admin/CareersManagement";
 import AboutManagement from "./pages/admin/AboutManagement";
 import FooterManagement from "./pages/admin/FooterManagement";
 import FooterMenuManagement from "./pages/admin/FooterMenuManagement";
+import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="about" element={<AboutManagement />} />
             <Route path="footer" element={<FooterManagement />} />
             <Route path="footer-menu" element={<FooterMenuManagement />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
