@@ -17,6 +17,8 @@ import { Link } from "react-router-dom";
 const BrandsManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -34,6 +36,27 @@ const BrandsManagement = () => {
     }
   });
 
+  // Add brand mutation
+  const addBrandMutation = useMutation({
+    mutationFn: async (brandData: any) => {
+      const { error } = await supabase
+        .from('brands')
+        .insert([brandData]);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      toast({ title: "Thêm nhãn hàng thành công" });
+      setIsDialogOpen(false);
+      setEditingBrand(null);
+      setImageFile(null);
+    },
+    onError: () => {
+      toast({ title: "Có lỗi xảy ra", variant: "destructive" });
+    }
+  });
+
   // Update brand mutation
   const updateBrandMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
@@ -47,6 +70,10 @@ const BrandsManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
       toast({ title: "Cập nhật thành công" });
+      if (!editingBrand) {
+        setIsDialogOpen(false);
+        setImageFile(null);
+      }
     },
     onError: () => {
       toast({ title: "Có lỗi xảy ra", variant: "destructive" });
@@ -81,8 +108,63 @@ const BrandsManagement = () => {
     "Khác"
   ];
 
+  // Upload image to storage
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = fileName;
+
+    const { error: uploadError } = await supabase.storage
+      .from('brand-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage
+      .from('brand-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsUploading(true);
+    try {
+      let imageUrl = editingBrand?.image_url || null;
+      
+      // Upload new image if selected
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
+      const brandData = {
+        name: formData.get('name') as string,
+        slug: formData.get('slug') as string,
+        category: formData.get('category') as string,
+        description: formData.get('description') as string,
+        image_url: imageUrl,
+      };
+
+      if (editingBrand) {
+        await updateBrandMutation.mutateAsync({
+          id: editingBrand.id,
+          updates: brandData
+        });
+      } else {
+        await addBrandMutation.mutateAsync(brandData);
+      }
+    } catch (error) {
+      toast({ title: "Có lỗi xảy ra khi xử lý", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleEdit = (brand: any) => {
     setEditingBrand(brand);
+    setImageFile(null);
     setIsDialogOpen(true);
   };
 
@@ -129,7 +211,10 @@ const BrandsManagement = () => {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingBrand(null)}>
+            <Button onClick={() => {
+              setEditingBrand(null);
+              setImageFile(null);
+            }}>
               <Plus className="h-4 w-4 mr-2" />
               Thêm nhãn hàng
             </Button>
@@ -143,67 +228,108 @@ const BrandsManagement = () => {
                 Điền thông tin chi tiết về nhãn hàng
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleSubmit(formData);
+            }}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="brand-name">Tên nhãn hàng</Label>
+                    <Input
+                      id="brand-name"
+                      name="name"
+                      defaultValue={editingBrand?.name || ""}
+                      placeholder="Nhập tên nhãn hàng"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="brand-slug">Slug (URL)</Label>
+                    <Input
+                      id="brand-slug"
+                      name="slug"
+                      defaultValue={editingBrand?.slug || ""}
+                      placeholder="ten-nhan-hang"
+                      required
+                    />
+                  </div>
+                </div>
                 <div>
-                  <Label htmlFor="brand-name">Tên nhãn hàng</Label>
-                  <Input
-                    id="brand-name"
-                    defaultValue={editingBrand?.name || ""}
-                    placeholder="Nhập tên nhãn hàng"
+                  <Label htmlFor="brand-category">Danh mục</Label>
+                  <Select name="category" defaultValue={editingBrand?.category || ""} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn danh mục" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="brand-description">Mô tả</Label>
+                  <Textarea
+                    id="brand-description"
+                    name="description"
+                    defaultValue={editingBrand?.description || ""}
+                    placeholder="Mô tả ngắn về nhãn hàng"
+                    rows={3}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="brand-slug">Slug (URL)</Label>
-                  <Input
-                    id="brand-slug"
-                    defaultValue={editingBrand?.slug || ""}
-                    placeholder="ten-nhan-hang"
-                  />
+                  <Label>Hình ảnh nhãn hàng</Label>
+                  {editingBrand?.image_url && !imageFile && (
+                    <div className="mt-2 mb-2">
+                      <img 
+                        src={editingBrand.image_url} 
+                        alt="Current brand image" 
+                        className="w-32 h-20 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                  <div className="mt-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setImageFile(file);
+                        }
+                      }}
+                      className="cursor-pointer"
+                    />
+                    {imageFile && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Đã chọn: {imageFile.name}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div>
-                <Label htmlFor="brand-category">Danh mục</Label>
-                <Select defaultValue={editingBrand?.category || ""}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn danh mục" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="brand-description">Mô tả</Label>
-                <Textarea
-                  id="brand-description"
-                  defaultValue={editingBrand?.description || ""}
-                  placeholder="Mô tả ngắn về nhãn hàng"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Label>Hình ảnh nhãn hàng</Label>
-                <div className="mt-2">
-                  <Button variant="outline" className="w-full">
-                    <Image className="h-4 w-4 mr-2" />
-                    Tải lên hình ảnh
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Hủy
-              </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>
-                {editingBrand ? "Cập nhật" : "Thêm"}
-              </Button>
-            </DialogFooter>
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsDialogOpen(false);
+                    setEditingBrand(null);
+                    setImageFile(null);
+                  }}
+                  disabled={isUploading}
+                >
+                  Hủy
+                </Button>
+                <Button type="submit" disabled={isUploading}>
+                  {isUploading ? "Đang xử lý..." : (editingBrand ? "Cập nhật" : "Thêm")}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
