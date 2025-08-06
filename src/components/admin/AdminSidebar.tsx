@@ -52,21 +52,19 @@ export function AdminSidebar() {
       : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
 
   return (
-    <>
-      <Sidebar
-        className={state === "collapsed" ? "w-14" : "w-60"}
-        collapsible="icon"
-        variant="sidebar"
-      >
-        <div className="p-4 border-b">
-          <SidebarTrigger />
-          {state !== "collapsed" && (
-            <div className="mt-2">
-              <h2 className="font-bold text-lg">Admin Panel</h2>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
-            </div>
-          )}
-        </div>
+    <Sidebar
+      className={state === "collapsed" ? "w-14" : "w-60"}
+      collapsible="icon"
+      variant="sidebar"
+    >
+      <div className="p-4 border-b mt-12">
+        {state !== "collapsed" && (
+          <div>
+            <h2 className="font-bold text-lg">Admin Panel</h2>
+            <p className="text-sm text-muted-foreground">{user?.email}</p>
+          </div>
+        )}
+      </div>
 
         <SidebarContent>
           <SidebarGroup>
@@ -106,6 +104,5 @@ export function AdminSidebar() {
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
-    </>
   );
 }
