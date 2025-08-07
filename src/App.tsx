@@ -26,7 +26,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import MenusManagement from "./pages/admin/MenusManagement";
 import HeaderManagement from "./pages/admin/HeaderManagement";
-import HomepageManagement from "./pages/admin/HomepageManagement";
+
 import HomepageBuilder from "./pages/admin/HomepageBuilder";
 import BrandsManagement from "./pages/admin/BrandsManagement";
 import NewsManagement from "./pages/admin/NewsManagement";
@@ -67,7 +67,7 @@ const App = () => (
             <Route path="banner" element={<BannerManagement />} />
             <Route path="menus" element={<MenusManagement />} />
             <Route path="header" element={<HeaderManagement />} />
-            <Route path="homepage" element={<HomepageManagement />} />
+            
             <Route path="homepage-builder" element={<HomepageBuilder />} />
             <Route path="brands" element={<BrandsManagement />} />
             <Route path="news" element={<NewsManagement />} />
