@@ -176,10 +176,10 @@ const Settings = () => {
           <div className="space-y-2">
             <Label htmlFor={setting.setting_key}>{setting.display_name}</Label>
             <Select value={value} onValueChange={(newValue) => handleInputChange(setting.setting_key, newValue)}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Chọn một tùy chọn" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white z-50">
                 {options.map((option: any) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
