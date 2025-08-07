@@ -21,6 +21,20 @@ const BrandsManagement = () => {
   const [editingBrand, setEditingBrand] = useState(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Auto-generate slug from name
+  const generateSlug = (name: string, languageCode: string) => {
+    const baseSlug = name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    
+    return languageCode === 'en' ? `${baseSlug}-en` : baseSlug;
+  };
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -255,7 +269,7 @@ const BrandsManagement = () => {
             }}>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
+                   <div>
                     <Label htmlFor="brand-name">Tên nhãn hàng</Label>
                     <Input
                       id="brand-name"
@@ -263,6 +277,13 @@ const BrandsManagement = () => {
                       defaultValue={editingBrand?.name || ""}
                       placeholder="Nhập tên nhãn hàng"
                       required
+                      onChange={(e) => {
+                        const nameInput = e.target;
+                        const slugInput = document.getElementById('brand-slug') as HTMLInputElement;
+                        if (slugInput && !editingBrand) {
+                          slugInput.value = generateSlug(nameInput.value, activeTab);
+                        }
+                      }}
                     />
                   </div>
                   <div>
@@ -274,6 +295,9 @@ const BrandsManagement = () => {
                       placeholder="ten-nhan-hang"
                       required
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Slug sẽ tự động tạo từ tên nhãn hàng. Có thể chỉnh sửa thủ công.
+                    </p>
                   </div>
                 </div>
                 <div>

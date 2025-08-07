@@ -47,6 +47,9 @@ import FooterManagement from "./pages/admin/FooterManagement";
 import FooterMenuManagement from "./pages/admin/FooterMenuManagement";
 import Settings from "./pages/admin/Settings";
 
+// Dynamic brand router
+import BrandDynamicRouter from "./pages/brands/BrandDynamicRouter";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -66,12 +69,8 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
-          <Route path="/brands/pigeon" element={<PigeonDynamic />} />
-          <Route path="/brands/verites" element={<VeritesDynamic />} />
-          <Route path="/brands/instax-camera" element={<InstaxCameraDynamic />} />
-          <Route path="/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
-          <Route path="/brands/etsuko" element={<EtsukoDynamic />} />
-          <Route path="/brands/astalift" element={<AstaliftDynamic />} />
+          {/* Dynamic brand routes */}
+          <Route path="/brands/:slug" element={<BrandDynamicRouter />} />
           
           {/* English routes with /en prefix */}
           <Route path="/en" element={<IndexDynamic />} />
@@ -80,12 +79,8 @@ const App = () => (
           <Route path="/en/news" element={<News />} />
           <Route path="/en/news/:slug" element={<NewsDetail />} />
           <Route path="/en/about" element={<About />} />
-          <Route path="/en/brands/pigeon" element={<PigeonDynamic />} />
-          <Route path="/en/brands/verites" element={<VeritesDynamic />} />
-          <Route path="/en/brands/instax-camera" element={<InstaxCameraDynamic />} />
-          <Route path="/en/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
-          <Route path="/en/brands/etsuko" element={<EtsukoDynamic />} />
-          <Route path="/en/brands/astalift" element={<AstaliftDynamic />} />
+          {/* Dynamic brand routes for English */}
+          <Route path="/en/brands/:slug" element={<BrandDynamicRouter />} />
           
           {/* Admin Auth Route */}
           <Route path="/admin/auth" element={<AdminAuth />} />
