@@ -125,40 +125,46 @@ const Header = () => {
                     
                     {/* Mega Menu */}
                     {isBrandMegaMenuOpen && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 lg:p-8 z-50 animate-fade-in">
+                      <div className="absolute top-full w-[95vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 lg:p-8 z-50 animate-fade-in"
+                        style={{ left: 'calc(50% - 50px - 24rem)' }}
+                      >
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                           {/* Featured Brands Column */}
                           <div className="lg:col-span-2">
                             <h3 className="text-lg font-bold text-gray-900 mb-4 lg:mb-6 border-b border-gray-200 pb-2">
-                              {currentLanguage === 'en' ? 'Our Brands' : 'Thương hiệu của chúng tôi'}
+                              {currentLanguage === 'en' ? 'Our Brands' : 'Thương hiệu của chúng tôi'} ({brands.length})
                             </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
-                              {brands.slice(0, 6).map((brand) => (
-                                <Link
-                                  key={brand.id}
-                                  to={createUrl(`/brands/${brand.slug}`)}
-                                  className="group p-3 lg:p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 p-2">
-                                      <img 
-                                        src={brand.image_url || '/placeholder.svg'} 
-                                        alt={brand.name}
-                                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                                      />
+                            {brands.length === 0 ? (
+                              <p className="text-gray-500 text-sm">Không có thương hiệu nào</p>
+                            ) : (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
+                                {brands.slice(0, 6).map((brand) => (
+                                  <Link
+                                    key={brand.id}
+                                    to={createUrl(`/brands/${brand.slug}`)}
+                                    className="group p-3 lg:p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 p-2">
+                                        <img 
+                                          src={brand.image_url || '/placeholder.svg'} 
+                                          alt={brand.name}
+                                          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                        />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm mb-1">
+                                          {brand.name}
+                                        </h4>
+                                        <p className="text-xs text-gray-600 line-clamp-2">
+                                          {brand.description}
+                                        </p>
+                                      </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                      <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm mb-1">
-                                        {brand.name}
-                                      </h4>
-                                      <p className="text-xs text-gray-600 line-clamp-2">
-                                        {brand.description}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Link>
-                              ))}
-                            </div>
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
                             
                             {/* View All Brands */}
                             <div className="mt-4 lg:mt-6 pt-4 border-t border-gray-200">
@@ -177,36 +183,40 @@ const Header = () => {
                               {currentLanguage === 'en' ? 'Categories' : 'Danh mục'}
                             </h3>
                             <div className="space-y-4">
-                              {Object.keys(brandCategories).slice(0, 3).map((category) => (
-                                <div key={category} className="group">
-                                  <h4 className="font-medium text-gray-700 mb-2 text-sm border-b border-gray-100 pb-1">
-                                    {category}
-                                  </h4>
-                                  <div className="space-y-1">
-                                    {brandCategories[category].slice(0, 4).map((brand) => (
-                                      <Link
-                                        key={brand.id}
-                                        to={createUrl(`/brands/${brand.slug}`)}
-                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-primary transition-colors py-1 hover:bg-gray-50 px-2 rounded group"
-                                      >
-                                        <div className="w-4 h-4 rounded overflow-hidden bg-gray-100 flex-shrink-0">
-                                          <img 
-                                            src={brand.image_url || '/placeholder.svg'} 
-                                            alt={brand.name}
-                                            className="w-full h-full object-contain"
-                                          />
-                                        </div>
-                                        <span className="truncate">{brand.name}</span>
-                                      </Link>
-                                    ))}
-                                    {brandCategories[category].length > 4 && (
-                                      <p className="text-xs text-gray-400 px-2 py-1">
-                                        +{brandCategories[category].length - 4} thêm
-                                      </p>
-                                    )}
+                              {Object.keys(brandCategories).length === 0 ? (
+                                <p className="text-gray-500 text-sm">Không có danh mục nào</p>
+                              ) : (
+                                Object.keys(brandCategories).slice(0, 3).map((category) => (
+                                  <div key={category} className="group">
+                                    <h4 className="font-medium text-gray-700 mb-2 text-sm border-b border-gray-100 pb-1">
+                                      {category}
+                                    </h4>
+                                    <div className="space-y-1">
+                                      {brandCategories[category].slice(0, 4).map((brand) => (
+                                        <Link
+                                          key={brand.id}
+                                          to={createUrl(`/brands/${brand.slug}`)}
+                                          className="flex items-center gap-2 text-xs text-gray-600 hover:text-primary transition-colors py-1 hover:bg-gray-50 px-2 rounded group"
+                                        >
+                                          <div className="w-4 h-4 rounded overflow-hidden bg-gray-100 flex-shrink-0">
+                                            <img 
+                                              src={brand.image_url || '/placeholder.svg'} 
+                                              alt={brand.name}
+                                              className="w-full h-full object-contain"
+                                            />
+                                          </div>
+                                          <span className="truncate">{brand.name}</span>
+                                        </Link>
+                                      ))}
+                                      {brandCategories[category].length > 4 && (
+                                        <p className="text-xs text-gray-400 px-2 py-1">
+                                          +{brandCategories[category].length - 4} thêm
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))
+                              )}
                               
                               {/* All Categories Link */}
                               <div className="pt-2 border-t border-gray-100">
