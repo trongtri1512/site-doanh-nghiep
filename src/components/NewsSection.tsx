@@ -22,7 +22,7 @@ const NewsSection = () => {
         .eq('status', 'published')
         .eq('language_code', currentLanguage)
         .order('created_at', { ascending: false })
-        .limit(3);
+        .limit(6);
 
       if (error) throw error;
       setNewsItems(data || []);
@@ -35,21 +35,21 @@ const NewsSection = () => {
 
   if (loading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gradient-to-br from-blue-100 to-blue-200">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
-          <div className="text-center py-8">{t('common.loading', 'Đang tải...')}</div>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center text-blue-900">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
+          <div className="text-center py-8 text-blue-700">{t('common.loading', 'Đang tải...')}</div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-gradient-to-br from-blue-100 to-blue-200">
       <div className="container mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
+        <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center text-blue-900">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           {newsItems.map((item, index) => (
             <Card key={item.id || index} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video overflow-hidden">
