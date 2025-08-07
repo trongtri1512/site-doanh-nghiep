@@ -100,16 +100,16 @@ const Contact = () => {
       if (error) throw error;
 
       toast({
-        title: pageContent[`success_title_${currentLanguage}`]?.content || "Gửi thành công",
-        description: pageContent[`success_message_${currentLanguage}`]?.content || "Tin nhắn của bạn đã được gửi. Chúng tôi sẽ liên hệ lại sớm nhất có thể.",
+        title: pageContent[`success_title_${currentLanguage}`]?.content || pageContent['success_title_en']?.content || "Gửi thành công",
+        description: pageContent[`success_message_${currentLanguage}`]?.content || pageContent['success_message_en']?.content || "Tin nhắn của bạn đã được gửi. Chúng tôi sẽ liên hệ lại sớm nhất có thể.",
       });
 
       form.reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
       toast({
-        title: pageContent[`error_title_${currentLanguage}`]?.content || "Lỗi",
-        description: pageContent[`error_message_${currentLanguage}`]?.content || "Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại.",
+        title: pageContent[`error_title_${currentLanguage}`]?.content || pageContent['error_title_en']?.content || "Lỗi",
+        description: pageContent[`error_message_${currentLanguage}`]?.content || pageContent['error_message_en']?.content || "Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại.",
         variant: "destructive",
       });
     } finally {
@@ -138,10 +138,10 @@ const Contact = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-4">
-              {pageContent[`page_title_${currentLanguage}`]?.content || "Liên hệ với chúng tôi"}
+              {pageContent[`page_title_${currentLanguage}`]?.content || pageContent['page_title_en']?.content || "Liên hệ với chúng tôi"}
             </h1>
             <p className="text-lg text-muted-foreground">
-              {pageContent[`page_description_${currentLanguage}`]?.content || "Chúng tôi luôn sẵn sàng hỗ trợ và lắng nghe ý kiến của bạn"}
+              {pageContent[`page_description_${currentLanguage}`]?.content || pageContent['page_description_en']?.content || "Chúng tôi luôn sẵn sàng hỗ trợ và lắng nghe ý kiến của bạn"}
             </p>
           </div>
 
@@ -149,7 +149,7 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-foreground mb-6">
-                {pageContent[`contact_info_title_${currentLanguage}`]?.content || "Thông tin liên hệ"}
+                {pageContent[`contact_info_title_${currentLanguage}`]?.content || pageContent['contact_info_title_en']?.content || "Thông tin liên hệ"}
               </h2>
               
               {contactInfo.map((info) => (
@@ -174,7 +174,7 @@ const Contact = () => {
               <Card className="border-border">
                 <CardHeader>
                   <CardTitle className="text-2xl">
-                    {pageContent[`form_title_${currentLanguage}`]?.content || "Gửi tin nhắn cho chúng tôi"}
+                    {pageContent[`form_title_${currentLanguage}`]?.content || pageContent['form_title_en']?.content || "Gửi tin nhắn cho chúng tôi"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -187,10 +187,10 @@ const Contact = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                {pageContent[`form_name_label_${currentLanguage}`]?.content || "Họ và tên *"}
+                                {pageContent[`form_name_label_${currentLanguage}`]?.content || pageContent['form_name_label_en']?.content || "Họ và tên *"}
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder={pageContent[`form_name_placeholder_${currentLanguage}`]?.content || "Nhập họ và tên"} {...field} />
+                                <Input placeholder={pageContent[`form_name_placeholder_${currentLanguage}`]?.content || pageContent['form_name_placeholder_en']?.content || "Nhập họ và tên"} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -203,10 +203,10 @@ const Contact = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                {pageContent[`form_email_label_${currentLanguage}`]?.content || "Email *"}
+                                {pageContent[`form_email_label_${currentLanguage}`]?.content || pageContent['form_email_label_en']?.content || "Email *"}
                               </FormLabel>
                               <FormControl>
-                                <Input type="email" placeholder={pageContent[`form_email_placeholder_${currentLanguage}`]?.content || "Nhập email"} {...field} />
+                                <Input type="email" placeholder={pageContent[`form_email_placeholder_${currentLanguage}`]?.content || pageContent['form_email_placeholder_en']?.content || "Nhập email"} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -221,10 +221,10 @@ const Contact = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                {pageContent[`form_phone_label_${currentLanguage}`]?.content || "Số điện thoại"}
+                                {pageContent[`form_phone_label_${currentLanguage}`]?.content || pageContent['form_phone_label_en']?.content || "Số điện thoại"}
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder={pageContent[`form_phone_placeholder_${currentLanguage}`]?.content || "Nhập số điện thoại"} {...field} />
+                                <Input placeholder={pageContent[`form_phone_placeholder_${currentLanguage}`]?.content || pageContent['form_phone_placeholder_en']?.content || "Nhập số điện thoại"} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -237,10 +237,10 @@ const Contact = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                {pageContent[`form_subject_label_${currentLanguage}`]?.content || "Tiêu đề *"}
+                                {pageContent[`form_subject_label_${currentLanguage}`]?.content || pageContent['form_subject_label_en']?.content || "Tiêu đề *"}
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder={pageContent[`form_subject_placeholder_${currentLanguage}`]?.content || "Nhập tiêu đề"} {...field} />
+                                <Input placeholder={pageContent[`form_subject_placeholder_${currentLanguage}`]?.content || pageContent['form_subject_placeholder_en']?.content || "Nhập tiêu đề"} {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -254,11 +254,11 @@ const Contact = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              {pageContent[`form_message_label_${currentLanguage}`]?.content || "Tin nhắn *"}
+                              {pageContent[`form_message_label_${currentLanguage}`]?.content || pageContent['form_message_label_en']?.content || "Tin nhắn *"}
                             </FormLabel>
                             <FormControl>
                               <Textarea 
-                                placeholder={pageContent[`form_message_placeholder_${currentLanguage}`]?.content || "Nhập tin nhắn của bạn"}
+                                placeholder={pageContent[`form_message_placeholder_${currentLanguage}`]?.content || pageContent['form_message_placeholder_en']?.content || "Nhập tin nhắn của bạn"}
                                 className="min-h-[120px]"
                                 {...field}
                               />
@@ -275,8 +275,8 @@ const Contact = () => {
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? 
-                          (pageContent[`form_submitting_button_${currentLanguage}`]?.content || "Đang gửi...") : 
-                          (pageContent[`form_submit_button_${currentLanguage}`]?.content || "Gửi tin nhắn")
+                          (pageContent[`form_submitting_button_${currentLanguage}`]?.content || pageContent['form_submitting_button_en']?.content || "Đang gửi...") : 
+                          (pageContent[`form_submit_button_${currentLanguage}`]?.content || pageContent['form_submit_button_en']?.content || "Gửi tin nhắn")
                         }
                       </Button>
                     </form>
