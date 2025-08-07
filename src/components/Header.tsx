@@ -17,6 +17,7 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBrandMegaMenuOpen, setIsBrandMegaMenuOpen] = useState(false);
+  const [megaMenuTimeout, setMegaMenuTimeout] = useState<NodeJS.Timeout | null>(null);
   const { settings } = useSiteSettings();
   const { t: translate, currentLanguage } = useLanguage();
   
@@ -82,6 +83,21 @@ const Header = () => {
     return acc;
   }, {} as Record<string, typeof brands>);
 
+  // Handle mega menu hover with delay
+  const handleMegaMenuEnter = () => {
+    if (megaMenuTimeout) {
+      clearTimeout(megaMenuTimeout);
+      setMegaMenuTimeout(null);
+    }
+    setIsBrandMegaMenuOpen(true);
+  };
+
+  const handleMegaMenuLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsBrandMegaMenuOpen(false);
+    }, 300); // 300ms delay
+    setMegaMenuTimeout(timeout);
+  };
 
   return (
     <header className="w-full bg-primary text-white sticky top-0 z-50">
@@ -110,8 +126,8 @@ const Header = () => {
                 <div 
                   key={item.id}
                   className="relative"
-                  onMouseEnter={() => setIsBrandMegaMenuOpen(true)}
-                  onMouseLeave={() => setIsBrandMegaMenuOpen(false)}
+                  onMouseEnter={handleMegaMenuEnter}
+                  onMouseLeave={handleMegaMenuLeave}
                 >
                   <Link 
                     to={createUrl(item.url)}
@@ -123,7 +139,10 @@ const Header = () => {
                   
                   {/* Mega Menu */}
                   {isBrandMegaMenuOpen && (
-                    <div className="fixed top-[4rem] left-1/2 transform -translate-x-1/2 w-[90vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 lg:p-6 z-50 animate-fade-in overflow-hidden"
+                    <div 
+                      className="fixed top-[4rem] left-1/2 transform -translate-x-1/2 w-[90vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 lg:p-6 z-50 animate-fade-in overflow-hidden"
+                      onMouseEnter={handleMegaMenuEnter}
+                      onMouseLeave={handleMegaMenuLeave}
                     >
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                         {/* Featured Brands Column */}
