@@ -57,28 +57,49 @@ const HeroSection = () => {
 
       {/* Animated waves at bottom */}
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
-        {/* Wave 1 */}
-        <svg className="relative block w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,60 C400,120 800,0 1200,60 L1200,120 L0,120 Z" 
-                fill="white" 
-                className="animate-wave-1">
-          </path>
+        {/* Wave 1 - Primary wave */}
+        <svg 
+          className="relative block w-[200%] h-20 animate-[wave1_8s_ease-in-out_infinite]" 
+          viewBox="0 0 2400 120" 
+          preserveAspectRatio="none"
+          style={{
+            animation: 'wave1 8s ease-in-out infinite'
+          }}
+        >
+          <path 
+            d="M0,60 C400,120 800,0 1200,60 C1600,120 2000,0 2400,60 L2400,120 L0,120 Z" 
+            fill="white"
+          />
         </svg>
         
-        {/* Wave 2 */}
-        <svg className="absolute bottom-0 w-full h-16" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,40 C300,100 900,20 1200,80 L1200,120 L0,120 Z" 
-                fill="rgba(255,255,255,0.7)" 
-                className="animate-wave-2">
-          </path>
+        {/* Wave 2 - Secondary wave */}
+        <svg 
+          className="absolute bottom-0 w-[200%] h-16 animate-[wave2_12s_ease-in-out_infinite_reverse]" 
+          viewBox="0 0 2400 120" 
+          preserveAspectRatio="none"
+          style={{
+            animation: 'wave2 12s ease-in-out infinite reverse'
+          }}
+        >
+          <path 
+            d="M0,40 C300,100 900,20 1200,80 C1500,140 2100,40 2400,100 L2400,120 L0,120 Z" 
+            fill="rgba(255,255,255,0.7)"
+          />
         </svg>
         
-        {/* Wave 3 */}
-        <svg className="absolute bottom-0 w-full h-12" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,80 C600,40 600,80 1200,40 L1200,120 L0,120 Z" 
-                fill="rgba(255,255,255,0.5)" 
-                className="animate-wave-3">
-          </path>
+        {/* Wave 3 - Tertiary wave */}
+        <svg 
+          className="absolute bottom-0 w-[200%] h-12 animate-[wave3_15s_ease-in-out_infinite]" 
+          viewBox="0 0 2400 120" 
+          preserveAspectRatio="none"
+          style={{
+            animation: 'wave3 15s ease-in-out infinite'
+          }}
+        >
+          <path 
+            d="M0,80 C600,40 600,80 1200,40 C1800,0 1800,40 2400,20 L2400,120 L0,120 Z" 
+            fill="rgba(255,255,255,0.5)"
+          />
         </svg>
       </div>
     </section>

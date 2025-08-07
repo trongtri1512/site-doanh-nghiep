@@ -57,7 +57,26 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+}
+
+/* Wave animations */
+@keyframes wave1 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-25%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes wave2 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-15%); }
+  100% { transform: translateX(-30%); }
+}
+
+@keyframes wave3 {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-35%); }
+  100% { transform: translateX(-70%); }
+}
 
   .dark {
     --background: 222.2 84% 4.9%;
