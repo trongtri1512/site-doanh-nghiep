@@ -223,6 +223,42 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_layouts: {
+        Row: {
+          content: Json
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          section_type: string
+          styles: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          section_type: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          section_type?: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_applications: {
         Row: {
           applicant_email: string
