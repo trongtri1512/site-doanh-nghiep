@@ -4,7 +4,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const HeroSection = () => {
   const { settings } = useSiteSettings();
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
+  
+  const welcomeText = currentLanguage === 'en' ? 'WELCOME TO' : 'CHÀO MỪNG BẠN ĐẾN VỚI';
+  const companyName = settings.site_title?.toUpperCase() || "IMV VIETNAM";
+  
   return (
     <section className="relative min-h-[600px] overflow-hidden">
       {/* Background Image */}
@@ -18,25 +22,34 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
       </div>
 
-      <div className="container mx-auto px-6 py-20 relative z-10">
+      {/* Scrolling Text Animation */}
+      <div className="absolute top-0 left-0 right-0 bg-primary/90 text-white py-2 overflow-hidden z-20">
+        <div className="animate-marquee whitespace-nowrap text-sm font-medium">
+          <span className="mx-4">🌟 {welcomeText} {companyName} - {currentLanguage === 'en' ? 'Elevating Life, Securing the Future' : 'Nâng tầm cuộc sống, vững vàng tương lai'} 🌟</span>
+          <span className="mx-4">🌟 {welcomeText} {companyName} - {currentLanguage === 'en' ? 'Elevating Life, Securing the Future' : 'Nâng tầm cuộc sống, vững vàng tương lai'} 🌟</span>
+          <span className="mx-4">🌟 {welcomeText} {companyName} - {currentLanguage === 'en' ? 'Elevating Life, Securing the Future' : 'Nâng tầm cuộc sống, vững vàng tương lai'} 🌟</span>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-6 py-20 relative z-10 mt-12">
         <div className="max-w-2xl">
           {/* Text Content with Beautiful Frame */}
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:bg-white/15">
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-              <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl animate-fade-in" 
+              <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl animate-fade-in hover:animate-pulse" 
                     style={{textShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)'}}>
-                {t('hero.welcome', 'CHÀO MỪNG BẠN')}<br />
-                {t('hero.company', `ĐẾN VỚI ${settings.site_title?.toUpperCase() || "IMV VIETNAM"}`)}
+                {welcomeText}<br />
+                <span className="text-yellow-400 animate-bounce inline-block">{companyName}</span>
               </span>
             </h1>
-            <p className="text-xl text-white/90 mb-6 leading-relaxed">
-              {settings.site_description || "Nâng tầm cuộc sống, vững vàng tương lai"}
+            <p className="text-xl text-white/90 mb-6 leading-relaxed animate-fade-in animation-delay-300">
+              {settings.site_description || (currentLanguage === 'en' ? 'Elevating Life, Securing the Future' : 'Nâng tầm cuộc sống, vững vàng tương lai')}
             </p>
             <Button 
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in animation-delay-500"
               size="lg"
             >
-              {t('hero.learn_more', 'Tìm hiểu thêm về Công ty chúng tôi')}
+              {t('hero.learn_more', currentLanguage === 'en' ? 'Learn more about our Company' : 'Tìm hiểu thêm về Công ty chúng tôi')}
             </Button>
           </div>
         </div>
