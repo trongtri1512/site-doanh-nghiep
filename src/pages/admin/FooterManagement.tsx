@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, Save, X, Upload } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Upload, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -31,6 +39,7 @@ interface FooterSection {
   content: any;
   display_order: number;
   is_active: boolean;
+  language_code: string;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +50,7 @@ const FooterManagement = () => {
   const [editingSection, setEditingSection] = useState<FooterSection | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
 
   const [formData, setFormData] = useState({
     section_type: "",
@@ -48,17 +58,19 @@ const FooterManagement = () => {
     content: "{}",
     display_order: 0,
     is_active: true,
+    language_code: currentLanguage,
   });
 
   useEffect(() => {
     fetchFooterSections();
-  }, []);
+  }, [currentLanguage]);
 
   const fetchFooterSections = async () => {
     try {
       const { data, error } = await supabase
         .from("footer_sections")
         .select("*")
+        .eq("language_code", currentLanguage)
         .order("display_order", { ascending: true });
 
       if (error) throw error;
@@ -93,6 +105,7 @@ const FooterManagement = () => {
       const sectionData = {
         ...formData,
         content,
+        language_code: currentLanguage,
       };
 
       if (editingSection) {
@@ -139,6 +152,7 @@ const FooterManagement = () => {
       content: JSON.stringify(section.content, null, 2),
       display_order: section.display_order,
       is_active: section.is_active,
+      language_code: section.language_code,
     });
     setIsDialogOpen(true);
   };
@@ -175,6 +189,7 @@ const FooterManagement = () => {
       content: "{}",
       display_order: 0,
       is_active: true,
+      language_code: currentLanguage,
     });
   };
 
@@ -191,7 +206,24 @@ const FooterManagement = () => {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Quản lý Footer</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold">Quản lý Footer</h1>
+          <div className="flex items-center gap-2">
+            <Languages className="h-4 w-4" />
+            <Select value={currentLanguage} onValueChange={setLanguage}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {availableLanguages.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.native_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={handleCreateNew} className="flex items-center gap-2">
@@ -287,6 +319,7 @@ const FooterManagement = () => {
               <TableRow>
                 <TableHead>Loại</TableHead>
                 <TableHead>Tiêu đề</TableHead>
+                <TableHead>Ngôn ngữ</TableHead>
                 <TableHead>Thứ tự</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead>Hành động</TableHead>
@@ -297,6 +330,7 @@ const FooterManagement = () => {
                 <TableRow key={section.id}>
                   <TableCell className="font-medium">{section.section_type}</TableCell>
                   <TableCell>{section.title}</TableCell>
+                  <TableCell>{section.language_code}</TableCell>
                   <TableCell>{section.display_order}</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded text-xs ${

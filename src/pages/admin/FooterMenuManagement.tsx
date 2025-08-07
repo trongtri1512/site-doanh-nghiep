@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Dialog,
   DialogContent,
@@ -44,6 +45,7 @@ interface FooterMenuItem {
   target: string;
   display_order: number;
   is_active: boolean;
+  language_code: string;
   footer_sections?: FooterSection;
 }
 
@@ -54,6 +56,7 @@ const FooterMenuManagement = () => {
   const [editingItem, setEditingItem] = useState<FooterMenuItem | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
 
   const [formData, setFormData] = useState({
     section_id: "",
@@ -62,11 +65,12 @@ const FooterMenuManagement = () => {
     target: "_self",
     display_order: 0,
     is_active: true,
+    language_code: currentLanguage,
   });
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentLanguage]);
 
   const fetchData = async () => {
     try {
@@ -75,6 +79,7 @@ const FooterMenuManagement = () => {
         .from("footer_sections")
         .select("id, section_type, title")
         .eq("is_active", true)
+        .eq("language_code", currentLanguage)
         .order("display_order", { ascending: true });
 
       if (sectionsError) throw sectionsError;
@@ -91,6 +96,7 @@ const FooterMenuManagement = () => {
             title
           )
         `)
+        .eq("language_code", currentLanguage)
         .order("section_id", { ascending: true })
         .order("display_order", { ascending: true });
 
@@ -111,10 +117,15 @@ const FooterMenuManagement = () => {
     e.preventDefault();
     
     try {
+      const submissionData = {
+        ...formData,
+        language_code: currentLanguage,
+      };
+
       if (editingItem) {
         const { error } = await supabase
           .from("footer_menu_items")
-          .update(formData)
+          .update(submissionData)
           .eq("id", editingItem.id);
 
         if (error) throw error;
@@ -125,7 +136,7 @@ const FooterMenuManagement = () => {
       } else {
         const { error } = await supabase
           .from("footer_menu_items")
-          .insert([formData]);
+          .insert([submissionData]);
 
         if (error) throw error;
         toast({
@@ -156,6 +167,7 @@ const FooterMenuManagement = () => {
       target: item.target,
       display_order: item.display_order,
       is_active: item.is_active,
+      language_code: item.language_code,
     });
     setIsDialogOpen(true);
   };
@@ -193,6 +205,7 @@ const FooterMenuManagement = () => {
       target: "_self",
       display_order: 0,
       is_active: true,
+      language_code: currentLanguage,
     });
   };
 
@@ -218,7 +231,24 @@ const FooterMenuManagement = () => {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Quản lý Menu Footer</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold">Quản lý Menu Footer</h1>
+          <div className="flex items-center gap-2">
+            <Languages className="h-4 w-4" />
+            <Select value={currentLanguage} onValueChange={setLanguage}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {availableLanguages.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.native_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={handleCreateNew} className="flex items-center gap-2">
