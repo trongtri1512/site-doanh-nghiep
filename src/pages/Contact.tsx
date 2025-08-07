@@ -70,7 +70,13 @@ const Contact = () => {
     try {
       const { error } = await supabase
         .from("contact_messages")
-        .insert([data]);
+        .insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          subject: data.subject,
+          message: data.message,
+        });
 
       if (error) throw error;
 

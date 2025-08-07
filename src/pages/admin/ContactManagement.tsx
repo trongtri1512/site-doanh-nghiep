@@ -113,7 +113,12 @@ const ContactManagement = () => {
       } else {
         const { error } = await supabase
           .from("contact_info")
-          .insert([data]);
+          .insert({
+            section_key: data.section_key,
+            title: data.title,
+            content: data.content,
+            display_order: data.display_order,
+          });
 
         if (error) throw error;
 
