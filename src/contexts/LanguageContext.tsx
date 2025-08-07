@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Language {
@@ -30,6 +31,9 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
     // Detect language from URL
     const path = window.location.pathname;
@@ -82,26 +86,38 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCurrentLanguage(languageCode);
     localStorage.setItem('language', languageCode);
     
-    // Update URL based on language
-    const currentPath = window.location.pathname;
-    let newPath: string;
-    
-    if (languageCode === 'en') {
-      // Switch to English - add /en prefix
-      if (currentPath.startsWith('/en')) {
-        return; // Already on English route
-      }
-      newPath = currentPath === '/' ? '/en' : `/en${currentPath}`;
-    } else {
-      // Switch to Vietnamese - remove /en prefix
-      if (!currentPath.startsWith('/en')) {
-        return; // Already on Vietnamese route
-      }
-      newPath = currentPath.replace(/^\/en/, '') || '/';
+    // Get current path without language prefix
+    let currentPath = location.pathname;
+    if (currentPath.startsWith('/en')) {
+      currentPath = currentPath.replace(/^\/en/, '') || '/';
     }
     
-    window.history.pushState({}, '', newPath);
-    window.location.reload(); // Reload to apply language changes
+    let newPath: string;
+    
+    // Handle special routes that need slug mapping
+    if (currentPath.startsWith('/brands/')) {
+      const brandSlug = currentPath.replace('/brands/', '');
+      
+      // Simple mapping for now - can be enhanced later
+      const currentBrandBase = brandSlug.replace(/-en$/, '');
+      const targetSlug = languageCode === 'en' ? `${currentBrandBase}-en` : currentBrandBase;
+      
+      newPath = languageCode === 'en' 
+        ? `/en/brands/${targetSlug}`
+        : `/brands/${targetSlug}`;
+    } else if (currentPath.startsWith('/news/')) {
+      // Handle news articles
+      newPath = languageCode === 'en' ? `/en/news` : '/news';
+    } else {
+      // Handle regular pages
+      if (languageCode === 'en') {
+        newPath = currentPath === '/' ? '/en' : `/en${currentPath}`;
+      } else {
+        newPath = currentPath === '/' ? '/' : currentPath;
+      }
+    }
+    
+    navigate(newPath);
   };
 
   const t = (key: string, fallback?: string) => {
