@@ -366,8 +366,8 @@ const CareersManagement = () => {
                   <div>
                     <Label>Tiêu đề chính</Label>
                     <Input
-                      value={contentData.hero_title?.title || ''}
-                      onChange={(e) => handleContentChange('hero_title', 'title', e.target.value)}
+                      value={contentData.hero_title?.content || ''}
+                      onChange={(e) => handleContentChange('hero_title', 'content', e.target.value)}
                       placeholder="Tiêu đề trang tuyển dụng"
                     />
                   </div>
@@ -400,9 +400,81 @@ const CareersManagement = () => {
                       value={contentData.why_join_content?.content || ''}
                       onChange={(e) => handleContentChange('why_join_content', 'content', e.target.value)}
                       placeholder="Mô tả về môi trường làm việc, văn hóa công ty..."
-                      rows={4}
+                      rows={3}
                     />
                   </div>
+                </div>
+                
+                {/* Why Join Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Môi trường thân thiện</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_friendly_environment_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_friendly_environment_title', 'content', e.target.value)}
+                          placeholder="Môi trường làm việc thân thiện"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_friendly_environment_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_friendly_environment_content', 'content', e.target.value)}
+                          placeholder="Mô tả về môi trường thân thiện"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Phát triển nghề nghiệp</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_career_development_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_career_development_title', 'content', e.target.value)}
+                          placeholder="Phát triển nghề nghiệp"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_career_development_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_career_development_content', 'content', e.target.value)}
+                          placeholder="Mô tả về phát triển nghề nghiệp"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Thành tựu & Thành công</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_achievements_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_achievements_title', 'content', e.target.value)}
+                          placeholder="Thành tựu và thành công"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_achievements_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_achievements_content', 'content', e.target.value)}
+                          placeholder="Mô tả về thành tựu"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
 
@@ -424,7 +496,142 @@ const CareersManagement = () => {
                       value={contentData.benefits_content?.content || ''}
                       onChange={(e) => handleContentChange('benefits_content', 'content', e.target.value)}
                       placeholder="Các quyền lợi, chế độ đãi ngộ dành cho nhân viên..."
-                      rows={4}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                
+                {/* Benefits Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Chăm sóc sức khỏe</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_healthcare_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_healthcare_title', 'content', e.target.value)}
+                          placeholder="Chăm sóc sức khỏe"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_healthcare_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_healthcare_content', 'content', e.target.value)}
+                          placeholder="Mô tả về chăm sóc sức khỏe"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Thời gian linh hoạt</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_flexible_time_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_flexible_time_title', 'content', e.target.value)}
+                          placeholder="Thời gian linh hoạt"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_flexible_time_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_flexible_time_content', 'content', e.target.value)}
+                          placeholder="Mô tả về thời gian linh hoạt"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Lương thưởng hấp dẫn</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_attractive_salary_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_attractive_salary_title', 'content', e.target.value)}
+                          placeholder="Lương thưởng hấp dẫn"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_attractive_salary_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_attractive_salary_content', 'content', e.target.value)}
+                          placeholder="Mô tả về lương thưởng"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Phát triển kỹ năng</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <Label>Tiêu đề</Label>
+                        <Input
+                          value={contentData.benefit_skill_development_title?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_skill_development_title', 'content', e.target.value)}
+                          placeholder="Phát triển kỹ năng"
+                        />
+                        <Label>Nội dung</Label>
+                        <Textarea
+                          value={contentData.benefit_skill_development_content?.content || ''}
+                          onChange={(e) => handleContentChange('benefit_skill_development_content', 'content', e.target.value)}
+                          placeholder="Mô tả về phát triển kỹ năng"
+                          rows={3}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Other Sections */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Các phần khác</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Tiêu đề phần tuyển dụng</Label>
+                    <Input
+                      value={contentData.jobs_section_title?.content || ''}
+                      onChange={(e) => handleContentChange('jobs_section_title', 'content', e.target.value)}
+                      placeholder="Vị trí đang tuyển dụng"
+                    />
+                  </div>
+                  <div>
+                    <Label>Phụ đề phần tuyển dụng</Label>
+                    <Input
+                      value={contentData.jobs_section_subtitle?.content || ''}
+                      onChange={(e) => handleContentChange('jobs_section_subtitle', 'content', e.target.value)}
+                      placeholder="Khám phá cơ hội nghề nghiệp..."
+                    />
+                  </div>
+                  <div>
+                    <Label>Tiêu đề phần liên hệ</Label>
+                    <Input
+                      value={contentData.contact_section_title?.content || ''}
+                      onChange={(e) => handleContentChange('contact_section_title', 'content', e.target.value)}
+                      placeholder="Không tìm thấy vị trí phù hợp?"
+                    />
+                  </div>
+                  <div>
+                    <Label>Nội dung phần liên hệ</Label>
+                    <Textarea
+                      value={contentData.contact_section_content?.content || ''}
+                      onChange={(e) => handleContentChange('contact_section_content', 'content', e.target.value)}
+                      placeholder="Hãy gửi CV của bạn..."
+                      rows={2}
                     />
                   </div>
                 </div>

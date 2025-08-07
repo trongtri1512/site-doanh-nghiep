@@ -70,14 +70,14 @@ const Careers = () => {
       <main className="container mx-auto px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
-          Quay lại trang chủ
+          {content.back_to_home?.content || "Quay lại trang chủ"}
         </Link>
 
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-12 mb-16">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-6">
-              {content.hero_title?.title || "Tham gia đội ngũ của chúng tôi"}
+              {content.hero_title?.content || "Tham gia đội ngũ của chúng tôi"}
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               {content.hero_subtitle?.content || "Khám phá những cơ hội nghề nghiệp tuyệt vời và phát triển cùng chúng tôi"}
@@ -98,11 +98,11 @@ const Careers = () => {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Users className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle>Môi trường làm việc thân thiện</CardTitle>
+                  <CardTitle>{content.benefit_friendly_environment_title?.content || "Môi trường làm việc thân thiện"}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Đội ngũ đồng nghiệp hỗ trợ, môi trường làm việc tích cực và văn hóa công ty mạnh mẽ.
+                    {content.benefit_friendly_environment_content?.content || "Đội ngũ đồng nghiệp hỗ trợ, môi trường làm việc tích cực và văn hóa công ty mạnh mẽ."}
                   </p>
                 </CardContent>
               </Card>
@@ -112,11 +112,11 @@ const Careers = () => {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <GraduationCap className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle>Phát triển nghề nghiệp</CardTitle>
+                  <CardTitle>{content.benefit_career_development_title?.content || "Phát triển nghề nghiệp"}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Cơ hội đào tạo, học hỏi và thăng tiến rõ ràng trong sự nghiệp của bạn.
+                    {content.benefit_career_development_content?.content || "Cơ hội đào tạo, học hỏi và thăng tiến rõ ràng trong sự nghiệp của bạn."}
                   </p>
                 </CardContent>
               </Card>
@@ -126,11 +126,11 @@ const Careers = () => {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Trophy className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle>Thành tựu và thành công</CardTitle>
+                  <CardTitle>{content.benefit_achievements_title?.content || "Thành tựu và thành công"}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Được ghi nhận những đóng góp và thành tựu trong công việc.
+                    {content.benefit_achievements_content?.content || "Được ghi nhận những đóng góp và thành tựu trong công việc."}
                   </p>
                 </CardContent>
               </Card>
@@ -158,12 +158,12 @@ const Careers = () => {
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Heart className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>Chăm sóc sức khỏe</CardTitle>
+                    <CardTitle>{content.benefit_healthcare_title?.content || "Chăm sóc sức khỏe"}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Bảo hiểm y tế toàn diện, khám sức khỏe định kỳ và hỗ trợ chăm sóc sức khỏe.
+                    {content.benefit_healthcare_content?.content || "Bảo hiểm y tế toàn diện, khám sức khỏe định kỳ và hỗ trợ chăm sóc sức khỏe."}
                   </p>
                 </CardContent>
               </Card>
@@ -174,12 +174,12 @@ const Careers = () => {
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Calendar className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>Thời gian linh hoạt</CardTitle>
+                    <CardTitle>{content.benefit_flexible_time_title?.content || "Thời gian linh hoạt"}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Chế độ làm việc linh hoạt, nghỉ phép hợp lý và cân bằng cuộc sống.
+                    {content.benefit_flexible_time_content?.content || "Chế độ làm việc linh hoạt, nghỉ phép hợp lý và cân bằng cuộc sống."}
                   </p>
                 </CardContent>
               </Card>
@@ -190,12 +190,12 @@ const Careers = () => {
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <DollarSign className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>Lương thưởng hấp dẫn</CardTitle>
+                    <CardTitle>{content.benefit_attractive_salary_title?.content || "Lương thưởng hấp dẫn"}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Mức lương cạnh tranh, thưởng hiệu suất và các phúc lợi bổ sung.
+                    {content.benefit_attractive_salary_content?.content || "Mức lương cạnh tranh, thưởng hiệu suất và các phúc lợi bổ sung."}
                   </p>
                 </CardContent>
               </Card>
@@ -206,12 +206,12 @@ const Careers = () => {
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Trophy className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle>Phát triển kỹ năng</CardTitle>
+                    <CardTitle>{content.benefit_skill_development_title?.content || "Phát triển kỹ năng"}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Các khóa đào tạo chuyên môn, hội thảo và cơ hội học tập liên tục.
+                    {content.benefit_skill_development_content?.content || "Các khóa đào tạo chuyên môn, hội thảo và cơ hội học tập liên tục."}
                   </p>
                 </CardContent>
               </Card>
@@ -229,9 +229,11 @@ const Careers = () => {
           {/* Job Listings Section */}
           <section className="mb-20">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Vị trí đang tuyển dụng</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                {content.jobs_section_title?.content || "Vị trí đang tuyển dụng"}
+              </h2>
               <p className="text-xl text-muted-foreground">
-                Khám phá những cơ hội nghề nghiệp phù hợp với bạn
+                {content.jobs_section_subtitle?.content || "Khám phá những cơ hội nghề nghiệp phù hợp với bạn"}
               </p>
             </div>
 
@@ -269,7 +271,7 @@ const Careers = () => {
                           onClick={() => handleApplyClick(job)}
                           className="w-full sm:w-auto"
                         >
-                          Ứng tuyển ngay
+                          {content.apply_now_button?.content || "Ứng tuyển ngay"}
                         </Button>
                       </div>
                     </div>
@@ -282,7 +284,9 @@ const Careers = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {job.description && (
                             <div>
-                              <h4 className="font-semibold mb-2">Mô tả công việc</h4>
+                              <h4 className="font-semibold mb-2">
+                                {content.job_description_label?.content || "Mô tả công việc"}
+                              </h4>
                               <p className="text-sm text-muted-foreground leading-relaxed">
                                 {job.description}
                               </p>
@@ -291,7 +295,9 @@ const Careers = () => {
                           
                           {job.requirements && (
                             <div>
-                              <h4 className="font-semibold mb-2">Yêu cầu ứng viên</h4>
+                              <h4 className="font-semibold mb-2">
+                                {content.job_requirements_label?.content || "Yêu cầu ứng viên"}
+                              </h4>
                               <p className="text-sm text-muted-foreground leading-relaxed">
                                 {job.requirements}
                               </p>
@@ -302,7 +308,9 @@ const Careers = () => {
                         {job.experience && (
                           <div className="mt-4 pt-4 border-t">
                             <div className="flex items-center space-x-2 text-sm">
-                              <span className="font-semibold">Kinh nghiệm:</span>
+                              <span className="font-semibold">
+                                {content.experience_label?.content || "Kinh nghiệm:"}
+                              </span>
                               <span className="text-muted-foreground">{job.experience}</span>
                             </div>
                           </div>
@@ -312,7 +320,9 @@ const Careers = () => {
                           <div className="mt-2">
                             <div className="flex items-center space-x-2 text-sm text-red-600">
                               <Calendar className="h-4 w-4" />
-                              <span>Hạn nộp hồ sơ: {new Date(job.deadline).toLocaleDateString('vi-VN')}</span>
+                              <span>
+                                {content.deadline_label?.content || "Hạn nộp hồ sơ:"} {new Date(job.deadline).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN')}
+                              </span>
                             </div>
                           </div>
                         )}
@@ -328,9 +338,11 @@ const Careers = () => {
                 <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="h-12 w-12 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Hiện tại chưa có vị trí tuyển dụng</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {content.no_jobs_title?.content || "Hiện tại chưa có vị trí tuyển dụng"}
+                </h3>
                 <p className="text-muted-foreground">
-                  Vui lòng quay lại sau để xem các cơ hội nghề nghiệp mới
+                  {content.no_jobs_content?.content || "Vui lòng quay lại sau để xem các cơ hội nghề nghiệp mới"}
                 </p>
               </div>
             )}
@@ -339,18 +351,17 @@ const Careers = () => {
           {/* Contact Section */}
           <section className="bg-muted/50 rounded-lg p-8 text-center">
             <h3 className="text-2xl font-semibold mb-4">
-              Không tìm thấy vị trí phù hợp?
+              {content.contact_section_title?.content || "Không tìm thấy vị trí phù hợp?"}
             </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Hãy gửi CV của bạn đến chúng tôi. Chúng tôi sẽ liên hệ khi có vị trí phù hợp 
-              với năng lực và kinh nghiệm của bạn.
+              {content.contact_section_content?.content || "Hãy gửi CV của bạn đến chúng tôi. Chúng tôi sẽ liên hệ khi có vị trí phù hợp với năng lực và kinh nghiệm của bạn."}
             </p>
             <div className="space-y-2">
               <p>
-                <strong>Email:</strong> careers@imv.com.vn
+                <strong>{content.contact_email_label?.content || "Email:"}</strong> careers@imv.com.vn
               </p>
               <p>
-                <strong>Hotline:</strong> 1900-xxxx
+                <strong>{content.contact_hotline_label?.content || "Hotline:"}</strong> 1900-xxxx
               </p>
             </div>
           </section>
