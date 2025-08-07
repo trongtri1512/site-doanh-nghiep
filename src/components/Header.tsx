@@ -80,17 +80,32 @@ const Header = () => {
             if (children.length > 0) {
               return (
                 <DropdownMenu key={item.id}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-medium text-sm">
+                  <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-medium text-sm transition-colors">
                     {item.title}
-                    <ChevronDown size={14} />
+                    <ChevronDown size={14} className="transition-transform duration-200" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent 
+                    align="start" 
+                    className="w-56 bg-white border border-gray-200 shadow-lg rounded-lg p-1"
+                    sideOffset={8}
+                  >
                     {children.map((child) => (
-                      <DropdownMenuItem key={child.id} asChild>
+                      <DropdownMenuItem key={child.id} asChild className="rounded-md">
                         {child.url.startsWith('http') ? (
-                          <a href={child.url} target={child.target}>{child.title}</a>
+                          <a 
+                            href={child.url} 
+                            target={child.target}
+                            className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors cursor-pointer"
+                          >
+                            {child.title}
+                          </a>
                         ) : (
-                          <Link to={createUrl(child.url)}>{child.title}</Link>
+                          <Link 
+                            to={createUrl(child.url)}
+                            className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                          >
+                            {child.title}
+                          </Link>
                         )}
                       </DropdownMenuItem>
                     ))}
@@ -99,11 +114,11 @@ const Header = () => {
               );
             } else {
               return item.url.startsWith('http') ? (
-                <a key={item.id} href={item.url} className="hover:underline font-medium text-sm" target={item.target}>
+                <a key={item.id} href={item.url} className="hover:underline font-medium text-sm transition-colors" target={item.target}>
                   {item.title}
                 </a>
               ) : (
-                <Link key={item.id} to={createUrl(item.url)} className="hover:underline font-medium text-sm">
+                <Link key={item.id} to={createUrl(item.url)} className="hover:underline font-medium text-sm transition-colors">
                   {item.title}
                 </Link>
               );
@@ -117,7 +132,7 @@ const Header = () => {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-white hover:bg-white/20 gap-1"
+            className="text-white hover:bg-white/20 gap-1 transition-colors"
           >
             <Search size={16} />
             <span className="hidden xl:inline">{translate('header.search_site', 'Search site')}</span>
@@ -170,32 +185,34 @@ const Header = () => {
                 
                 if (children.length > 0) {
                   return (
-                    <div key={item.id} className="space-y-1">
+                    <div key={item.id} className="space-y-2">
                       <div className="flex items-center justify-between py-3 border-b border-white/20">
                         <span className="font-medium text-lg text-white">{item.title}</span>
                         <ChevronDown size={16} className="text-white/70" />
                       </div>
-                      {children.map((child) => (
-                        child.url.startsWith('http') ? (
-                          <a 
-                            key={child.id} 
-                            href={child.url} 
-                            className="block py-2 px-4 text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
-                            target={child.target}
-                          >
-                            {child.title}
-                          </a>
-                        ) : (
-                          <Link 
-                            key={child.id} 
-                            to={createUrl(child.url)} 
-                            className="block py-2 px-4 text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            {child.title}
-                          </Link>
-                        )
-                      ))}
+                      <div className="grid grid-cols-1 gap-1 pl-2">
+                        {children.map((child) => (
+                          child.url.startsWith('http') ? (
+                            <a 
+                              key={child.id} 
+                              href={child.url} 
+                              className="block py-2 px-3 text-sm text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
+                              target={child.target}
+                            >
+                              {child.title}
+                            </a>
+                          ) : (
+                            <Link 
+                              key={child.id} 
+                              to={createUrl(child.url)} 
+                              className="block py-2 px-3 text-sm text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              {child.title}
+                            </Link>
+                          )
+                        ))}
+                      </div>
                     </div>
                   );
                 } else {
