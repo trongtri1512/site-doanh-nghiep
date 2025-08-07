@@ -55,12 +55,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SiteSettingsProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <TooltipProvider>
-        <Toaster />
-        <Sonner />
-      <BrowserRouter>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <LanguageProvider>
         <Routes>
           {/* Vietnamese routes (default) */}
           <Route path="/" element={<IndexDynamic />} />
@@ -107,10 +107,10 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </LanguageProvider>
         </BrowserRouter>
       </TooltipProvider>
       </AuthProvider>
-    </LanguageProvider>
     </SiteSettingsProvider>
   </QueryClientProvider>
 );
