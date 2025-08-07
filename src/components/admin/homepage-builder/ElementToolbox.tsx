@@ -10,7 +10,13 @@ import {
   Grid3X3,
   Plus,
   Award,
-  Newspaper
+  Newspaper,
+  Images,
+  MessageSquare,
+  ArrowRight,
+  Star,
+  Users,
+  Mail
 } from "lucide-react";
 import { PageElement } from "@/pages/admin/HomepageBuilder";
 
@@ -43,6 +49,42 @@ export function ElementToolbox({ onAddElement }: ElementToolboxProps) {
       label: "News Section",
       icon: <Newspaper className="h-5 w-5" />,
       description: "Tin tức và sự kiện"
+    },
+    {
+      type: "gallery" as const,
+      label: "Gallery",
+      icon: <Images className="h-5 w-5" />,
+      description: "Thư viện hình ảnh"
+    },
+    {
+      type: "testimonials" as const,
+      label: "Testimonials",
+      icon: <MessageSquare className="h-5 w-5" />,
+      description: "Đánh giá khách hàng"
+    },
+    {
+      type: "cta" as const,
+      label: "Call to Action",
+      icon: <ArrowRight className="h-5 w-5" />,
+      description: "Kêu gọi hành động"
+    },
+    {
+      type: "features" as const,
+      label: "Features",
+      icon: <Star className="h-5 w-5" />,
+      description: "Tính năng nổi bật"
+    },
+    {
+      type: "team" as const,
+      label: "Team",
+      icon: <Users className="h-5 w-5" />,
+      description: "Đội ngũ"
+    },
+    {
+      type: "contact" as const,
+      label: "Contact",
+      icon: <Mail className="h-5 w-5" />,
+      description: "Thông tin liên hệ"
     }
   ];
 

@@ -26,7 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface PageElement {
   id: string;
-  type: "hero" | "stats" | "brands" | "news" | "text" | "image" | "layout";
+  type: "hero" | "stats" | "brands" | "news" | "text" | "image" | "layout" | "gallery" | "testimonials" | "cta" | "features" | "team" | "contact";
   content: any;
   styles?: any;
   section_type?: string;
@@ -173,8 +173,98 @@ const HomepageBuilder = () => {
         return { url: "/placeholder.svg", alt: "Image description" };
       case "layout":
         return { columns: 2, items: [] };
+      case "gallery":
+        return { 
+          title: 'Thư viện hình ảnh',
+          images: [
+            { url: '/placeholder.svg', alt: 'Hình ảnh 1', caption: 'Mô tả hình ảnh 1' },
+            { url: '/placeholder.svg', alt: 'Hình ảnh 2', caption: 'Mô tả hình ảnh 2' }
+          ]
+        };
+      case "testimonials":
+        return {
+          title: 'Khách hàng nói gì về chúng tôi',
+          testimonials: [
+            { name: 'Nguyễn Văn A', role: 'Giám đốc', company: 'ABC Corp', content: 'Dịch vụ tuyệt vời...', avatar: '/placeholder.svg' }
+          ]
+        };
+      case "cta":
+        return {
+          title: 'Sẵn sàng bắt đầu?',
+          subtitle: 'Liên hệ với chúng tôi ngay hôm nay',
+          cta_text: 'Liên hệ ngay',
+          cta_link: '/contact',
+          background_color: '#1e40af'
+        };
+      case "features":
+        return {
+          title: 'Tính năng nổi bật',
+          features: [
+            { icon: 'star', title: 'Chất lượng cao', description: 'Sản phẩm chất lượng cao nhất' },
+            { icon: 'shield', title: 'Bảo hành', description: 'Bảo hành toàn diện' }
+          ]
+        };
+      case "team":
+        return {
+          title: 'Đội ngũ của chúng tôi',
+          members: [
+            { name: 'Nguyễn Văn A', role: 'CEO', bio: 'Mô tả ngắn', image: '/placeholder.svg' }
+          ]
+        };
+      case "contact":
+        return {
+          title: 'Liên hệ với chúng tôi',
+          address: '123 Đường ABC, Quận 1, TP.HCM',
+          phone: '(84) 123 456 789',
+          email: 'contact@imv.com.vn',
+          show_form: true
+        };
       default:
         return {};
+    }
+  };
+
+  // Create new element mutation
+  const createElementMutation = useMutation({
+    mutationFn: async (newElement: Omit<PageElement, 'id'>) => {
+      const { data, error } = await supabase
+        .from('homepage_layouts')
+        .insert({
+          section_type: newElement.type,
+          title: newElement.title || getElementTitle(newElement.type),
+          content: newElement.content,
+          styles: newElement.styles || {},
+          display_order: newElement.display_order,
+          is_active: true
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-layouts'] });
+      toast.success("Đã thêm section mới!");
+    },
+    onError: (error) => {
+      toast.error("Lỗi khi thêm section: " + error.message);
+    }
+  });
+
+  const getElementTitle = (type: PageElement['type']) => {
+    switch (type) {
+      case 'hero': return 'Hero Section';
+      case 'stats': return 'Thống kê';
+      case 'brands': return 'Nhãn hàng';
+      case 'news': return 'Tin tức';
+      case 'gallery': return 'Thư viện ảnh';
+      case 'testimonials': return 'Đánh giá khách hàng';
+      case 'cta': return 'Call to Action';
+      case 'features': return 'Tính năng';
+      case 'team': return 'Đội ngũ';
+      case 'contact': return 'Liên hệ';
+      default: return 'Section mới';
     }
   };
 
@@ -188,16 +278,16 @@ const HomepageBuilder = () => {
       }
     }
 
-    const newElement: PageElement = {
-      id: `element-${Date.now()}`,
+    const newElement = {
       type,
       content: getDefaultContent(type),
       styles: {},
-      display_order: elements.length
+      display_order: elements.length,
+      title: getElementTitle(type)
     };
-    setElements([...elements, newElement]);
-    toast.success(`Đã thêm ${type} element`);
-  }, [elements]);
+    
+    createElementMutation.mutate(newElement);
+  }, [elements, createElementMutation]);
 
   const updateElement = useCallback((id: string, updates: Partial<PageElement>) => {
     setElements(prev => prev.map(el => 

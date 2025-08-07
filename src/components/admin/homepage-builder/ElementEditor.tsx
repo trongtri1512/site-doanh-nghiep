@@ -290,6 +290,222 @@ export function ElementEditor({ element, onUpdate, onClose }: ElementEditorProps
           </div>
         );
 
+      case "gallery":
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="gallery-title">Tiêu đề</Label>
+              <Input
+                id="gallery-title"
+                value={content.title || ""}
+                onChange={(e) => handleContentChange("title", e.target.value)}
+                placeholder="Thư viện hình ảnh"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label>Hình ảnh</Label>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  const newImages = [...(content.images || []), { 
+                    url: "/placeholder.svg", 
+                    alt: "Hình ảnh mới", 
+                    caption: ""
+                  }];
+                  handleContentChange("images", newImages);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            {(content.images || []).map((image: any, index: number) => (
+              <div key={index} className="border rounded-lg p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Hình {index + 1}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      const newImages = content.images.filter((_: any, i: number) => i !== index);
+                      handleContentChange("images", newImages);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Input
+                  value={image.url}
+                  onChange={(e) => {
+                    const newImages = [...content.images];
+                    newImages[index] = { ...image, url: e.target.value };
+                    handleContentChange("images", newImages);
+                  }}
+                  placeholder="URL hình ảnh"
+                />
+                <Input
+                  value={image.alt}
+                  onChange={(e) => {
+                    const newImages = [...content.images];
+                    newImages[index] = { ...image, alt: e.target.value };
+                    handleContentChange("images", newImages);
+                  }}
+                  placeholder="Mô tả hình ảnh"
+                />
+                <Input
+                  value={image.caption}
+                  onChange={(e) => {
+                    const newImages = [...content.images];
+                    newImages[index] = { ...image, caption: e.target.value };
+                    handleContentChange("images", newImages);
+                  }}
+                  placeholder="Chú thích"
+                />
+              </div>
+            ))}
+          </div>
+        );
+
+      case "testimonials":
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="testimonials-title">Tiêu đề</Label>
+              <Input
+                id="testimonials-title"
+                value={content.title || ""}
+                onChange={(e) => handleContentChange("title", e.target.value)}
+                placeholder="Khách hàng nói gì về chúng tôi"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label>Đánh giá</Label>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  const newTestimonials = [...(content.testimonials || []), { 
+                    name: "", 
+                    role: "", 
+                    company: "",
+                    content: "",
+                    avatar: "/placeholder.svg"
+                  }];
+                  handleContentChange("testimonials", newTestimonials);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            {(content.testimonials || []).map((testimonial: any, index: number) => (
+              <div key={index} className="border rounded-lg p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Đánh giá {index + 1}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      const newTestimonials = content.testimonials.filter((_: any, i: number) => i !== index);
+                      handleContentChange("testimonials", newTestimonials);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Input
+                  value={testimonial.name}
+                  onChange={(e) => {
+                    const newTestimonials = [...content.testimonials];
+                    newTestimonials[index] = { ...testimonial, name: e.target.value };
+                    handleContentChange("testimonials", newTestimonials);
+                  }}
+                  placeholder="Tên khách hàng"
+                />
+                <Input
+                  value={testimonial.role}
+                  onChange={(e) => {
+                    const newTestimonials = [...content.testimonials];
+                    newTestimonials[index] = { ...testimonial, role: e.target.value };
+                    handleContentChange("testimonials", newTestimonials);
+                  }}
+                  placeholder="Chức vụ"
+                />
+                <Input
+                  value={testimonial.company}
+                  onChange={(e) => {
+                    const newTestimonials = [...content.testimonials];
+                    newTestimonials[index] = { ...testimonial, company: e.target.value };
+                    handleContentChange("testimonials", newTestimonials);
+                  }}
+                  placeholder="Công ty"
+                />
+                <Textarea
+                  value={testimonial.content}
+                  onChange={(e) => {
+                    const newTestimonials = [...content.testimonials];
+                    newTestimonials[index] = { ...testimonial, content: e.target.value };
+                    handleContentChange("testimonials", newTestimonials);
+                  }}
+                  placeholder="Nội dung đánh giá"
+                  rows={3}
+                />
+              </div>
+            ))}
+          </div>
+        );
+
+      case "cta":
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="cta-title">Tiêu đề</Label>
+              <Input
+                id="cta-title"
+                value={content.title || ""}
+                onChange={(e) => handleContentChange("title", e.target.value)}
+                placeholder="Sẵn sàng bắt đầu?"
+              />
+            </div>
+            <div>
+              <Label htmlFor="cta-subtitle">Mô tả</Label>
+              <Textarea
+                id="cta-subtitle"
+                value={content.subtitle || ""}
+                onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                placeholder="Liên hệ với chúng tôi ngay hôm nay"
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label htmlFor="cta-text">Text nút</Label>
+              <Input
+                id="cta-text"
+                value={content.cta_text || ""}
+                onChange={(e) => handleContentChange("cta_text", e.target.value)}
+                placeholder="Liên hệ ngay"
+              />
+            </div>
+            <div>
+              <Label htmlFor="cta-link">Link</Label>
+              <Input
+                id="cta-link"
+                value={content.cta_link || ""}
+                onChange={(e) => handleContentChange("cta_link", e.target.value)}
+                placeholder="/contact"
+              />
+            </div>
+            <div>
+              <Label htmlFor="cta-bg">Màu nền</Label>
+              <Input
+                id="cta-bg"
+                type="color"
+                value={content.background_color || "#1e40af"}
+                onChange={(e) => handleContentChange("background_color", e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
       case "layout":
         return (
           <div className="space-y-4">
