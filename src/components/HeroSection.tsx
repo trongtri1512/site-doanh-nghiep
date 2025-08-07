@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HeroSection = () => {
   const { settings } = useSiteSettings();
+  const { t } = useLanguage();
   return (
     <section className="relative min-h-[600px] overflow-hidden">
       {/* Background Image */}
@@ -23,8 +25,8 @@ const HeroSection = () => {
             <h1 className="text-4xl lg:text-6xl font-bold text-white mb-8 leading-tight">
               <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl animate-fade-in" 
                     style={{textShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)'}}>
-                CHÀO MỪNG BẠN<br />
-                ĐẾN VỚI {settings.site_title?.toUpperCase() || "IMV VIETNAM"}
+                {t('hero.welcome', 'CHÀO MỪNG BẠN')}<br />
+                {t('hero.company', `ĐẾN VỚI ${settings.site_title?.toUpperCase() || "IMV VIETNAM"}`)}
               </span>
             </h1>
             <p className="text-xl text-white/90 mb-6 leading-relaxed">
@@ -34,7 +36,7 @@ const HeroSection = () => {
               className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
             >
-              Tìm hiểu thêm về Công ty chúng tôi
+              {t('hero.learn_more', 'Tìm hiểu thêm về Công ty chúng tôi')}
             </Button>
           </div>
         </div>
