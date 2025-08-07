@@ -125,69 +125,118 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button and Language Switcher */}
-        <div className="lg:hidden flex items-center gap-1">
+        <div className="lg:hidden flex items-center gap-2">
           <LanguageSwitcher />
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-white/20 h-8 w-8 p-0"
+            className="text-white hover:bg-white/20 gap-2 h-10 px-3"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            <Menu size={18} />
+            <span className="text-sm font-medium">Menu</span>
           </Button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-primary border-t border-white/20">
-          <div className="px-4 py-3 space-y-3">
-            {parentMenuItems.map((item) => {
-              const children = getChildItems(item.id);
-              
-              if (children.length > 0) {
-                return (
-                  <div key={item.id} className="space-y-1">
-                    <div className="font-medium text-sm">{item.title}</div>
-                    {children.map((child) => (
-                      child.url.startsWith('http') ? (
-                        <a key={child.id} href={child.url} className="block pl-3 text-xs text-white/90 hover:text-white" target={child.target}>
-                          {child.title}
-                        </a>
-                      ) : (
-                        <Link key={child.id} to={createUrl(child.url)} className="block pl-3 text-xs text-white/90 hover:text-white" onClick={() => setIsMenuOpen(false)}>
-                          {child.title}
-                        </Link>
-                      )
-                    ))}
-                  </div>
-                );
-              } else {
-                return item.url.startsWith('http') ? (
-                  <a key={item.id} href={item.url} className="block text-sm font-medium hover:text-white/80" target={item.target}>
-                    {item.title}
-                  </a>
-                ) : (
-                  <Link key={item.id} to={createUrl(item.url)} className="block text-sm font-medium hover:text-white/80" onClick={() => setIsMenuOpen(false)}>
-                    {item.title}
-                  </Link>
-                );
-              }
-            })}
-            
-            {/* Mobile Search */}
-            <div className="pt-2 border-t border-white/20">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-white hover:bg-white/20 h-8 w-full justify-start text-sm"
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden animate-fade-in"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          
+          {/* Menu Panel */}
+          <div className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-primary z-50 lg:hidden animate-slide-in-right">
+            {/* Close Button */}
+            <div className="flex justify-end p-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 gap-2 h-12 px-4"
+                onClick={() => setIsMenuOpen(false)}
               >
-                <Search size={14} className="mr-2" />
-                {translate('header.search_site', 'Search site')}
+                <X size={20} />
+                <span className="text-sm font-medium">Close menu</span>
               </Button>
             </div>
+            
+            {/* Menu Content */}
+            <div className="px-6 py-4 space-y-1">
+              {parentMenuItems.map((item) => {
+                const children = getChildItems(item.id);
+                
+                if (children.length > 0) {
+                  return (
+                    <div key={item.id} className="space-y-1">
+                      <div className="flex items-center justify-between py-3 border-b border-white/20">
+                        <span className="font-medium text-lg text-white">{item.title}</span>
+                        <ChevronDown size={16} className="text-white/70" />
+                      </div>
+                      {children.map((child) => (
+                        child.url.startsWith('http') ? (
+                          <a 
+                            key={child.id} 
+                            href={child.url} 
+                            className="block py-2 px-4 text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
+                            target={child.target}
+                          >
+                            {child.title}
+                          </a>
+                        ) : (
+                          <Link 
+                            key={child.id} 
+                            to={createUrl(child.url)} 
+                            className="block py-2 px-4 text-white/90 hover:text-white hover:bg-white/10 rounded transition-colors" 
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {child.title}
+                          </Link>
+                        )
+                      ))}
+                    </div>
+                  );
+                } else {
+                  return item.url.startsWith('http') ? (
+                    <a 
+                      key={item.id} 
+                      href={item.url} 
+                      className="flex items-center justify-between py-3 border-b border-white/20 text-lg font-medium text-white hover:text-white/80 transition-colors" 
+                      target={item.target}
+                    >
+                      <span>{item.title}</span>
+                      <ChevronDown size={16} className="text-white/70 rotate-[-90deg]" />
+                    </a>
+                  ) : (
+                    <Link 
+                      key={item.id} 
+                      to={createUrl(item.url)} 
+                      className="flex items-center justify-between py-3 border-b border-white/20 text-lg font-medium text-white hover:text-white/80 transition-colors" 
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <span>{item.title}</span>
+                      <ChevronDown size={16} className="text-white/70 rotate-[-90deg]" />
+                    </Link>
+                  );
+                }
+              })}
+              
+              {/* Mobile Search */}
+              <div className="pt-4 mt-4 border-t border-white/20">
+                <Button 
+                  variant="ghost" 
+                  size="lg" 
+                  className="text-white hover:bg-white/10 w-full justify-start gap-3 py-3 text-lg font-medium"
+                >
+                  <Search size={18} />
+                  {translate('header.search_site', 'Search site')}
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   );
