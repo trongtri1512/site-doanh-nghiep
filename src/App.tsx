@@ -11,6 +11,7 @@ import Careers from "./pages/Careers";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Pigeon from "./pages/brands/Pigeon";
 import Verites from "./pages/brands/Verites";
 import InstaxCamera from "./pages/brands/InstaxCamera";
@@ -31,6 +32,7 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import MenusManagement from "./pages/admin/MenusManagement";
+import ContactManagement from "./pages/admin/ContactManagement";
 import HeaderManagement from "./pages/admin/HeaderManagement";
 
 import HomepageBuilder from "./pages/admin/HomepageBuilder";
@@ -55,10 +57,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<IndexDynamic />} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/news/:slug" element={<NewsDetail />} />
-          <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:slug" element={<NewsDetail />} />
+            <Route path="/about" element={<About />} />
           <Route path="/brands/pigeon" element={<PigeonDynamic />} />
           <Route path="/brands/verites" element={<VeritesDynamic />} />
           <Route path="/brands/instax-camera" element={<InstaxCameraDynamic />} />
@@ -73,6 +76,7 @@ const App = () => (
             <Route path="users" element={<UserManagement />} />
             <Route path="banner" element={<BannerManagement />} />
             <Route path="menus" element={<MenusManagement />} />
+            <Route path="contact" element={<ContactManagement />} />
             <Route path="header" element={<HeaderManagement />} />
             
             <Route path="homepage-builder" element={<HomepageBuilder />} />
