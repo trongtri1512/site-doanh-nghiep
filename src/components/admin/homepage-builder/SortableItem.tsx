@@ -2,7 +2,18 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Grip, Edit2, Trash2, Image as ImageIcon, Type, BarChart3, Sparkles } from "lucide-react";
+import { 
+  Grip, 
+  Edit2, 
+  Trash2, 
+  Image as ImageIcon, 
+  Type, 
+  BarChart3, 
+  Sparkles,
+  Award,
+  Newspaper,
+  Layout
+} from "lucide-react";
 import { PageElement } from "@/pages/admin/HomepageBuilder";
 
 interface SortableItemProps {
@@ -33,6 +44,9 @@ export function SortableItem({ element, isPreview, onEdit, onDelete }: SortableI
       case "image": return <ImageIcon className="h-4 w-4" />;
       case "hero": return <Sparkles className="h-4 w-4" />;
       case "stats": return <BarChart3 className="h-4 w-4" />;
+      case "brands": return <Award className="h-4 w-4" />;
+      case "news": return <Newspaper className="h-4 w-4" />;
+      case "layout": return <Layout className="h-4 w-4" />;
       default: return <Type className="h-4 w-4" />;
     }
   };
@@ -59,9 +73,9 @@ export function SortableItem({ element, isPreview, onEdit, onDelete }: SortableI
       case "hero":
         return (
           <div className="relative p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg">
-            <h2 className="text-xl font-bold mb-2">{element.content.title}</h2>
-            <p className="text-muted-foreground mb-4">{element.content.subtitle}</p>
-            <Button variant="outline" size="sm">{element.content.cta}</Button>
+            <h2 className="text-xl font-bold mb-2">{element.content.title || "Hero Title"}</h2>
+            <p className="text-muted-foreground mb-4">{element.content.subtitle || "Hero Subtitle"}</p>
+            <Button variant="outline" size="sm">{element.content.cta_text || element.content.cta || "CTA"}</Button>
           </div>
         );
       
@@ -69,10 +83,52 @@ export function SortableItem({ element, isPreview, onEdit, onDelete }: SortableI
         return (
           <div className="p-4">
             <div className="grid grid-cols-2 gap-4">
-              {element.content.items?.map((item: any, index: number) => (
+              {element.content.stats?.slice(0, 4).map((stat: any, index: number) => (
+                <div key={index} className="text-center p-3 bg-primary text-primary-foreground rounded-lg">
+                  <div className="text-lg font-bold">{stat.number}</div>
+                  {stat.unit && <div className="text-sm">{stat.unit}</div>}
+                  <div className="text-xs opacity-90">{stat.description}</div>
+                </div>
+              )) || element.content.items?.map((item: any, index: number) => (
                 <div key={index} className="text-center">
                   <div className="text-lg font-bold text-primary">{item.value}</div>
                   <div className="text-xs text-muted-foreground">{item.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case "brands":
+        return (
+          <div className="p-4 bg-muted/30 rounded-lg">
+            <h3 className="font-semibold mb-2">{element.content.title || "Brands Section"}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{element.content.subtitle || "Brand showcase"}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="aspect-square bg-white rounded border flex items-center justify-center">
+                  <Award className="h-6 w-6 text-muted-foreground" />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case "news":
+        return (
+          <div className="p-4">
+            <h3 className="font-semibold mb-2">{element.content.title || "News Section"}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{element.content.subtitle || "Latest news"}</p>
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-3 p-2 bg-muted/50 rounded">
+                  <div className="w-16 h-12 bg-muted rounded flex items-center justify-center">
+                    <Newspaper className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">Sample News {i}</div>
+                    <div className="text-xs text-muted-foreground">News excerpt...</div>
+                  </div>
                 </div>
               ))}
             </div>

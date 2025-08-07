@@ -104,20 +104,29 @@ export function ElementEditor({ element, onUpdate, onClose }: ElementEditorProps
               />
             </div>
             <div>
-              <Label htmlFor="hero-cta">Call to Action</Label>
+              <Label htmlFor="hero-cta">Text nút CTA</Label>
               <Input
                 id="hero-cta"
-                value={content.cta || ""}
-                onChange={(e) => handleContentChange("cta", e.target.value)}
+                value={content.cta_text || content.cta || ""}
+                onChange={(e) => handleContentChange("cta_text", e.target.value)}
                 placeholder="Văn bản nút"
+              />
+            </div>
+            <div>
+              <Label htmlFor="hero-link">Link CTA</Label>
+              <Input
+                id="hero-link"
+                value={content.cta_link || ""}
+                onChange={(e) => handleContentChange("cta_link", e.target.value)}
+                placeholder="/about"
               />
             </div>
             <div>
               <Label htmlFor="hero-bg">Hình nền</Label>
               <Input
                 id="hero-bg"
-                value={content.backgroundImage || ""}
-                onChange={(e) => handleContentChange("backgroundImage", e.target.value)}
+                value={content.background_image || content.backgroundImage || ""}
+                onChange={(e) => handleContentChange("background_image", e.target.value)}
                 placeholder="URL hình nền"
               />
             </div>
@@ -133,14 +142,19 @@ export function ElementEditor({ element, onUpdate, onClose }: ElementEditorProps
                 size="sm" 
                 variant="outline"
                 onClick={() => {
-                  const newItems = [...(content.items || []), { label: "", value: "" }];
-                  handleContentChange("items", newItems);
+                  const newStats = [...(content.stats || content.items || []), { 
+                    number: "", 
+                    description: "", 
+                    unit: "",
+                    note: ""
+                  }];
+                  handleContentChange("stats", newStats);
                 }}
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
-            {content.items?.map((item: any, index: number) => (
+            {(content.stats || content.items || []).map((stat: any, index: number) => (
               <div key={index} className="border rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Thống kê {index + 1}</span>
@@ -148,33 +162,131 @@ export function ElementEditor({ element, onUpdate, onClose }: ElementEditorProps
                     size="sm"
                     variant="ghost"
                     onClick={() => {
-                      const newItems = content.items.filter((_: any, i: number) => i !== index);
-                      handleContentChange("items", newItems);
+                      const newStats = (content.stats || content.items).filter((_: any, i: number) => i !== index);
+                      handleContentChange("stats", newStats);
                     }}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
                 <Input
-                  value={item.label || ""}
+                  value={stat.number || stat.value || ""}
                   onChange={(e) => {
-                    const newItems = [...content.items];
-                    newItems[index] = { ...item, label: e.target.value };
-                    handleContentChange("items", newItems);
+                    const newStats = [...(content.stats || content.items)];
+                    newStats[index] = { ...stat, number: e.target.value };
+                    handleContentChange("stats", newStats);
                   }}
-                  placeholder="Nhãn (vd: Khách hàng)"
+                  placeholder="Số liệu (vd: 29, 100%)"
                 />
                 <Input
-                  value={item.value || ""}
+                  value={stat.unit || ""}
                   onChange={(e) => {
-                    const newItems = [...content.items];
-                    newItems[index] = { ...item, value: e.target.value };
-                    handleContentChange("items", newItems);
+                    const newStats = [...(content.stats || content.items)];
+                    newStats[index] = { ...stat, unit: e.target.value };
+                    handleContentChange("stats", newStats);
                   }}
-                  placeholder="Giá trị (vd: 1000+)"
+                  placeholder="Đơn vị (vd: năm)"
+                />
+                <Input
+                  value={stat.description || stat.label || ""}
+                  onChange={(e) => {
+                    const newStats = [...(content.stats || content.items)];
+                    newStats[index] = { ...stat, description: e.target.value };
+                    handleContentChange("stats", newStats);
+                  }}
+                  placeholder="Mô tả (vd: nâng tầm cuộc sống)"
+                />
+                <Textarea
+                  value={stat.note || ""}
+                  onChange={(e) => {
+                    const newStats = [...(content.stats || content.items)];
+                    newStats[index] = { ...stat, note: e.target.value };
+                    handleContentChange("stats", newStats);
+                  }}
+                  placeholder="Ghi chú (tùy chọn)"
+                  rows={2}
                 />
               </div>
             ))}
+          </div>
+        );
+
+      case "brands":
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="brands-title">Tiêu đề</Label>
+              <Input
+                id="brands-title"
+                value={content.title || ""}
+                onChange={(e) => handleContentChange("title", e.target.value)}
+                placeholder="Các nhãn hàng đồng hành"
+              />
+            </div>
+            <div>
+              <Label htmlFor="brands-subtitle">Mô tả</Label>
+              <Textarea
+                id="brands-subtitle"
+                value={content.subtitle || ""}
+                onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                placeholder="Mô tả về các nhãn hàng"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="brands-cta">Text nút CTA</Label>
+              <Input
+                id="brands-cta"
+                value={content.cta_text || ""}
+                onChange={(e) => handleContentChange("cta_text", e.target.value)}
+                placeholder="Tìm hiểu thêm về IMV"
+              />
+            </div>
+            <div>
+              <Label htmlFor="brands-link">Link CTA</Label>
+              <Input
+                id="brands-link"
+                value={content.cta_link || ""}
+                onChange={(e) => handleContentChange("cta_link", e.target.value)}
+                placeholder="/about"
+              />
+            </div>
+          </div>
+        );
+
+      case "news":
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="news-title">Tiêu đề</Label>
+              <Input
+                id="news-title"
+                value={content.title || ""}
+                onChange={(e) => handleContentChange("title", e.target.value)}
+                placeholder="Tin tức & Sự kiện"
+              />
+            </div>
+            <div>
+              <Label htmlFor="news-subtitle">Mô tả</Label>
+              <Textarea
+                id="news-subtitle"
+                value={content.subtitle || ""}
+                onChange={(e) => handleContentChange("subtitle", e.target.value)}
+                placeholder="Cập nhật những tin tức mới nhất từ IMV"
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label htmlFor="news-limit">Số bài hiển thị</Label>
+              <Input
+                id="news-limit"
+                type="number"
+                min="1"
+                max="10"
+                value={content.limit || 3}
+                onChange={(e) => handleContentChange("limit", parseInt(e.target.value))}
+              />
+            </div>
           </div>
         );
 

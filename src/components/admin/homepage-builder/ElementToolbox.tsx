@@ -8,7 +8,9 @@ import {
   BarChart3,
   Grid2X2,
   Grid3X3,
-  Plus 
+  Plus,
+  Award,
+  Newspaper
 } from "lucide-react";
 import { PageElement } from "@/pages/admin/HomepageBuilder";
 
@@ -17,13 +19,34 @@ interface ElementToolboxProps {
 }
 
 export function ElementToolbox({ onAddElement }: ElementToolboxProps) {
-  const elements = [
+  const homepageSections = [
     {
       type: "hero" as const,
       label: "Hero Section",
       icon: <Sparkles className="h-5 w-5" />,
       description: "Banner chính với tiêu đề và CTA"
     },
+    {
+      type: "stats" as const,
+      label: "Statistics",
+      icon: <BarChart3 className="h-5 w-5" />,
+      description: "Thống kê số liệu công ty"
+    },
+    {
+      type: "brands" as const,
+      label: "Brands Section",
+      icon: <Award className="h-5 w-5" />,
+      description: "Hiển thị các nhãn hàng"
+    },
+    {
+      type: "news" as const,
+      label: "News Section",
+      icon: <Newspaper className="h-5 w-5" />,
+      description: "Tin tức và sự kiện"
+    }
+  ];
+
+  const basicElements = [
     {
       type: "text" as const,
       label: "Text Block",
@@ -35,12 +58,6 @@ export function ElementToolbox({ onAddElement }: ElementToolboxProps) {
       label: "Image",
       icon: <Image className="h-5 w-5" />,
       description: "Hình ảnh đơn"
-    },
-    {
-      type: "stats" as const,
-      label: "Statistics",
-      icon: <BarChart3 className="h-5 w-5" />,
-      description: "Thống kê số liệu"
     },
     {
       type: "layout" as const,
@@ -67,13 +84,38 @@ export function ElementToolbox({ onAddElement }: ElementToolboxProps) {
 
   return (
     <div className="space-y-4">
+      {/* Homepage Sections */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Sections Trang chủ</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {homepageSections.map((section) => (
+            <Button
+              key={section.type}
+              variant="ghost"
+              className="w-full justify-start h-auto p-3"
+              onClick={() => onAddElement(section.type)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-primary">{section.icon}</div>
+                <div className="text-left">
+                  <div className="text-sm font-medium">{section.label}</div>
+                  <div className="text-xs text-muted-foreground">{section.description}</div>
+                </div>
+              </div>
+            </Button>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* Basic Elements */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm">Thành phần cơ bản</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {elements.map((element) => (
+          {basicElements.map((element) => (
             <Button
               key={element.type}
               variant="ghost"
@@ -103,14 +145,7 @@ export function ElementToolbox({ onAddElement }: ElementToolboxProps) {
               key={index}
               variant="ghost"
               className="w-full justify-start h-auto p-3"
-              onClick={() => {
-                const newElement = {
-                  id: `layout-${Date.now()}`,
-                  type: "layout" as const,
-                  content: { columns: layout.columns, items: [] }
-                };
-                onAddElement(newElement.type);
-              }}
+              onClick={() => onAddElement("layout")}
             >
               <div className="flex items-center gap-3">
                 <div className="text-primary">{layout.icon}</div>

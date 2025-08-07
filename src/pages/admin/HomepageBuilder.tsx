@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -15,52 +15,92 @@ import {
 } from "@dnd-kit/sortable";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Grip, Edit2, Trash2, Image, Type, LayoutGrid } from "lucide-react";
+import { Plus, Grip, Edit2, Trash2, Image, Type, LayoutGrid, Save, Eye, EyeOff } from "lucide-react";
 import { SortableItem } from "@/components/admin/homepage-builder/SortableItem";
 import { ElementToolbox } from "@/components/admin/homepage-builder/ElementToolbox";
 import { ElementEditor } from "@/components/admin/homepage-builder/ElementEditor";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface PageElement {
   id: string;
-  type: "text" | "image" | "layout" | "hero" | "stats";
+  type: "hero" | "stats" | "brands" | "news" | "text" | "image" | "layout";
   content: any;
   styles?: any;
+  section_type?: string;
+  title?: string;
+  display_order?: number;
+  is_active?: boolean;
 }
 
-const defaultElements: PageElement[] = [
-  {
-    id: "hero-1",
-    type: "hero",
-    content: {
-      title: "Welcome to Our Company",
-      subtitle: "We provide innovative solutions for your business",
-      cta: "Learn More",
-      backgroundImage: "/placeholder.svg"
-    }
-  },
-  {
-    id: "stats-1", 
-    type: "stats",
-    content: {
-      items: [
-        { label: "Years Experience", value: "25+" },
-        { label: "Happy Clients", value: "1000+" },
-        { label: "Projects Completed", value: "500+" },
-        { label: "Awards Won", value: "50+" }
-      ]
-    }
-  }
-];
-
 const HomepageBuilder = () => {
-  const [elements, setElements] = useState<PageElement[]>(defaultElements);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editingElement, setEditingElement] = useState<PageElement | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Fetch homepage layouts from database
+  const { data: layouts = [], isLoading } = useQuery({
+    queryKey: ['homepage-layouts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('homepage_layouts')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Convert database layouts to PageElements
+  const [elements, setElements] = useState<PageElement[]>([]);
+
+  useEffect(() => {
+    if (layouts) {
+      const convertedElements = layouts.map(layout => ({
+        id: layout.id,
+        type: layout.section_type as PageElement['type'],
+        content: layout.content,
+        styles: layout.styles,
+        section_type: layout.section_type,
+        title: layout.title,
+        display_order: layout.display_order,
+        is_active: layout.is_active
+      }));
+      setElements(convertedElements);
+    }
+  }, [layouts]);
+
+  // Save homepage layout mutation
+  const saveLayoutMutation = useMutation({
+    mutationFn: async (elements: PageElement[]) => {
+      // Update existing elements
+      for (const element of elements) {
+        const { error } = await supabase
+          .from('homepage_layouts')
+          .update({
+            content: element.content,
+            styles: element.styles,
+            display_order: element.display_order,
+            is_active: element.is_active
+          })
+          .eq('id', element.id);
+        
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Layout đã được lưu thành công!");
+      queryClient.invalidateQueries({ queryKey: ['homepage-layouts'] });
+    },
+    onError: (error) => {
+      toast.error("Lỗi khi lưu layout: " + error.message);
+    }
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -81,23 +121,83 @@ const HomepageBuilder = () => {
       setElements((items) => {
         const oldIndex = items.findIndex(item => item.id === active.id);
         const newIndex = items.findIndex(item => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        
+        // Update display order
+        return newItems.map((item, index) => ({
+          ...item,
+          display_order: index
+        }));
       });
+      toast.success("Đã thay đổi thứ tự sections");
     }
     
     setActiveId(null);
   }, []);
 
+  const getDefaultContent = (type: PageElement['type']) => {
+    switch (type) {
+      case 'hero':
+        return { 
+          title: 'CHÀO MỪNG BẠN ĐẾN VỚI IMV VIETNAM', 
+          subtitle: 'Nâng tầm cuộc sống, vững vàng tương lai',
+          cta_text: 'Tìm hiểu thêm về Công ty chúng tôi',
+          cta_link: '/about',
+          background_image: '/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png'
+        };
+      case 'stats':
+        return { 
+          stats: [
+            { number: '29', unit: 'năm', description: 'nâng tầm cuộc sống, vững vàng tương lai' },
+            { number: '100%', description: 'năng lượng tái tạo được sử dụng' },
+            { number: '7 triệu', description: 'sản phẩm bán ra mỗi ngày' },
+            { number: 'Top 1', description: 'nơi làm việc tốt nhất Việt Nam' }
+          ]
+        };
+      case 'brands':
+        return {
+          title: 'Các nhãn hàng đồng hành',
+          subtitle: 'IMV tự hào là đối tác phân phối chính thức của nhiều thương hiệu uy tín hàng đầu thế giới',
+          cta_text: 'Tìm hiểu thêm về IMV',
+          cta_link: '/about'
+        };
+      case 'news':
+        return {
+          title: 'Tin tức & Sự kiện',
+          subtitle: 'Cập nhật những tin tức mới nhất từ IMV',
+          limit: 3
+        };
+      case "text":
+        return { text: "Nhập nội dung text của bạn ở đây..." };
+      case "image":
+        return { url: "/placeholder.svg", alt: "Image description" };
+      case "layout":
+        return { columns: 2, items: [] };
+      default:
+        return {};
+    }
+  };
+
   const addElement = useCallback((type: PageElement['type']) => {
+    // For existing sections, don't allow duplicates
+    if (['hero', 'stats', 'brands', 'news'].includes(type)) {
+      const exists = elements.find(el => el.type === type);
+      if (exists) {
+        toast.error(`Section ${type} đã tồn tại!`);
+        return;
+      }
+    }
+
     const newElement: PageElement = {
-      id: `${type}-${Date.now()}`,
+      id: `element-${Date.now()}`,
       type,
-      content: getDefaultContent(type)
+      content: getDefaultContent(type),
+      styles: {},
+      display_order: elements.length
     };
-    
-    setElements(prev => [...prev, newElement]);
-    toast("Đã thêm phần tử mới");
-  }, []);
+    setElements([...elements, newElement]);
+    toast.success(`Đã thêm ${type} element`);
+  }, [elements]);
 
   const updateElement = useCallback((id: string, updates: Partial<PageElement>) => {
     setElements(prev => prev.map(el => 
@@ -107,44 +207,41 @@ const HomepageBuilder = () => {
   }, []);
 
   const deleteElement = useCallback((id: string) => {
+    const element = elements.find(el => el.id === id);
+    if (element && ['hero', 'stats', 'brands', 'news'].includes(element.type)) {
+      toast.error("Không thể xóa section mặc định!");
+      return;
+    }
+    
     setElements(prev => prev.filter(el => el.id !== id));
+    if (editingElement?.id === id) {
+      setEditingElement(null);
+    }
     toast("Đã xóa phần tử");
-  }, []);
+  }, [editingElement]);
 
   const saveLayout = useCallback(() => {
-    // TODO: Save to database
-    console.log("Saving layout:", elements);
-    toast("Đã lưu bố cục trang chủ");
-  }, [elements]);
-
-  function getDefaultContent(type: PageElement['type']) {
-    switch (type) {
-      case "text":
-        return { text: "Nhập nội dung text của bạn ở đây..." };
-      case "image":
-        return { url: "/placeholder.svg", alt: "Image description" };
-      case "layout":
-        return { columns: 2, items: [] };
-      case "hero":
-        return {
-          title: "Tiêu đề Hero",
-          subtitle: "Mô tả ngắn gọn",
-          cta: "Call to Action",
-          backgroundImage: "/placeholder.svg"
-        };
-      case "stats":
-        return {
-          items: [
-            { label: "Metric 1", value: "100+" },
-            { label: "Metric 2", value: "200+" }
-          ]
-        };
-      default:
-        return {};
-    }
-  }
+    // Update display order based on current order
+    const updatedElements = elements.map((el, index) => ({
+      ...el,
+      display_order: index
+    }));
+    setElements(updatedElements);
+    saveLayoutMutation.mutate(updatedElements);
+  }, [elements, saveLayoutMutation]);
 
   const activeElement = elements.find(el => el.id === activeId);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Đang tải layout trang chủ...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -157,14 +254,21 @@ const HomepageBuilder = () => {
               <p className="text-muted-foreground">Kéo thả để tùy chỉnh bố cục trang chủ</p>
             </div>
             <div className="flex gap-2">
+              <Button 
+                onClick={saveLayout}
+                disabled={saveLayoutMutation.isPending}
+                className="flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                {saveLayoutMutation.isPending ? "Đang lưu..." : "Lưu Layout"}
+              </Button>
               <Button
                 variant={previewMode ? "default" : "outline"}
                 onClick={() => setPreviewMode(!previewMode)}
+                className="flex items-center gap-2"
               >
+                {previewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 {previewMode ? "Chế độ chỉnh sửa" : "Xem trước"}
-              </Button>
-              <Button onClick={saveLayout}>
-                Lưu thay đổi
               </Button>
             </div>
           </div>
