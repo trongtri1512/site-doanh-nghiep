@@ -125,12 +125,7 @@ const Header = () => {
                     
                     {/* Mega Menu */}
                     {isBrandMegaMenuOpen && (
-                      <div className="absolute top-full left-0 right-0 mx-auto w-[90vw] max-w-5xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 lg:p-6 z-50 animate-fade-in"
-                        style={{ 
-                          left: '50%', 
-                          transform: 'translateX(-50%)',
-                          maxWidth: 'min(90vw, 80rem)'
-                        }}
+                      <div className="fixed top-[4rem] left-1/2 transform -translate-x-1/2 w-[90vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 lg:p-6 z-50 animate-fade-in overflow-hidden"
                       >
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                           {/* Featured Brands Column */}
