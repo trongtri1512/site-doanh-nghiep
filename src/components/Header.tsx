@@ -133,7 +133,7 @@ const Header = () => {
                               {currentLanguage === 'en' ? 'Our Brands' : 'Thương hiệu của chúng tôi'}
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
-                              {brands.slice(0, 4).map((brand) => (
+                              {brands.slice(0, 6).map((brand) => (
                                 <Link
                                   key={brand.id}
                                   to={createUrl(`/brands/${brand.slug}`)}
@@ -176,25 +176,47 @@ const Header = () => {
                             <h3 className="text-lg font-bold text-gray-900 mb-4 lg:mb-6 border-b border-gray-200 pb-2">
                               {currentLanguage === 'en' ? 'Categories' : 'Danh mục'}
                             </h3>
-                            <div className="space-y-3">
-                              {Object.keys(brandCategories).slice(0, 4).map((category) => (
+                            <div className="space-y-4">
+                              {Object.keys(brandCategories).slice(0, 3).map((category) => (
                                 <div key={category} className="group">
-                                  <h4 className="font-medium text-gray-700 mb-2 text-sm">
+                                  <h4 className="font-medium text-gray-700 mb-2 text-sm border-b border-gray-100 pb-1">
                                     {category}
                                   </h4>
                                   <div className="space-y-1">
-                                    {brandCategories[category].slice(0, 3).map((brand) => (
+                                    {brandCategories[category].slice(0, 4).map((brand) => (
                                       <Link
                                         key={brand.id}
                                         to={createUrl(`/brands/${brand.slug}`)}
-                                        className="block text-xs text-gray-600 hover:text-primary transition-colors py-1 hover:bg-gray-50 px-2 rounded"
+                                        className="flex items-center gap-2 text-xs text-gray-600 hover:text-primary transition-colors py-1 hover:bg-gray-50 px-2 rounded group"
                                       >
-                                        {brand.name}
+                                        <div className="w-4 h-4 rounded overflow-hidden bg-gray-100 flex-shrink-0">
+                                          <img 
+                                            src={brand.image_url || '/placeholder.svg'} 
+                                            alt={brand.name}
+                                            className="w-full h-full object-contain"
+                                          />
+                                        </div>
+                                        <span className="truncate">{brand.name}</span>
                                       </Link>
                                     ))}
+                                    {brandCategories[category].length > 4 && (
+                                      <p className="text-xs text-gray-400 px-2 py-1">
+                                        +{brandCategories[category].length - 4} thêm
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               ))}
+                              
+                              {/* All Categories Link */}
+                              <div className="pt-2 border-t border-gray-100">
+                                <Link 
+                                  to={createUrl('/brands')}
+                                  className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+                                >
+                                  {currentLanguage === 'en' ? 'Browse All Categories' : 'Xem tất cả danh mục'} →
+                                </Link>
+                              </div>
                             </div>
                           </div>
                         </div>
