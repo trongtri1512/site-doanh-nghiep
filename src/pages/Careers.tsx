@@ -358,10 +358,10 @@ const Careers = () => {
             </p>
             <div className="space-y-2">
               <p>
-                <strong>{content.contact_email_label?.content || "Email:"}</strong> careers@imv.com.vn
+                <strong>{content.contact_email_label?.content || "Email:"}</strong> {content.contact_email_value?.content || "careers@imv.com.vn"}
               </p>
               <p>
-                <strong>{content.contact_hotline_label?.content || "Hotline:"}</strong> 1900-xxxx
+                <strong>{content.contact_hotline_label?.content || "Hotline:"}</strong> {content.contact_hotline_value?.content || "1900-xxxx"}
               </p>
             </div>
           </section>

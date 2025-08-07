@@ -634,6 +634,22 @@ const CareersManagement = () => {
                       rows={2}
                     />
                   </div>
+                  <div>
+                    <Label>Email liên hệ</Label>
+                    <Input
+                      value={contentData.contact_email_value?.content || ''}
+                      onChange={(e) => handleContentChange('contact_email_value', 'content', e.target.value)}
+                      placeholder="careers@imv.com.vn"
+                    />
+                  </div>
+                  <div>
+                    <Label>Hotline</Label>
+                    <Input
+                      value={contentData.contact_hotline_value?.content || ''}
+                      onChange={(e) => handleContentChange('contact_hotline_value', 'content', e.target.value)}
+                      placeholder="1900-xxxx"
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>
