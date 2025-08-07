@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, Eye, Image, Home, Layout } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
 const BrandsManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -24,11 +26,12 @@ const BrandsManagement = () => {
 
   // Fetch brands from database
   const { data: brands = [], isLoading } = useQuery({
-    queryKey: ['brands'],
+    queryKey: ['brands', activeTab],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('brands')
         .select('*')
+        .eq('language_code', activeTab)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -145,6 +148,7 @@ const BrandsManagement = () => {
         category: formData.get('category') as string,
         description: formData.get('description') as string,
         image_url: imageUrl,
+        language_code: activeTab,
       };
 
       if (editingBrand) {
@@ -209,7 +213,16 @@ const BrandsManagement = () => {
           </div>
           <p className="text-muted-foreground">Quản lý thông tin các nhãn hàng và sản phẩm</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 w-fit">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => {
               setEditingBrand(null);
@@ -331,104 +344,106 @@ const BrandsManagement = () => {
               </DialogFooter>
             </form>
           </DialogContent>
-        </Dialog>
-      </div>
+          </Dialog>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Danh sách nhãn hàng</CardTitle>
-          <CardDescription>
-            Quản lý tất cả nhãn hàng đang phân phối
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Hình ảnh</TableHead>
-                <TableHead>Tên nhãn hàng</TableHead>
-                <TableHead>Danh mục</TableHead>
-                <TableHead>Mô tả</TableHead>
-                <TableHead>Nổi bật</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead className="text-right">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {brands.map((brand) => (
-                <TableRow key={brand.id}>
-                  <TableCell>
-                    <img
-                      src={brand.image_url}
-                      alt={brand.name}
-                      className="w-12 h-12 object-cover rounded"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{brand.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{brand.category}</Badge>
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate">
-                    {brand.description}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant={brand.featured ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => toggleFeatured(brand.id)}
-                    >
-                      {brand.featured ? "Nổi bật" : "Thường"}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={brand.active ? "default" : "secondary"}>
-                      {brand.active ? "Hoạt động" : "Tạm dừng"}
-                    </Badge>
-                  </TableCell>
-                   <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        title="Quản lý trang"
-                      >
-                        <Link to={`/admin/brands/${brand.slug}/builder`}>
-                          <Layout className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`/brands/${brand.slug}`, '_blank')}
-                        title="Xem trang chi tiết"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(brand)}
-                        title="Chỉnh sửa"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(brand.id)}
-                        title="Xóa"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          <Card>
+
+            <CardHeader>
+              <CardTitle>Danh sách nhãn hàng</CardTitle>
+              <CardDescription>
+                Quản lý tất cả nhãn hàng đang phân phối
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Hình ảnh</TableHead>
+                    <TableHead>Tên nhãn hàng</TableHead>
+                    <TableHead>Danh mục</TableHead>
+                    <TableHead>Mô tả</TableHead>
+                    <TableHead>Nổi bật</TableHead>
+                    <TableHead>Trạng thái</TableHead>
+                    <TableHead className="text-right">Thao tác</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {brands.map((brand) => (
+                    <TableRow key={brand.id}>
+                      <TableCell>
+                        <img
+                          src={brand.image_url}
+                          alt={brand.name}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">{brand.name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{brand.category}</Badge>
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">
+                        {brand.description}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant={brand.featured ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => toggleFeatured(brand.id)}
+                        >
+                          {brand.featured ? "Nổi bật" : "Thường"}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={brand.active ? "default" : "secondary"}>
+                          {brand.active ? "Hoạt động" : "Tạm dừng"}
+                        </Badge>
+                      </TableCell>
+                       <TableCell className="text-right">
+                          <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                            title="Quản lý trang"
+                          >
+                            <Link to={`/admin/brands/${brand.slug}/builder`}>
+                              <Layout className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(`/brands/${brand.slug}`, '_blank')}
+                            title="Xem trang chi tiết"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(brand)}
+                            title="Chỉnh sửa"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(brand.id)}
+                            title="Xóa"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

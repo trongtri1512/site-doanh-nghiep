@@ -45,6 +45,7 @@ interface ContactMessage {
 }
 
 const ContactManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [contactInfo, setContactInfo] = useState<ContactInfo[]>([]);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [editingItem, setEditingItem] = useState<ContactInfo | null>(null);
@@ -66,12 +67,13 @@ const ContactManagement = () => {
   useEffect(() => {
     fetchContactInfo();
     fetchContactMessages();
-  }, []);
+  }, [activeTab]);
 
   const fetchContactInfo = async () => {
     const { data, error } = await supabase
       .from("contact_info")
       .select("*")
+      .eq("language_code", activeTab)
       .order("display_order");
 
     if (error) {
@@ -118,6 +120,7 @@ const ContactManagement = () => {
             title: data.title,
             content: data.content,
             display_order: data.display_order,
+            language_code: activeTab,
           });
 
         if (error) throw error;
@@ -232,11 +235,18 @@ const ContactManagement = () => {
         <h1 className="text-3xl font-bold">Quản lý liên hệ</h1>
       </div>
 
-      <Tabs defaultValue="info" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="info">Thông tin liên hệ</TabsTrigger>
-          <TabsTrigger value="messages">Tin nhắn khách hàng</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 w-fit">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
+          <Tabs defaultValue="info" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="info">Thông tin liên hệ</TabsTrigger>
+              <TabsTrigger value="messages">Tin nhắn khách hàng</TabsTrigger>
+            </TabsList>
 
         <TabsContent value="info" className="space-y-4">
           <div className="flex justify-between items-center">
@@ -429,6 +439,8 @@ const ContactManagement = () => {
               </Table>
             </CardContent>
           </Card>
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
 

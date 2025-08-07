@@ -91,7 +91,7 @@ const HomepageManagement = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-2 w-fit">
           <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
           <TabsTrigger value="en">English</TabsTrigger>
         </TabsList>

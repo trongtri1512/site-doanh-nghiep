@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const CareersManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [isJobDialogOpen, setIsJobDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<any>(null);
   const [jobFormData, setJobFormData] = useState({
@@ -26,11 +27,12 @@ const CareersManagement = () => {
 
   // Fetch careers content
   const { data: careersContent, isLoading: contentLoading } = useQuery({
-    queryKey: ['careers-content'],
+    queryKey: ['careers-content', activeTab],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('careers_content')
         .select('*')
+        .eq('language_code', activeTab)
         .order('display_order');
       if (error) throw error;
       return data;
@@ -39,11 +41,12 @@ const CareersManagement = () => {
 
   // Fetch careers jobs
   const { data: careersJobs, isLoading: jobsLoading } = useQuery({
-    queryKey: ['careers-jobs'],
+    queryKey: ['careers-jobs', activeTab],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('careers_jobs')
         .select('*')
+        .eq('language_code', activeTab)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
@@ -129,10 +132,10 @@ const CareersManagement = () => {
       const promises = Object.entries(updates).map(async ([section_key, data]: [string, any]) => {
         const { error } = await supabase
           .from('careers_content')
-          .update({
-            title: data.title,
-            content: data.content
-          })
+        .update({
+          title: data.title,
+          content: data.content
+        })
           .eq('section_key', section_key);
         if (error) throw error;
       });
@@ -244,7 +247,8 @@ const CareersManagement = () => {
 
     const submitData = {
       ...jobFormData,
-      deadline: jobFormData.deadline ? new Date(jobFormData.deadline).toISOString() : null
+      deadline: jobFormData.deadline ? new Date(jobFormData.deadline).toISOString() : null,
+      language_code: activeTab
     };
 
     if (editingJob) {
@@ -325,12 +329,19 @@ const CareersManagement = () => {
         <p className="text-muted-foreground">Quản lý nội dung trang và thông tin tuyển dụng</p>
       </div>
 
-      <Tabs defaultValue="content" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="content">Quản lý trang</TabsTrigger>
-          <TabsTrigger value="jobs">Quản lý tuyển dụng</TabsTrigger>
-          <TabsTrigger value="applications">Danh sách ứng tuyển</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 w-fit">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
+          <Tabs defaultValue="content" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="content">Quản lý trang</TabsTrigger>
+              <TabsTrigger value="jobs">Quản lý tuyển dụng</TabsTrigger>
+              <TabsTrigger value="applications">Danh sách ứng tuyển</TabsTrigger>
+            </TabsList>
 
         <TabsContent value="content" className="space-y-6">
           <Card>
@@ -868,6 +879,8 @@ const CareersManagement = () => {
               )}
             </CardContent>
           </Card>
+          </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>
