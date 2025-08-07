@@ -251,6 +251,52 @@ export function ElementEditor({ element, onUpdate, onClose }: ElementEditorProps
                 placeholder="/about"
               />
             </div>
+            
+            <Separator />
+            
+            {/* Brand settings */}
+            <div>
+              <Label>Cài đặt hiển thị</Label>
+              <div className="text-sm text-muted-foreground mb-3">
+                Dữ liệu brands được lấy từ database. Để chỉnh sửa chi tiết từng brand, vào <strong>Quản lý Thương hiệu</strong>.
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="show-featured"
+                    checked={content.show_featured_only !== false}
+                    onChange={(e) => handleContentChange("show_featured_only", e.target.checked)}
+                  />
+                  <Label htmlFor="show-featured" className="text-sm">Chỉ hiển thị brands nổi bật</Label>
+                </div>
+                <div>
+                  <Label htmlFor="max-items" className="text-sm">Số lượng tối đa hiển thị</Label>
+                  <Input
+                    id="max-items"
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={content.max_items || 6}
+                    onChange={(e) => handleContentChange("max_items", parseInt(e.target.value))}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="columns" className="text-sm">Số cột hiển thị</Label>
+                  <select
+                    id="columns"
+                    value={content.columns || 3}
+                    onChange={(e) => handleContentChange("columns", parseInt(e.target.value))}
+                    className="w-full p-2 border rounded mt-1"
+                  >
+                    <option value={2}>2 cột</option>
+                    <option value={3}>3 cột</option>
+                    <option value={4}>4 cột</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         );
 
