@@ -74,6 +74,8 @@ const ContactManagement = () => {
       .from("contact_info")
       .select("*")
       .eq("language_code", activeTab)
+      .not("section_key", "like", "%_vi")
+      .not("section_key", "like", "%_en")
       .order("display_order");
 
     if (error) {
@@ -103,7 +105,11 @@ const ContactManagement = () => {
       if (editingItem) {
         const { error } = await supabase
           .from("contact_info")
-          .update(data)
+          .update({
+            title: data.title,
+            content: data.content,
+            display_order: data.display_order,
+          })
           .eq("id", editingItem.id);
 
         if (error) throw error;
@@ -113,6 +119,23 @@ const ContactManagement = () => {
           description: "Thông tin liên hệ đã được cập nhật.",
         });
       } else {
+        // Check if section_key already exists for this language
+        const { data: existing } = await supabase
+          .from("contact_info")
+          .select("id")
+          .eq("section_key", data.section_key)
+          .eq("language_code", activeTab)
+          .single();
+
+        if (existing) {
+          toast({
+            title: "Lỗi",
+            description: `Key "${data.section_key}" đã tồn tại cho ngôn ngữ này. Vui lòng sử dụng key khác.`,
+            variant: "destructive",
+          });
+          return;
+        }
+
         const { error } = await supabase
           .from("contact_info")
           .insert({
@@ -123,7 +146,17 @@ const ContactManagement = () => {
             language_code: activeTab,
           });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Insert error:", error);
+          toast({
+            title: "Lỗi",
+            description: error.message.includes("duplicate key") 
+              ? `Key "${data.section_key}" đã tồn tại. Vui lòng sử dụng key khác.`
+              : "Có lỗi xảy ra khi lưu thông tin.",
+            variant: "destructive",
+          });
+          return;
+        }
 
         toast({
           title: "Thêm thành công",
