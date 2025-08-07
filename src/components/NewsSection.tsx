@@ -3,14 +3,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsSection = () => {
   const [newsItems, setNewsItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { currentLanguage, t } = useLanguage();
 
   useEffect(() => {
     loadFeaturedNews();
-  }, []);
+  }, [currentLanguage]);
 
   const loadFeaturedNews = async () => {
     try {
@@ -18,6 +20,7 @@ const NewsSection = () => {
         .from('news')
         .select('*')
         .eq('status', 'published')
+        .eq('language_code', currentLanguage)
         .order('created_at', { ascending: false })
         .limit(3);
 
@@ -34,8 +37,8 @@ const NewsSection = () => {
     return (
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">Tin tức mới nhất</h2>
-          <div className="text-center py-8">Đang tải...</div>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
+          <div className="text-center py-8">{t('common.loading', 'Đang tải...')}</div>
         </div>
       </section>
     );
@@ -44,7 +47,7 @@ const NewsSection = () => {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-6">
-        <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">Tin tức mới nhất</h2>
+        <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {newsItems.map((item, index) => (
@@ -62,7 +65,7 @@ const NewsSection = () => {
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4">{item.excerpt}</p>
                 <Link to={`/news/${item.slug}`}>
                   <Button variant="outline" size="sm" className="w-full">
-                    Đọc thêm
+                    {t('common.read_more', 'Đọc thêm')}
                   </Button>
                 </Link>
               </CardContent>
@@ -73,7 +76,7 @@ const NewsSection = () => {
         <div className="text-center mt-12">
           <Link to="/news">
             <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
-              Xem tất cả tin tức
+              {t('news.view_all', 'Xem tất cả tin tức')}
             </Button>
           </Link>
         </div>
