@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Image, Home } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Image, Home, Layout } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -385,8 +385,18 @@ const BrandsManagement = () => {
                       {brand.active ? "Hoạt động" : "Tạm dừng"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                     <div className="flex justify-end space-x-2">
+                   <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        title="Quản lý trang"
+                      >
+                        <Link to={`/admin/brands/${brand.slug}/builder`}>
+                          <Layout className="h-4 w-4" />
+                        </Link>
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"

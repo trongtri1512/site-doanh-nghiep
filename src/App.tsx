@@ -17,6 +17,7 @@ import InstaxCamera from "./pages/brands/InstaxCamera";
 import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
+import PigeonDynamic from "./pages/brands/PigeonDynamic";
 import AdminAuth from "./pages/AdminAuth";
 import BannerManagement from "./pages/admin/BannerManagement";
 
@@ -29,6 +30,7 @@ import HeaderManagement from "./pages/admin/HeaderManagement";
 
 import HomepageBuilder from "./pages/admin/HomepageBuilder";
 import BrandsManagement from "./pages/admin/BrandsManagement";
+import BrandPageBuilder from "./pages/admin/BrandPageBuilder";
 import NewsManagement from "./pages/admin/NewsManagement";
 import CareersManagement from "./pages/admin/CareersManagement";
 import AboutManagement from "./pages/admin/AboutManagement";
@@ -52,7 +54,7 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
-          <Route path="/brands/pigeon" element={<Pigeon />} />
+          <Route path="/brands/pigeon" element={<PigeonDynamic />} />
           <Route path="/brands/verites" element={<Verites />} />
           <Route path="/brands/instax-camera" element={<InstaxCamera />} />
           <Route path="/brands/fujifilm-image" element={<FujifilmImage />} />
@@ -70,6 +72,7 @@ const App = () => (
             
             <Route path="homepage-builder" element={<HomepageBuilder />} />
             <Route path="brands" element={<BrandsManagement />} />
+            <Route path="brands/:brandSlug/builder" element={<BrandPageBuilder />} />
             <Route path="news" element={<NewsManagement />} />
             <Route path="careers" element={<CareersManagement />} />
             <Route path="about" element={<AboutManagement />} />

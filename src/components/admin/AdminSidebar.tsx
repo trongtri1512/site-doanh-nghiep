@@ -35,7 +35,7 @@ const adminMenuItems = [
   // Nhóm Quản lý trang chủ
   { title: "Giao diện trang chủ", url: "/admin/homepage-builder", icon: Layout },
   { title: "Quản lý Banner", url: "/admin/banner", icon: Image },
-  { title: "Nhãn hàng", url: "/admin/brands", icon: Package },
+  { title: "Quản lý Nhãn hàng", url: "/admin/brands", icon: Package },
   
   // Nhóm Nội dung
   { title: "Tin tức", url: "/admin/news", icon: Newspaper },

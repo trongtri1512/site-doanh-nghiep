@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      brand_pages: {
+        Row: {
+          brand_id: string
+          content: Json
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          section_type: string
+          styles: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          brand_id: string
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          section_type: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          brand_id?: string
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          section_type?: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_pages_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brands: {
         Row: {
           active: boolean
