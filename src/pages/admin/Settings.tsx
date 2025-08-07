@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Save, Upload, SettingsIcon, Palette, Wrench, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,10 @@ const Settings = () => {
       data?.forEach(setting => {
         if (setting.setting_type === 'boolean') {
           initialData[setting.setting_key] = setting.setting_value === true;
+        } else if (setting.setting_type === 'select') {
+          // For select type, extract the value from the JSON structure
+          const selectValue = setting.setting_value as any;
+          initialData[setting.setting_key] = selectValue?.value || '';
         } else {
           initialData[setting.setting_key] = typeof setting.setting_value === 'string' 
             ? setting.setting_value.replace(/^"|"$/g, '') 
@@ -82,6 +87,9 @@ const Settings = () => {
           processedValue = value;
         } else if (setting.setting_type === 'number') {
           processedValue = Number(value);
+        } else if (setting.setting_type === 'select') {
+          // For select type, preserve the original structure with updated value
+          processedValue = { ...setting.setting_value, value };
         } else {
           processedValue = `"${value}"`;
         }
@@ -161,6 +169,30 @@ const Settings = () => {
     const value = formData[setting.setting_key] || '';
 
     switch (setting.setting_type) {
+      case 'select':
+        const selectValue = setting.setting_value as any;
+        const options = selectValue?.options || [];
+        return (
+          <div className="space-y-2">
+            <Label htmlFor={setting.setting_key}>{setting.display_name}</Label>
+            <Select value={value} onValueChange={(newValue) => handleInputChange(setting.setting_key, newValue)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn một tùy chọn" />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option: any) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {setting.description && (
+              <p className="text-sm text-muted-foreground">{setting.description}</p>
+            )}
+          </div>
+        );
+
       case 'boolean':
         return (
           <div className="flex items-center space-x-2">
@@ -272,6 +304,7 @@ const Settings = () => {
       case 'appearance': return 'Giao diện';
       case 'maintenance': return 'Bảo trì';
       case 'seo': return 'SEO & Analytics';
+      case 'menu': return 'Menu';
       default: return category;
     }
   };
@@ -295,7 +328,7 @@ const Settings = () => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className={`grid w-full grid-cols-${Object.keys(groupedSettings).length}`}>
           {Object.keys(groupedSettings).map((category) => (
             <TabsTrigger 
               key={category} 
