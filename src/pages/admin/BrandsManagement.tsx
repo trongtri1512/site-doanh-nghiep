@@ -102,13 +102,20 @@ const BrandsManagement = () => {
     }
   });
 
-  const categories = [
+  const categories = activeTab === 'vi' ? [
     "Chăm sóc trẻ em",
-    "Làm đẹp",
+    "Làm đẹp", 
     "Máy ảnh",
     "Ảnh & In ấn",
     "Thời trang",
     "Khác"
+  ] : [
+    "Baby Care",
+    "Beauty",
+    "Camera",
+    "Photo & Printing",
+    "Fashion",
+    "Others"
   ];
 
   // Upload image to storage
