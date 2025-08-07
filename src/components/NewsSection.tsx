@@ -51,20 +51,22 @@ const NewsSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {newsItems.map((item, index) => (
-            <Card key={item.id || index} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video overflow-hidden">
+            <Card key={item.id || index} className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+              <div className="aspect-[4/3] overflow-hidden">
                 <img 
                   src={item.image_url || "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400&h=250&fit=crop"} 
                   alt={item.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <CardContent className="p-6">
-                <div className="text-sm text-muted-foreground mb-2">{item.category}</div>
-                <h3 className="text-lg font-semibold mb-3 line-clamp-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm line-clamp-3 mb-4">{item.excerpt}</p>
-                <Link to={`/news/${item.slug}`}>
-                  <Button variant="outline" size="sm" className="w-full">
+              <CardContent className="p-4 flex-1 flex flex-col">
+                <div className="text-xs text-muted-foreground mb-2">
+                  {new Date(item.created_at).toLocaleDateString('vi-VN')} • {item.category}
+                </div>
+                <h3 className="text-base font-semibold mb-2 line-clamp-2 flex-1">{item.title}</h3>
+                <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{item.excerpt}</p>
+                <Link to={`/news/${item.slug}`} className="mt-auto">
+                  <Button variant="outline" size="sm" className="w-full text-xs">
                     {t('common.read_more', 'Đọc thêm')}
                   </Button>
                 </Link>
