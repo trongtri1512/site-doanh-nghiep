@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
@@ -35,6 +36,7 @@ const Contact = () => {
   const [contactInfo, setContactInfo] = useState<ContactInfo[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { currentLanguage, t } = useLanguage();
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -53,6 +55,7 @@ const Contact = () => {
         .from("contact_info")
         .select("*")
         .eq("is_active", true)
+        .eq("language_code", currentLanguage)
         .order("display_order");
 
       if (error) {
@@ -64,7 +67,7 @@ const Contact = () => {
     };
 
     fetchContactInfo();
-  }, []);
+  }, [currentLanguage]);
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);

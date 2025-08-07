@@ -10,19 +10,22 @@ import { JobApplicationForm } from "@/components/JobApplicationForm";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isApplicationFormOpen, setIsApplicationFormOpen] = useState(false);
+  const { currentLanguage, t } = useLanguage();
 
   // Fetch careers content
   const { data: careersContent } = useQuery({
-    queryKey: ['careers-content'],
+    queryKey: ['careers-content', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('careers_content')
         .select('*')
         .eq('is_active', true)
+        .eq('language_code', currentLanguage)
         .order('display_order');
       if (error) throw error;
       return data;
@@ -31,12 +34,13 @@ const Careers = () => {
 
   // Fetch active jobs
   const { data: activeJobs } = useQuery({
-    queryKey: ['active-jobs'],
+    queryKey: ['active-jobs', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('careers_jobs')
         .select('*')
         .eq('status', 'active')
+        .eq('language_code', currentLanguage)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data;

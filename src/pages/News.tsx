@@ -4,17 +4,19 @@ import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const News = () => {
   const [newsArticles, setNewsArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const { currentLanguage, t } = useLanguage();
 
   const categories = ["Tất cả", "Thương hiệu", "Sản phẩm", "Thành tích", "Sự kiện", "Xu hướng"];
 
   useEffect(() => {
     loadNews();
-  }, []);
+  }, [currentLanguage]);
 
   const loadNews = async () => {
     try {
@@ -22,6 +24,7 @@ const News = () => {
         .from('news')
         .select('*')
         .eq('status', 'published')
+        .eq('language_code', currentLanguage)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
