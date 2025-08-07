@@ -60,13 +60,13 @@ const Header = () => {
     <header className="w-full bg-primary text-white sticky top-0 z-50">
 
       {/* Main navigation */}
-      <nav className="flex items-center justify-between px-6 py-4">
+      <nav className="flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
         <div className="flex items-center">
           <Link to={createUrl('/')}>
             <img 
               src={settings.site_logo || "/lovable-uploads/7b254a6b-841e-44ed-ba5d-5a43caa59b9a.png"} 
               alt={`${settings.site_title || "IMV"} Logo`} 
-              className="h-12 w-auto brightness-0 invert"
+              className="h-10 lg:h-12 w-auto brightness-0 invert"
               style={{ filter: 'brightness(0) invert(1)' }}
             />
           </Link>
@@ -125,15 +125,15 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button and Language Switcher */}
-        <div className="lg:hidden flex items-center gap-2">
+        <div className="lg:hidden flex items-center gap-1">
           <LanguageSwitcher />
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 h-8 w-8 p-0"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </Button>
         </div>
       </nav>
@@ -141,21 +141,21 @@ const Header = () => {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="lg:hidden bg-primary border-t border-white/20">
-          <div className="px-6 py-4 space-y-4">
+          <div className="px-4 py-3 space-y-3">
             {parentMenuItems.map((item) => {
               const children = getChildItems(item.id);
               
               if (children.length > 0) {
                 return (
-                  <div key={item.id} className="space-y-2">
-                    <div className="font-semibold">{item.title}</div>
+                  <div key={item.id} className="space-y-1">
+                    <div className="font-medium text-sm">{item.title}</div>
                     {children.map((child) => (
                       child.url.startsWith('http') ? (
-                        <a key={child.id} href={child.url} className="block pl-4 text-sm hover:underline" target={child.target}>
+                        <a key={child.id} href={child.url} className="block pl-3 text-xs text-white/90 hover:text-white" target={child.target}>
                           {child.title}
                         </a>
                       ) : (
-                        <Link key={child.id} to={createUrl(child.url)} className="block pl-4 text-sm hover:underline">
+                        <Link key={child.id} to={createUrl(child.url)} className="block pl-3 text-xs text-white/90 hover:text-white" onClick={() => setIsMenuOpen(false)}>
                           {child.title}
                         </Link>
                       )
@@ -164,16 +164,28 @@ const Header = () => {
                 );
               } else {
                 return item.url.startsWith('http') ? (
-                  <a key={item.id} href={item.url} className="block hover:underline" target={item.target}>
+                  <a key={item.id} href={item.url} className="block text-sm font-medium hover:text-white/80" target={item.target}>
                     {item.title}
                   </a>
                 ) : (
-                  <Link key={item.id} to={createUrl(item.url)} className="block hover:underline">
+                  <Link key={item.id} to={createUrl(item.url)} className="block text-sm font-medium hover:text-white/80" onClick={() => setIsMenuOpen(false)}>
                     {item.title}
                   </Link>
                 );
               }
             })}
+            
+            {/* Mobile Search */}
+            <div className="pt-2 border-t border-white/20">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-white/20 h-8 w-full justify-start text-sm"
+              >
+                <Search size={14} className="mr-2" />
+                {translate('header.search_site', 'Search site')}
+              </Button>
+            </div>
           </div>
         </div>
       )}
