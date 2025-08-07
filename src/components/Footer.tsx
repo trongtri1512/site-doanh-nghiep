@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FooterSection {
   id: string;
@@ -25,10 +26,11 @@ interface FooterMenuItem {
 const Footer = () => {
   const [sections, setSections] = useState<FooterSection[]>([]);
   const [menuItems, setMenuItems] = useState<FooterMenuItem[]>([]);
+  const { currentLanguage } = useLanguage();
 
   useEffect(() => {
     fetchFooterData();
-  }, []);
+  }, [currentLanguage]);
 
   const fetchFooterData = async () => {
     try {
@@ -37,6 +39,7 @@ const Footer = () => {
         .from("footer_sections")
         .select("*")
         .eq("is_active", true)
+        .eq("language_code", currentLanguage)
         .order("display_order", { ascending: true });
 
       // Fetch menu items
@@ -44,6 +47,7 @@ const Footer = () => {
         .from("footer_menu_items")
         .select("*")
         .eq("is_active", true)
+        .eq("language_code", currentLanguage)
         .order("display_order", { ascending: true });
 
       setSections(sectionsData || []);
