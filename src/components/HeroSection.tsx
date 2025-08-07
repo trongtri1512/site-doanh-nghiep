@@ -55,10 +55,30 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Decorative wave at bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg className="w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,60 C400,120 800,0 1200,60 L1200,120 L0,120 Z" fill="white"></path>
+      {/* Animated waves at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
+        {/* Wave 1 */}
+        <svg className="relative block w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,60 C400,120 800,0 1200,60 L1200,120 L0,120 Z" 
+                fill="white" 
+                className="animate-wave-1">
+          </path>
+        </svg>
+        
+        {/* Wave 2 */}
+        <svg className="absolute bottom-0 w-full h-16" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,40 C300,100 900,20 1200,80 L1200,120 L0,120 Z" 
+                fill="rgba(255,255,255,0.7)" 
+                className="animate-wave-2">
+          </path>
+        </svg>
+        
+        {/* Wave 3 */}
+        <svg className="absolute bottom-0 w-full h-12" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,80 C600,40 600,80 1200,40 L1200,120 L0,120 Z" 
+                fill="rgba(255,255,255,0.5)" 
+                className="animate-wave-3">
+          </path>
         </svg>
       </div>
     </section>
