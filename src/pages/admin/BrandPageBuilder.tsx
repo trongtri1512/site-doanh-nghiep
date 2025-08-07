@@ -22,7 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 import { SortableItem } from "@/components/admin/homepage-builder/SortableItem";
 import { ElementToolbox } from "@/components/admin/homepage-builder/ElementToolbox";
-import { ElementEditor } from "@/components/admin/homepage-builder/ElementEditor";
+import { BrandElementEditor } from "@/components/admin/homepage-builder/BrandElementEditor";
 import { ArrowLeft, Save, Eye, X } from "lucide-react";
 
 interface BrandPageElement {
@@ -335,18 +335,18 @@ const BrandPageBuilder = () => {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <ElementEditor
-                element={{...selectedElement, type: selectedElement.section_type as any}}
+              <BrandElementEditor
+                element={selectedElement}
                 onClose={() => {
                   setIsEditorOpen(false);
                   setSelectedElement(null);
                 }}
                 onUpdate={(updated) => {
                   const brandElement = {
-                    ...updated,
-                    section_type: updated.type || selectedElement.section_type
+                    ...selectedElement,
+                    ...updated
                   };
-                  updateElement(brandElement as BrandPageElement);
+                  updateElement(brandElement);
                 }}
               />
             </Card>
