@@ -136,7 +136,8 @@ const CareersManagement = () => {
           title: data.title,
           content: data.content
         })
-          .eq('section_key', section_key);
+          .eq('section_key', section_key)
+          .eq('language_code', activeTab);
         if (error) throw error;
       });
       await Promise.all(promises);
