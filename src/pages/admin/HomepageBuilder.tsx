@@ -17,6 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Grip, Edit2, Trash2, Image, Type, LayoutGrid, Save, Eye, EyeOff } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SortableItem } from "@/components/admin/homepage-builder/SortableItem";
 import { ElementToolbox } from "@/components/admin/homepage-builder/ElementToolbox";
 import { ElementEditor } from "@/components/admin/homepage-builder/ElementEditor";
@@ -39,16 +40,18 @@ const HomepageBuilder = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editingElement, setEditingElement] = useState<PageElement | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState("vi");
   const queryClient = useQueryClient();
 
   // Fetch homepage layouts from database
   const { data: layouts = [], isLoading } = useQuery({
-    queryKey: ['homepage-layouts'],
+    queryKey: ['homepage-layouts', activeLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('homepage_layouts')
         .select('*')
         .eq('is_active', true)
+        .eq('language_code', activeLanguage)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -136,12 +139,15 @@ const HomepageBuilder = () => {
   }, []);
 
   const getDefaultContent = (type: PageElement['type']) => {
+    // Get content based on active language
+    const isVietnamese = activeLanguage === 'vi';
+    
     switch (type) {
       case 'hero':
         return { 
-          title: 'CHÀO MỪNG BẠN ĐẾN VỚI IMV VIETNAM', 
-          subtitle: 'Nâng tầm cuộc sống, vững vàng tương lai',
-          cta_text: 'Tìm hiểu thêm về Công ty chúng tôi',
+          title: isVietnamese ? 'CHÀO MỪNG BẠN ĐẾN VỚI IMV VIETNAM' : 'WELCOME TO IMV VIETNAM', 
+          subtitle: isVietnamese ? 'Nâng tầm cuộc sống, vững vàng tương lai' : 'Elevating life, securing the future',
+          cta_text: isVietnamese ? 'Tìm hiểu thêm về Công ty chúng tôi' : 'Learn more about our Company',
           cta_link: '/about',
           background_image: '/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png'
         };
@@ -235,6 +241,7 @@ const HomepageBuilder = () => {
           content: newElement.content,
           styles: newElement.styles || {},
           display_order: newElement.display_order,
+          language_code: activeLanguage,
           is_active: true
         })
         .select()
@@ -361,6 +368,16 @@ const HomepageBuilder = () => {
                 {previewMode ? "Chế độ chỉnh sửa" : "Xem trước"}
               </Button>
             </div>
+          </div>
+          
+          {/* Language Tabs */}
+          <div className="mt-4">
+            <Tabs value={activeLanguage} onValueChange={setActiveLanguage} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 w-fit">
+                <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+                <TabsTrigger value="en">English</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
       </div>
