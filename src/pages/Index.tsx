@@ -7,17 +7,21 @@ import NewsSection from "@/components/NewsSection";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
-  // Fetch brands from database
+  const { currentLanguage, t } = useLanguage();
+  
+  // Fetch brands from database based on current language
   const { data: brands = [] } = useQuery({
-    queryKey: ['brands-homepage'],
+    queryKey: ['brands-homepage', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('brands')
         .select('*')
         .eq('active', true)
         .eq('featured', true)
+        .eq('language_code', currentLanguage)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -36,11 +40,10 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              Các nhãn hàng đồng hành
+              {t('homepage.brands_title', 'Các nhãn hàng đồng hành')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              IMV tự hào là đối tác phân phối chính thức của nhiều thương hiệu uy tín hàng đầu thế giới, 
-              mang đến cho người tiêu dùng Việt Nam những sản phẩm chất lượng cao và dịch vụ tận tâm.
+              {t('homepage.brands_subtitle', 'IMV tự hào là đối tác phân phối chính thức của nhiều thương hiệu uy tín hàng đầu thế giới, mang đến cho người tiêu dùng Việt Nam những sản phẩm chất lượng cao và dịch vụ tận tâm.')}
             </p>
           </div>
           
@@ -75,13 +78,13 @@ const Index = () => {
           
           <div className="text-center mt-12">
             <p className="text-muted-foreground mb-6">
-              Khám phá thêm về các thương hiệu và sản phẩm mà chúng tôi phân phối
+              {t('homepage.brands_cta_text', 'Khám phá thêm về các thương hiệu và sản phẩm mà chúng tôi phân phối')}
             </p>
             <Link 
               to="/about"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-primary/90 transition-colors"
             >
-              Tìm hiểu thêm về IMV
+              {t('homepage.learn_more_cta', 'Tìm hiểu thêm về IMV')}
             </Link>
           </div>
         </div>

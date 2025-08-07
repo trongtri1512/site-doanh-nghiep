@@ -71,6 +71,7 @@ export type Database = {
           featured: boolean
           id: string
           image_url: string | null
+          language_code: string
           name: string
           slug: string
           updated_at: string
@@ -84,6 +85,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url?: string | null
+          language_code?: string
           name: string
           slug: string
           updated_at?: string
@@ -97,6 +99,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url?: string | null
+          language_code?: string
           name?: string
           slug?: string
           updated_at?: string
@@ -110,6 +113,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean
+          language_code: string
           section_key: string
           settings: Json | null
           title: string | null
@@ -121,6 +125,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean
+          language_code?: string
           section_key: string
           settings?: Json | null
           title?: string | null
@@ -132,6 +137,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean
+          language_code?: string
           section_key?: string
           settings?: Json | null
           title?: string | null
@@ -150,6 +156,7 @@ export type Database = {
           id: string
           is_featured: boolean
           job_type: string
+          language_code: string
           location: string
           requirements: string | null
           salary: string | null
@@ -167,6 +174,7 @@ export type Database = {
           id?: string
           is_featured?: boolean
           job_type: string
+          language_code?: string
           location: string
           requirements?: string | null
           salary?: string | null
@@ -184,6 +192,7 @@ export type Database = {
           id?: string
           is_featured?: boolean
           job_type?: string
+          language_code?: string
           location?: string
           requirements?: string | null
           salary?: string | null
@@ -200,6 +209,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean
+          language_code: string
           section_key: string
           title: string | null
           updated_at: string
@@ -210,6 +220,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean
+          language_code?: string
           section_key: string
           title?: string | null
           updated_at?: string
@@ -220,6 +231,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean
+          language_code?: string
           section_key?: string
           title?: string | null
           updated_at?: string
@@ -268,6 +280,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean | null
+          language_code: string
           section_id: string | null
           target: string | null
           title: string
@@ -279,6 +292,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           section_id?: string | null
           target?: string | null
           title: string
@@ -290,6 +304,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           section_id?: string | null
           target?: string | null
           title?: string
@@ -313,6 +328,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean | null
+          language_code: string
           section_type: string
           title: string | null
           updated_at: string
@@ -323,6 +339,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           section_type: string
           title?: string | null
           updated_at?: string
@@ -333,6 +350,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           section_type?: string
           title?: string | null
           updated_at?: string
@@ -464,6 +482,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean | null
+          language_code: string
           menu_type: string
           parent_id: string | null
           target: string | null
@@ -476,6 +495,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           menu_type: string
           parent_id?: string | null
           target?: string | null
@@ -488,6 +508,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          language_code?: string
           menu_type?: string
           parent_id?: string | null
           target?: string | null
@@ -515,6 +536,7 @@ export type Database = {
           featured: boolean
           id: string
           image_url: string | null
+          language_code: string
           published_at: string | null
           scheduled_at: string | null
           slug: string
@@ -531,6 +553,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url?: string | null
+          language_code?: string
           published_at?: string | null
           scheduled_at?: string | null
           slug: string
@@ -547,6 +570,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url?: string | null
+          language_code?: string
           published_at?: string | null
           scheduled_at?: string | null
           slug?: string

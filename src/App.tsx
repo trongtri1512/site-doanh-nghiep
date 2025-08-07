@@ -32,7 +32,7 @@ import BannerManagement from "./pages/admin/BannerManagement";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import UserManagement from "./pages/admin/UserManagement";
-import MenusManagement from "./pages/admin/MenusManagement";
+import MenusManagement from "./pages/admin/MenusManagementMultiLanguage";
 import ContactManagement from "./pages/admin/ContactManagement";
 import LanguageManagement from "./pages/admin/LanguageManagement";
 import HeaderManagement from "./pages/admin/HeaderManagement";

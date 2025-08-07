@@ -16,17 +16,18 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
-  const { t } = useLanguage();
+  const { t: translate, currentLanguage } = useLanguage();
 
-  // Fetch all menu items from database
+  // Fetch all menu items from database based on current language
   const { data: allMenuItems = [] } = useQuery({
-    queryKey: ['menu-items-main'],
+    queryKey: ['menu-items-main', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
         .eq('menu_type', 'main')
         .eq('is_active', true)
+        .eq('language_code', currentLanguage)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -97,7 +98,7 @@ const Header = () => {
             className="text-white hover:bg-white/20 gap-1"
           >
             <Search size={16} />
-            <span className="hidden xl:inline">{t('header.search_site', 'Search site')}</span>
+            <span className="hidden xl:inline">{translate('header.search_site', 'Search site')}</span>
           </Button>
         </div>
 
