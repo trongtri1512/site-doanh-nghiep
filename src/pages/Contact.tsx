@@ -52,19 +52,42 @@ const Contact = () => {
 
   useEffect(() => {
     const fetchContactInfo = async () => {
-      const { data, error } = await supabase
+      // First try to get data for current language
+      const { data: currentLangData, error: currentError } = await supabase
         .from("contact_info")
         .select("*")
         .eq("is_active", true)
         .eq("language_code", currentLanguage)
         .order("display_order");
 
-      if (error) {
-        console.error("Error fetching contact info:", error);
+      if (currentError) {
+        console.error("Error fetching contact info:", currentError);
         return;
       }
 
-      const allData = data || [];
+      let allData = currentLangData || [];
+
+      // If current language is English and no contact info sections found, fallback to Vietnamese
+      if (currentLanguage === 'en') {
+        const hasContactInfo = allData.some(item => 
+          ['company_info', 'business_hours', 'support'].includes(item.section_key)
+        );
+
+        if (!hasContactInfo) {
+          const { data: viData, error: viError } = await supabase
+            .from("contact_info")
+            .select("*")
+            .eq("is_active", true)
+            .eq("language_code", 'vi')
+            .in("section_key", ['company_info', 'business_hours', 'support'])
+            .order("display_order");
+
+          if (!viError && viData) {
+            // Add Vietnamese contact info as fallback
+            allData = [...allData, ...viData];
+          }
+        }
+      }
       
       // Separate contact info and page content
       const contactInfoData = allData.filter(item => 
