@@ -108,6 +108,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else if (currentPath.startsWith('/news/')) {
       // Handle news articles
       newPath = languageCode === 'en' ? `/en/news` : '/news';
+    } else if (currentPath.startsWith('/admin')) {
+      // Admin routes don't use language prefix
+      newPath = currentPath;
     } else {
       // Handle regular pages
       if (languageCode === 'en') {
