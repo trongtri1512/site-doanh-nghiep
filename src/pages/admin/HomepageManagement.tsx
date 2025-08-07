@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,72 +10,168 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, GripVertical, Eye, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const HomepageManagement = () => {
   const [activeTab, setActiveTab] = useState("vi");
-  const [sections, setSections] = useState([
-    { id: 1, name: "Hero Section", type: "hero", active: true, order: 1 },
-    { id: 2, name: "Thống kê", type: "stats", active: true, order: 2 },
-    { id: 3, name: "Nhãn hàng đồng hành", type: "brands", active: true, order: 3 },
-    { id: 4, name: "Tin tức mới nhất", type: "news", active: true, order: 4 },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [sections, setSections] = useState<any[]>([]);
+  const [heroContent, setHeroContent] = useState<any>({});
+  const [statsData, setStatsData] = useState<any[]>([]);
 
-  // Vietnamese content
-  const [heroContentVi, setHeroContentVi] = useState({
-    title: "Đối tác tin cậy trong lĩnh vực sản phẩm tiêu dùng",
-    subtitle: "IMV mang đến những sản phẩm chất lượng cao từ các thương hiệu hàng đầu thế giới",
-    backgroundImage: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png",
-    ctaText: "Khám phá sản phẩm",
-    ctaLink: "/brands"
-  });
+  // Load data from database
+  useEffect(() => {
+    loadHomepageData();
+  }, [activeTab]);
 
-  const [statsDataVi, setStatsDataVi] = useState([
-    { label: "Năm kinh nghiệm", value: "20+", icon: "calendar" },
-    { label: "Thương hiệu đối tác", value: "50+", icon: "handshake" },
-    { label: "Sản phẩm", value: "1000+", icon: "package" },
-    { label: "Khách hàng hài lòng", value: "99%", icon: "smile" }
-  ]);
+  const loadHomepageData = async () => {
+    setLoading(true);
+    try {
+      // Load homepage layouts for current language
+      const { data: layouts, error: layoutsError } = await supabase
+        .from('homepage_layouts')
+        .select('*')
+        .eq('language_code', activeTab)
+        .order('display_order');
 
-  // English content
-  const [heroContentEn, setHeroContentEn] = useState({
-    title: "Trusted Partner in Consumer Products",
-    subtitle: "IMV brings high-quality products from world-leading brands",
-    backgroundImage: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png",
-    ctaText: "Explore Products",
-    ctaLink: "/brands"
-  });
+      if (layoutsError) throw layoutsError;
 
-  const [statsDataEn, setStatsDataEn] = useState([
-    { label: "Years of Experience", value: "20+", icon: "calendar" },
-    { label: "Partner Brands", value: "50+", icon: "handshake" },
-    { label: "Products", value: "1000+", icon: "package" },
-    { label: "Customer Satisfaction", value: "99%", icon: "smile" }
-  ]);
+      setSections(layouts || []);
 
-  const handleSaveHero = () => {
-    const heroContent = activeTab === "vi" ? heroContentVi : heroContentEn;
-    console.log(`Saving hero content for ${activeTab}:`, heroContent);
+      // Load specific content for hero and stats sections
+      const heroSection = layouts?.find(layout => layout.section_type === 'hero');
+      const statsSection = layouts?.find(layout => layout.section_type === 'stats');
+
+      if (heroSection) {
+        setHeroContent(heroSection.content || {});
+      } else {
+        // Set default hero content
+        setHeroContent({
+          title: activeTab === "vi" ? "Đối tác tin cậy trong lĩnh vực sản phẩm tiêu dùng" : "Trusted Partner in Consumer Products",
+          subtitle: activeTab === "vi" ? "IMV mang đến những sản phẩm chất lượng cao từ các thương hiệu hàng đầu thế giới" : "IMV brings high-quality products from world-leading brands",
+          backgroundImage: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png",
+          ctaText: activeTab === "vi" ? "Khám phá sản phẩm" : "Explore Products",
+          ctaLink: "/brands"
+        });
+      }
+
+      if (statsSection && statsSection.content && typeof statsSection.content === 'object') {
+        const content = statsSection.content as any;
+        setStatsData(content.stats || []);
+      } else {
+        // Set default stats data
+        setStatsData(activeTab === "vi" ? [
+          { label: "Năm kinh nghiệm", value: "20+", icon: "calendar" },
+          { label: "Thương hiệu đối tác", value: "50+", icon: "handshake" },
+          { label: "Sản phẩm", value: "1000+", icon: "package" },
+          { label: "Khách hàng hài lòng", value: "99%", icon: "smile" }
+        ] : [
+          { label: "Years of Experience", value: "20+", icon: "calendar" },
+          { label: "Partner Brands", value: "50+", icon: "handshake" },
+          { label: "Products", value: "1000+", icon: "package" },
+          { label: "Customer Satisfaction", value: "99%", icon: "smile" }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error loading homepage data:', error);
+      toast.error('Lỗi khi tải dữ liệu trang chủ');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveStats = () => {
-    const statsData = activeTab === "vi" ? statsDataVi : statsDataEn;
-    console.log(`Saving stats for ${activeTab}:`, statsData);
+  const handleSaveHero = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('homepage_layouts')
+        .upsert({
+          section_type: 'hero',
+          language_code: activeTab,
+          title: 'Hero Section',
+          content: heroContent,
+          is_active: true,
+          display_order: 1
+        }, {
+          onConflict: 'section_type,language_code'
+        });
+
+      if (error) throw error;
+
+      toast.success('Đã lưu Hero Section thành công');
+    } catch (error) {
+      console.error('Error saving hero content:', error);
+      toast.error('Lỗi khi lưu Hero Section');
+    }
   };
 
-  const toggleSection = (id: number) => {
-    setSections(sections.map(section => 
-      section.id === id ? { ...section, active: !section.active } : section
-    ));
+  const handleSaveStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('homepage_layouts')
+        .upsert({
+          section_type: 'stats',
+          language_code: activeTab,
+          title: 'Statistics',
+          content: { stats: statsData },
+          is_active: true,
+          display_order: 2
+        }, {
+          onConflict: 'section_type,language_code'
+        });
+
+      if (error) throw error;
+
+      toast.success('Đã lưu thống kê thành công');
+    } catch (error) {
+      console.error('Error saving stats:', error);
+      toast.error('Lỗi khi lưu thống kê');
+    }
   };
 
-  const deleteSection = (id: number) => {
-    setSections(sections.filter(section => section.id !== id));
+  const toggleSection = async (sectionId: string) => {
+    try {
+      const section = sections.find(s => s.id === sectionId);
+      if (!section) return;
+
+      const { error } = await supabase
+        .from('homepage_layouts')
+        .update({ is_active: !section.is_active })
+        .eq('id', sectionId);
+
+      if (error) throw error;
+
+      setSections(sections.map(s => 
+        s.id === sectionId ? { ...s, is_active: !s.is_active } : s
+      ));
+
+      toast.success('Đã cập nhật trạng thái section');
+    } catch (error) {
+      console.error('Error toggling section:', error);
+      toast.error('Lỗi khi cập nhật section');
+    }
   };
 
-  const currentHeroContent = activeTab === "vi" ? heroContentVi : heroContentEn;
-  const currentStatsData = activeTab === "vi" ? statsDataVi : statsDataEn;
-  const setCurrentHeroContent = activeTab === "vi" ? setHeroContentVi : setHeroContentEn;
-  const setCurrentStatsData = activeTab === "vi" ? setStatsDataVi : setStatsDataEn;
+  const deleteSection = async (sectionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('homepage_layouts')
+        .delete()
+        .eq('id', sectionId);
+
+      if (error) throw error;
+
+      setSections(sections.filter(s => s.id !== sectionId));
+      toast.success('Đã xóa section thành công');
+    } catch (error) {
+      console.error('Error deleting section:', error);
+      toast.error('Lỗi khi xóa section');
+    }
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-64">Đang tải...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -156,13 +252,13 @@ const HomepageManagement = () => {
                       <span>{section.order}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{section.name}</TableCell>
+                  <TableCell className="font-medium">{section.title}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{section.type}</Badge>
+                    <Badge variant="outline">{section.section_type}</Badge>
                   </TableCell>
                   <TableCell>
                     <Switch
-                      checked={section.active}
+                      checked={section.is_active}
                       onCheckedChange={() => toggleSection(section.id)}
                     />
                   </TableCell>
@@ -207,16 +303,16 @@ const HomepageManagement = () => {
               <Label htmlFor="hero-title">Tiêu đề chính</Label>
               <Input
                 id="hero-title"
-                value={currentHeroContent.title}
-                onChange={(e) => setCurrentHeroContent({...currentHeroContent, title: e.target.value})}
+                value={heroContent.title || ''}
+                onChange={(e) => setHeroContent({...heroContent, title: e.target.value})}
               />
             </div>
             <div>
               <Label htmlFor="hero-subtitle">Phụ đề</Label>
               <Textarea
                 id="hero-subtitle"
-                value={currentHeroContent.subtitle}
-                onChange={(e) => setCurrentHeroContent({...currentHeroContent, subtitle: e.target.value})}
+                value={heroContent.subtitle || ''}
+                onChange={(e) => setHeroContent({...heroContent, subtitle: e.target.value})}
                 rows={3}
               />
             </div>
@@ -226,16 +322,16 @@ const HomepageManagement = () => {
               <Label htmlFor="cta-text">Text nút CTA</Label>
               <Input
                 id="cta-text"
-                value={currentHeroContent.ctaText}
-                onChange={(e) => setCurrentHeroContent({...currentHeroContent, ctaText: e.target.value})}
+                value={heroContent.ctaText || ''}
+                onChange={(e) => setHeroContent({...heroContent, ctaText: e.target.value})}
               />
             </div>
             <div>
               <Label htmlFor="cta-link">Link nút CTA</Label>
               <Input
                 id="cta-link"
-                value={currentHeroContent.ctaLink}
-                onChange={(e) => setCurrentHeroContent({...currentHeroContent, ctaLink: e.target.value})}
+                value={heroContent.ctaLink || ''}
+                onChange={(e) => setHeroContent({...heroContent, ctaLink: e.target.value})}
               />
             </div>
           </div>
@@ -267,16 +363,16 @@ const HomepageManagement = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
-            {currentStatsData.map((stat, index) => (
+            {statsData.map((stat, index) => (
               <div key={index} className="space-y-2 p-4 border rounded-lg">
                 <div>
                   <Label>Nhãn</Label>
                   <Input
                     value={stat.label}
                     onChange={(e) => {
-                      const newStats = [...currentStatsData];
+                      const newStats = [...statsData];
                       newStats[index].label = e.target.value;
-                      setCurrentStatsData(newStats);
+                      setStatsData(newStats);
                     }}
                   />
                 </div>
@@ -285,9 +381,9 @@ const HomepageManagement = () => {
                   <Input
                     value={stat.value}
                     onChange={(e) => {
-                      const newStats = [...currentStatsData];
+                      const newStats = [...statsData];
                       newStats[index].value = e.target.value;
-                      setCurrentStatsData(newStats);
+                      setStatsData(newStats);
                     }}
                   />
                 </div>

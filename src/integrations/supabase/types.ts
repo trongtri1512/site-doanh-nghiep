@@ -364,6 +364,7 @@ export type Database = {
           display_order: number
           id: string
           is_active: boolean
+          language_code: string
           section_type: string
           styles: Json | null
           title: string | null
@@ -375,6 +376,7 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          language_code?: string
           section_type: string
           styles?: Json | null
           title?: string | null
@@ -386,6 +388,7 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
+          language_code?: string
           section_type?: string
           styles?: Json | null
           title?: string | null
