@@ -7,10 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, GripVertical, Eye, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const HomepageManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [sections, setSections] = useState([
     { id: 1, name: "Hero Section", type: "hero", active: true, order: 1 },
     { id: 2, name: "Thống kê", type: "stats", active: true, order: 2 },
@@ -18,7 +20,8 @@ const HomepageManagement = () => {
     { id: 4, name: "Tin tức mới nhất", type: "news", active: true, order: 4 },
   ]);
 
-  const [heroContent, setHeroContent] = useState({
+  // Vietnamese content
+  const [heroContentVi, setHeroContentVi] = useState({
     title: "Đối tác tin cậy trong lĩnh vực sản phẩm tiêu dùng",
     subtitle: "IMV mang đến những sản phẩm chất lượng cao từ các thương hiệu hàng đầu thế giới",
     backgroundImage: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png",
@@ -26,19 +29,37 @@ const HomepageManagement = () => {
     ctaLink: "/brands"
   });
 
-  const [statsData, setStatsData] = useState([
+  const [statsDataVi, setStatsDataVi] = useState([
     { label: "Năm kinh nghiệm", value: "20+", icon: "calendar" },
     { label: "Thương hiệu đối tác", value: "50+", icon: "handshake" },
     { label: "Sản phẩm", value: "1000+", icon: "package" },
     { label: "Khách hàng hài lòng", value: "99%", icon: "smile" }
   ]);
 
+  // English content
+  const [heroContentEn, setHeroContentEn] = useState({
+    title: "Trusted Partner in Consumer Products",
+    subtitle: "IMV brings high-quality products from world-leading brands",
+    backgroundImage: "/lovable-uploads/57f45edb-5893-4b5b-9ee6-f1ff029deda0.png",
+    ctaText: "Explore Products",
+    ctaLink: "/brands"
+  });
+
+  const [statsDataEn, setStatsDataEn] = useState([
+    { label: "Years of Experience", value: "20+", icon: "calendar" },
+    { label: "Partner Brands", value: "50+", icon: "handshake" },
+    { label: "Products", value: "1000+", icon: "package" },
+    { label: "Customer Satisfaction", value: "99%", icon: "smile" }
+  ]);
+
   const handleSaveHero = () => {
-    console.log("Saving hero content:", heroContent);
+    const heroContent = activeTab === "vi" ? heroContentVi : heroContentEn;
+    console.log(`Saving hero content for ${activeTab}:`, heroContent);
   };
 
   const handleSaveStats = () => {
-    console.log("Saving stats:", statsData);
+    const statsData = activeTab === "vi" ? statsDataVi : statsDataEn;
+    console.log(`Saving stats for ${activeTab}:`, statsData);
   };
 
   const toggleSection = (id: number) => {
@@ -50,6 +71,11 @@ const HomepageManagement = () => {
   const deleteSection = (id: number) => {
     setSections(sections.filter(section => section.id !== id));
   };
+
+  const currentHeroContent = activeTab === "vi" ? heroContentVi : heroContentEn;
+  const currentStatsData = activeTab === "vi" ? statsDataVi : statsDataEn;
+  const setCurrentHeroContent = activeTab === "vi" ? setHeroContentVi : setHeroContentEn;
+  const setCurrentStatsData = activeTab === "vi" ? setStatsDataVi : setStatsDataEn;
 
   return (
     <div className="space-y-6">
@@ -63,6 +89,14 @@ const HomepageManagement = () => {
           Xem trang chủ
         </Button>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
 
       {/* Quản lý sections */}
       <Card>
@@ -173,16 +207,16 @@ const HomepageManagement = () => {
               <Label htmlFor="hero-title">Tiêu đề chính</Label>
               <Input
                 id="hero-title"
-                value={heroContent.title}
-                onChange={(e) => setHeroContent({...heroContent, title: e.target.value})}
+                value={currentHeroContent.title}
+                onChange={(e) => setCurrentHeroContent({...currentHeroContent, title: e.target.value})}
               />
             </div>
             <div>
               <Label htmlFor="hero-subtitle">Phụ đề</Label>
               <Textarea
                 id="hero-subtitle"
-                value={heroContent.subtitle}
-                onChange={(e) => setHeroContent({...heroContent, subtitle: e.target.value})}
+                value={currentHeroContent.subtitle}
+                onChange={(e) => setCurrentHeroContent({...currentHeroContent, subtitle: e.target.value})}
                 rows={3}
               />
             </div>
@@ -192,16 +226,16 @@ const HomepageManagement = () => {
               <Label htmlFor="cta-text">Text nút CTA</Label>
               <Input
                 id="cta-text"
-                value={heroContent.ctaText}
-                onChange={(e) => setHeroContent({...heroContent, ctaText: e.target.value})}
+                value={currentHeroContent.ctaText}
+                onChange={(e) => setCurrentHeroContent({...currentHeroContent, ctaText: e.target.value})}
               />
             </div>
             <div>
               <Label htmlFor="cta-link">Link nút CTA</Label>
               <Input
                 id="cta-link"
-                value={heroContent.ctaLink}
-                onChange={(e) => setHeroContent({...heroContent, ctaLink: e.target.value})}
+                value={currentHeroContent.ctaLink}
+                onChange={(e) => setCurrentHeroContent({...currentHeroContent, ctaLink: e.target.value})}
               />
             </div>
           </div>
@@ -233,16 +267,16 @@ const HomepageManagement = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
-            {statsData.map((stat, index) => (
+            {currentStatsData.map((stat, index) => (
               <div key={index} className="space-y-2 p-4 border rounded-lg">
                 <div>
                   <Label>Nhãn</Label>
                   <Input
                     value={stat.label}
                     onChange={(e) => {
-                      const newStats = [...statsData];
+                      const newStats = [...currentStatsData];
                       newStats[index].label = e.target.value;
-                      setStatsData(newStats);
+                      setCurrentStatsData(newStats);
                     }}
                   />
                 </div>
@@ -251,9 +285,9 @@ const HomepageManagement = () => {
                   <Input
                     value={stat.value}
                     onChange={(e) => {
-                      const newStats = [...statsData];
+                      const newStats = [...currentStatsData];
                       newStats[index].value = e.target.value;
-                      setStatsData(newStats);
+                      setCurrentStatsData(newStats);
                     }}
                   />
                 </div>
@@ -262,6 +296,8 @@ const HomepageManagement = () => {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

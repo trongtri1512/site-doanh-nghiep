@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, Eye, Image, Calendar, Upload, Clock } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 const NewsManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,13 +55,14 @@ const NewsManagement = () => {
   // Load news from Supabase
   useEffect(() => {
     loadNews();
-  }, []);
+  }, [activeTab]);
 
   const loadNews = async () => {
     try {
       const { data, error } = await supabase
         .from('news')
         .select('*')
+        .eq('language_code', activeTab)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -296,7 +299,8 @@ const NewsManagement = () => {
         published_at: status === 'published' ? new Date().toISOString() : (formData.publishDate ? new Date(formData.publishDate).toISOString() : null),
         scheduled_at: status === 'scheduled' ? new Date(formData.scheduledDate).toISOString() : null,
         status,
-        featured: formData.featured
+        featured: formData.featured,
+        language_code: activeTab
       };
 
       let error;
@@ -524,6 +528,14 @@ const NewsManagement = () => {
         </Dialog>
       </div>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
+
       <Card>
         <CardHeader>
           <CardTitle>Danh sách tin tức</CardTitle>
@@ -643,6 +655,8 @@ const NewsManagement = () => {
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

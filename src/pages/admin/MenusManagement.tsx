@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,18 +15,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const MenusManagement = () => {
+  const [activeTab, setActiveTab] = useState("vi");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "none" });
   const queryClient = useQueryClient();
 
-  // Fetch menu items from database
+  // Fetch menu items from database for current language
   const { data: menuItems = [] } = useQuery({
-    queryKey: ['menu-items'],
+    queryKey: ['menu-items', activeTab],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
+        .eq('language_code', activeTab)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -168,7 +171,8 @@ const MenusManagement = () => {
       target: formData.target,
       menu_type: 'main',
       parent_id: formData.parentId === "none" ? null : formData.parentId,
-      display_order: mainMenuItems.length + 1
+      display_order: mainMenuItems.length + 1,
+      language_code: activeTab
     };
 
     if (editingItem) {
@@ -203,12 +207,13 @@ const MenusManagement = () => {
   const addBrandMenu = () => {
     console.log("Clicked add brand menu button");
     const data = {
-      title: "Các nhãn hàng",
+      title: activeTab === "vi" ? "Các nhãn hàng" : "Our Brands",
       url: "#",
       target: "_self",
       menu_type: 'main',
       parent_id: null,
-      display_order: mainMenuItems.length + 1
+      display_order: mainMenuItems.length + 1,
+      language_code: activeTab
     };
     createMutation.mutate(data);
   };
@@ -303,6 +308,14 @@ const MenusManagement = () => {
         <h1 className="text-3xl font-bold">Quản lý Menu</h1>
         <p className="text-muted-foreground">Chỉnh sửa menu chính. Bạn có thể tạo menu dropdown bằng cách chọn menu cha khi thêm menu mới.</p>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
 
       <Card>
         <CardHeader>
@@ -420,6 +433,8 @@ const MenusManagement = () => {
           />
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

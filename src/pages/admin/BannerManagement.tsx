@@ -4,11 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, Save, Eye, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 const BannerManagement = () => {
-  const [bannerData, setBannerData] = useState({
+  const [activeTab, setActiveTab] = useState("vi");
+  
+  // Vietnamese banner data
+  const [bannerDataVi, setBannerDataVi] = useState({
     title: "CHÀO MỪNG BẠN\nĐẾN VỚI IMV\nVIETNAM",
     buttonText: "Tìm hiểu thêm về Công ty chúng tôi",
     buttonLink: "/about",
@@ -16,10 +20,20 @@ const BannerManagement = () => {
     isActive: true
   });
 
+  // English banner data
+  const [bannerDataEn, setBannerDataEn] = useState({
+    title: "WELCOME TO\nIMV\nVIETNAM",
+    buttonText: "Learn more about our Company",
+    buttonLink: "/about",
+    backgroundImage: "/lovable-uploads/ed58ce9e-f21d-46e4-b22e-021e8a21a686.png",
+    isActive: true
+  });
+
   const handleSave = () => {
     // Placeholder for saving banner data
+    const bannerData = activeTab === "vi" ? bannerDataVi : bannerDataEn;
     toast.success("Banner đã được cập nhật thành công!");
-    console.log("Saving banner data:", bannerData);
+    console.log(`Saving banner data for ${activeTab}:`, bannerData);
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +41,7 @@ const BannerManagement = () => {
     if (file) {
       // Placeholder for image upload
       const imageUrl = URL.createObjectURL(file);
+      const setBannerData = activeTab === "vi" ? setBannerDataVi : setBannerDataEn;
       setBannerData(prev => ({ ...prev, backgroundImage: imageUrl }));
       toast.success("Hình ảnh đã được tải lên!");
     }
@@ -36,6 +51,9 @@ const BannerManagement = () => {
     // Open homepage in new tab for preview
     window.open("/", "_blank");
   };
+
+  const currentBannerData = activeTab === "vi" ? bannerDataVi : bannerDataEn;
+  const setCurrentBannerData = activeTab === "vi" ? setBannerDataVi : setBannerDataEn;
 
   return (
     <div className="space-y-6">
@@ -58,6 +76,14 @@ const BannerManagement = () => {
         </div>
       </div>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
+          <TabsTrigger value="en">English</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="space-y-6 mt-6">
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Content Settings */}
         <Card>
@@ -73,8 +99,8 @@ const BannerManagement = () => {
               <Textarea
                 id="title"
                 placeholder="Nhập tiêu đề banner..."
-                value={bannerData.title}
-                onChange={(e) => setBannerData(prev => ({ ...prev, title: e.target.value }))}
+                value={currentBannerData.title}
+                onChange={(e) => setCurrentBannerData(prev => ({ ...prev, title: e.target.value }))}
                 rows={4}
                 className="mt-1"
               />
@@ -88,8 +114,8 @@ const BannerManagement = () => {
               <Input
                 id="buttonText"
                 placeholder="Nhập text cho nút..."
-                value={bannerData.buttonText}
-                onChange={(e) => setBannerData(prev => ({ ...prev, buttonText: e.target.value }))}
+                value={currentBannerData.buttonText}
+                onChange={(e) => setCurrentBannerData(prev => ({ ...prev, buttonText: e.target.value }))}
                 className="mt-1"
               />
             </div>
@@ -99,8 +125,8 @@ const BannerManagement = () => {
               <Input
                 id="buttonLink"
                 placeholder="/about"
-                value={bannerData.buttonLink}
-                onChange={(e) => setBannerData(prev => ({ ...prev, buttonLink: e.target.value }))}
+                value={currentBannerData.buttonLink}
+                onChange={(e) => setCurrentBannerData(prev => ({ ...prev, buttonLink: e.target.value }))}
                 className="mt-1"
               />
             </div>
@@ -120,7 +146,7 @@ const BannerManagement = () => {
               <Label>Hình ảnh hiện tại</Label>
               <div className="mt-2 border rounded-lg overflow-hidden">
                 <img
-                  src={bannerData.backgroundImage}
+                  src={currentBannerData.backgroundImage}
                   alt="Banner Background"
                   className="w-full h-32 object-cover"
                 />
@@ -156,8 +182,8 @@ const BannerManagement = () => {
               <Input
                 id="imageUrl"
                 placeholder="https://example.com/image.jpg"
-                value={bannerData.backgroundImage}
-                onChange={(e) => setBannerData(prev => ({ ...prev, backgroundImage: e.target.value }))}
+                value={currentBannerData.backgroundImage}
+                onChange={(e) => setCurrentBannerData(prev => ({ ...prev, backgroundImage: e.target.value }))}
                 className="mt-1"
               />
             </div>
@@ -179,7 +205,7 @@ const BannerManagement = () => {
         <CardContent>
           <div className="relative h-64 rounded-lg overflow-hidden">
             <img
-              src={bannerData.backgroundImage}
+              src={currentBannerData.backgroundImage}
               alt="Banner Preview"
               className="w-full h-full object-cover"
             />
@@ -189,12 +215,12 @@ const BannerManagement = () => {
                 <div className="max-w-lg">
                   <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
                     <h2 className="text-2xl lg:text-3xl font-bold text-white mb-4 leading-tight">
-                      {bannerData.title.split('\n').map((line, index) => (
+                      {currentBannerData.title.split('\n').map((line, index) => (
                         <span key={index} className="block">{line}</span>
                       ))}
                     </h2>
                     <Button className="bg-primary hover:bg-primary/90 text-white">
-                      {bannerData.buttonText}
+                      {currentBannerData.buttonText}
                     </Button>
                   </div>
                 </div>
@@ -203,6 +229,8 @@ const BannerManagement = () => {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
