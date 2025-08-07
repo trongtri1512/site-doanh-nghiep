@@ -128,7 +128,7 @@ const Header = () => {
                     
                     {/* Mega Menu */}
                     {isBrandMegaMenuOpen && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[800px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 z-50 animate-fade-in">
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[900px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 z-50 animate-fade-in">
                         <div className="grid grid-cols-3 gap-8">
                           {/* Featured Brands Column */}
                           <div className="col-span-2">
@@ -143,11 +143,11 @@ const Header = () => {
                                   className="group p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
+                                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 p-2">
                                       <img 
                                         src={brand.image_url || '/placeholder.svg'} 
                                         alt={brand.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
                                       />
                                     </div>
                                     <div className="flex-1 min-w-0">
