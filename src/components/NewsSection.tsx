@@ -49,7 +49,7 @@ const NewsSection = () => {
       <div className="container mx-auto px-6">
         <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-center text-blue-900">{t('news.latest_title', 'Tin tức mới nhất')}</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {newsItems.map((item, index) => (
             <Card key={item.id || index} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video overflow-hidden">
