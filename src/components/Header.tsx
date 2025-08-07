@@ -82,9 +82,6 @@ const Header = () => {
     return acc;
   }, {} as Record<string, typeof brands>);
 
-  // Get menu display type from settings
-  const brandsMenuType = (settings as any).brands_menu_type || 'dropdown';
-
 
   return (
     <header className="w-full bg-primary text-white sticky top-0 z-50">
@@ -109,8 +106,8 @@ const Header = () => {
             
             // Special handling for Brands menu with conditional display type
             if (item.title.toLowerCase().includes('brand') || item.url.includes('/brands')) {
-              // Use Mega Menu if selected in settings
-              if (brandsMenuType === 'megamenu') {
+              // Use Mega Menu if selected in menu item display_type
+              if (item.display_type === 'megamenu') {
                 return (
                   <div 
                     key={item.id}

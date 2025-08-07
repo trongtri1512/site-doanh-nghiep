@@ -18,7 +18,7 @@ const MenusManagement = () => {
   const [activeTab, setActiveTab] = useState("vi");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "none" });
+  const [formData, setFormData] = useState({ title: "", url: "", target: "_self", parentId: "none", displayType: "dropdown" });
   const queryClient = useQueryClient();
 
   // Fetch menu items from database for current language
@@ -74,7 +74,7 @@ const MenusManagement = () => {
       queryClient.invalidateQueries({ queryKey: ['menu-items-main'] });
       toast.success("Đã thêm menu mới");
       setIsDialogOpen(false);
-      setFormData({ title: "", url: "", target: "_self", parentId: "none" });
+      setFormData({ title: "", url: "", target: "_self", parentId: "none", displayType: "dropdown" });
       setEditingItem(null);
     },
     onError: () => toast.error("Lỗi khi thêm menu")
@@ -94,7 +94,7 @@ const MenusManagement = () => {
       toast.success("Đã cập nhật menu");
       setIsDialogOpen(false);
       setEditingItem(null);
-      setFormData({ title: "", url: "", target: "_self", parentId: "none" });
+      setFormData({ title: "", url: "", target: "_self", parentId: "none", displayType: "dropdown" });
     },
     onError: () => toast.error("Lỗi khi cập nhật menu")
   });
@@ -138,7 +138,8 @@ const MenusManagement = () => {
         title: editingItem.title || "",
         url: editingItem.url || "",
         target: editingItem.target || "_self",
-        parentId: editingItem.parent_id || "none"
+        parentId: editingItem.parent_id || "none",
+        displayType: editingItem.display_type || "dropdown"
       });
     }
   }, [editingItem]);
@@ -172,7 +173,8 @@ const MenusManagement = () => {
       menu_type: 'main',
       parent_id: formData.parentId === "none" ? null : formData.parentId,
       display_order: mainMenuItems.length + 1,
-      language_code: activeTab
+      language_code: activeTab,
+      display_type: formData.displayType
     };
 
     if (editingItem) {
@@ -225,6 +227,7 @@ const MenusManagement = () => {
           <TableHead className="w-[50px]">Thứ tự</TableHead>
           <TableHead>Tiêu đề</TableHead>
           <TableHead>URL</TableHead>
+          <TableHead>Kiểu hiển thị</TableHead>
           <TableHead>Trạng thái</TableHead>
           <TableHead className="text-right">Thao tác</TableHead>
         </TableRow>
@@ -248,6 +251,17 @@ const MenusManagement = () => {
               )}
             </TableCell>
             <TableCell className="font-mono text-sm">{item.url}</TableCell>
+            <TableCell>
+              {item.display_type === 'megamenu' ? (
+                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                  Mega Menu
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                  Dropdown
+                </Badge>
+              )}
+            </TableCell>
              <TableCell>
                <Badge variant={item.is_active || item.active ? "default" : "secondary"}>
                  {item.is_active || item.active ? "Hiển thị" : "Ẩn"}
@@ -335,7 +349,7 @@ const MenusManagement = () => {
                   <Button onClick={() => {
                     console.log("Clicked add menu button");
                     setEditingItem(null);
-                    setFormData({ title: "", url: "", target: "_self", parentId: "none" });
+                    setFormData({ title: "", url: "", target: "_self", parentId: "none", displayType: "dropdown" });
                     setIsDialogOpen(true);
                   }}>
                     <Plus className="h-4 w-4 mr-2" />
@@ -385,6 +399,21 @@ const MenusManagement = () => {
                       </Select>
                     </div>
                     <div>
+                      <Label htmlFor="displayType">Kiểu hiển thị</Label>
+                      <Select value={formData.displayType} onValueChange={(value) => setFormData(prev => ({ ...prev, displayType: value }))}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Chọn kiểu hiển thị" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white z-50">
+                          <SelectItem value="dropdown">Dropdown Menu</SelectItem>
+                          <SelectItem value="megamenu">Mega Menu</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Mega Menu chỉ hoạt động với menu có chứa "Brand" hoặc URL chứa "/brands"
+                      </p>
+                    </div>
+                    <div>
                       <Label>Hoặc chọn nhãn hàng</Label>
                       <div className="grid grid-cols-2 gap-2 mt-2">
                         {brandItems?.map((brand: any) => (
@@ -412,7 +441,7 @@ const MenusManagement = () => {
                       onClick={() => {
                         setIsDialogOpen(false);
                         setEditingItem(null);
-                        setFormData({ title: "", url: "", target: "_self", parentId: "none" });
+                        setFormData({ title: "", url: "", target: "_self", parentId: "none", displayType: "dropdown" });
                       }}
                     >
                       Hủy
