@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SiteSettingsProvider } from "@/contexts/SiteSettingsContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import IndexDynamic from "./pages/IndexDynamic";
 import NotFound from "./pages/NotFound";
 import Careers from "./pages/Careers";
@@ -33,6 +34,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import MenusManagement from "./pages/admin/MenusManagement";
 import ContactManagement from "./pages/admin/ContactManagement";
+import LanguageManagement from "./pages/admin/LanguageManagement";
 import HeaderManagement from "./pages/admin/HeaderManagement";
 
 import HomepageBuilder from "./pages/admin/HomepageBuilder";
@@ -50,8 +52,9 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SiteSettingsProvider>
-      <AuthProvider>
-        <TooltipProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <TooltipProvider>
         <Toaster />
         <Sonner />
       <BrowserRouter>
@@ -77,6 +80,7 @@ const App = () => (
             <Route path="banner" element={<BannerManagement />} />
             <Route path="menus" element={<MenusManagement />} />
             <Route path="contact" element={<ContactManagement />} />
+            <Route path="languages" element={<LanguageManagement />} />
             <Route path="header" element={<HeaderManagement />} />
             
             <Route path="homepage-builder" element={<HomepageBuilder />} />
@@ -96,6 +100,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
       </AuthProvider>
+    </LanguageProvider>
     </SiteSettingsProvider>
   </QueryClientProvider>
 );

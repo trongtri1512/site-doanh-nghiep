@@ -1,9 +1,11 @@
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,7 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
+  const { t } = useLanguage();
 
   // Fetch all menu items from database
   const { data: allMenuItems = [] } = useQuery({
@@ -55,14 +58,14 @@ const Header = () => {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {parentMenuItems.map((item) => {
             const children = getChildItems(item.id);
             
             if (children.length > 0) {
               return (
                 <DropdownMenu key={item.id}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-medium">
+                  <DropdownMenuTrigger className="flex items-center gap-1 hover:underline font-medium text-sm">
                     {item.title}
                     <ChevronDown size={14} />
                   </DropdownMenuTrigger>
@@ -77,23 +80,39 @@ const Header = () => {
               );
             } else {
               return (
-                <a key={item.id} href={item.url} className="hover:underline font-medium" target={item.target}>
+                <a key={item.id} href={item.url} className="hover:underline font-medium text-sm" target={item.target}>
                   {item.title}
                 </a>
               );
             }
           })}
+          
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
+          {/* Search Button */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white hover:bg-white/20 gap-1"
+          >
+            <Search size={16} />
+            <span className="hidden xl:inline">{t('header.search_site', 'Search site')}</span>
+          </Button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="lg:hidden text-white hover:bg-white/20"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
+        {/* Mobile Menu Button and Language Switcher */}
+        <div className="lg:hidden flex items-center gap-2">
+          <LanguageSwitcher />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/20"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </Button>
+        </div>
       </nav>
 
       {/* Mobile Menu */}
