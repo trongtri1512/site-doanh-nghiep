@@ -7,16 +7,20 @@ import StatsSection from "@/components/StatsSection";
 import NewsSection from "@/components/NewsSection";
 import { Link } from "react-router-dom";
 import { Star, Shield, Users, Mail, ArrowRight, MessageSquare } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const IndexDynamic = () => {
-  // Fetch homepage layout from database
+  const { currentLanguage } = useLanguage();
+  
+  // Fetch homepage layout from database filtered by current language
   const { data: layouts = [], isLoading } = useQuery({
-    queryKey: ['homepage-layouts'],
+    queryKey: ['homepage-layouts', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('homepage_layouts')
         .select('*')
         .eq('is_active', true)
+        .eq('language_code', currentLanguage)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
@@ -24,15 +28,16 @@ const IndexDynamic = () => {
     }
   });
 
-  // Fetch brands for brands section
+  // Fetch brands for brands section filtered by current language
   const { data: brands = [] } = useQuery({
-    queryKey: ['brands-homepage'],
+    queryKey: ['brands-homepage', currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('brands')
         .select('*')
         .eq('active', true)
         .eq('featured', true)
+        .eq('language_code', currentLanguage)
         .order('display_order', { ascending: true });
       
       if (error) throw error;
