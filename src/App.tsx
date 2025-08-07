@@ -18,6 +18,11 @@ import FujifilmImage from "./pages/brands/FujifilmImage";
 import Etsuko from "./pages/brands/Etsuko";
 import Astalift from "./pages/brands/Astalift";
 import PigeonDynamic from "./pages/brands/PigeonDynamic";
+import VeritesDynamic from "./pages/brands/VeritesDynamic";
+import AstaliftDynamic from "./pages/brands/AstaliftDynamic";
+import EtsukoDynamic from "./pages/brands/EtsukoDynamic";
+import InstaxCameraDynamic from "./pages/brands/InstaxCameraDynamic";
+import FujifilmImageDynamic from "./pages/brands/FujifilmImageDynamic";
 import AdminAuth from "./pages/AdminAuth";
 import BannerManagement from "./pages/admin/BannerManagement";
 
@@ -55,11 +60,11 @@ const App = () => (
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/brands/pigeon" element={<PigeonDynamic />} />
-          <Route path="/brands/verites" element={<Verites />} />
-          <Route path="/brands/instax-camera" element={<InstaxCamera />} />
-          <Route path="/brands/fujifilm-image" element={<FujifilmImage />} />
-          <Route path="/brands/etsuko" element={<Etsuko />} />
-          <Route path="/brands/astalift" element={<Astalift />} />
+          <Route path="/brands/verites" element={<VeritesDynamic />} />
+          <Route path="/brands/instax-camera" element={<InstaxCameraDynamic />} />
+          <Route path="/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
+          <Route path="/brands/etsuko" element={<EtsukoDynamic />} />
+          <Route path="/brands/astalift" element={<AstaliftDynamic />} />
           
           {/* Admin Auth Route */}
           <Route path="/admin/auth" element={<AdminAuth />} />
