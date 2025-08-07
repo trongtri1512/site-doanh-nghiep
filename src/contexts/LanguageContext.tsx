@@ -31,6 +31,11 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
+    // Detect language from URL
+    const path = window.location.pathname;
+    if (path.startsWith('/en')) {
+      return 'en';
+    }
     return localStorage.getItem('language') || 'vi';
   });
 
@@ -76,6 +81,27 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLanguage = (languageCode: string) => {
     setCurrentLanguage(languageCode);
     localStorage.setItem('language', languageCode);
+    
+    // Update URL based on language
+    const currentPath = window.location.pathname;
+    let newPath: string;
+    
+    if (languageCode === 'en') {
+      // Switch to English - add /en prefix
+      if (currentPath.startsWith('/en')) {
+        return; // Already on English route
+      }
+      newPath = currentPath === '/' ? '/en' : `/en${currentPath}`;
+    } else {
+      // Switch to Vietnamese - remove /en prefix
+      if (!currentPath.startsWith('/en')) {
+        return; // Already on Vietnamese route
+      }
+      newPath = currentPath.replace(/^\/en/, '') || '/';
+    }
+    
+    window.history.pushState({}, '', newPath);
+    window.location.reload(); // Reload to apply language changes
   };
 
   const t = (key: string, fallback?: string) => {

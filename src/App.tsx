@@ -59,18 +59,33 @@ const App = () => (
         <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Vietnamese routes (default) */}
           <Route path="/" element={<IndexDynamic />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:slug" element={<NewsDetail />} />
-            <Route path="/about" element={<About />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:slug" element={<NewsDetail />} />
+          <Route path="/about" element={<About />} />
           <Route path="/brands/pigeon" element={<PigeonDynamic />} />
           <Route path="/brands/verites" element={<VeritesDynamic />} />
           <Route path="/brands/instax-camera" element={<InstaxCameraDynamic />} />
           <Route path="/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
           <Route path="/brands/etsuko" element={<EtsukoDynamic />} />
           <Route path="/brands/astalift" element={<AstaliftDynamic />} />
+          
+          {/* English routes with /en prefix */}
+          <Route path="/en" element={<IndexDynamic />} />
+          <Route path="/en/careers" element={<Careers />} />
+          <Route path="/en/contact" element={<Contact />} />
+          <Route path="/en/news" element={<News />} />
+          <Route path="/en/news/:slug" element={<NewsDetail />} />
+          <Route path="/en/about" element={<About />} />
+          <Route path="/en/brands/pigeon" element={<PigeonDynamic />} />
+          <Route path="/en/brands/verites" element={<VeritesDynamic />} />
+          <Route path="/en/brands/instax-camera" element={<InstaxCameraDynamic />} />
+          <Route path="/en/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
+          <Route path="/en/brands/etsuko" element={<EtsukoDynamic />} />
+          <Route path="/en/brands/astalift" element={<AstaliftDynamic />} />
           
           {/* Admin Auth Route */}
           <Route path="/admin/auth" element={<AdminAuth />} />

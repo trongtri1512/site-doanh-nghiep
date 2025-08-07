@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,17 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
   const { t: translate, currentLanguage } = useLanguage();
+  
+  // Helper function to get language prefix for URLs
+  const getLanguagePrefix = () => currentLanguage === 'en' ? '/en' : '';
+  
+  // Helper function to create proper URL with language prefix
+  const createUrl = (path: string) => {
+    if (path.startsWith('http')) return path; // External URL
+    const prefix = getLanguagePrefix();
+    if (path === '/') return prefix || '/';
+    return `${prefix}${path}`;
+  };
 
   // Fetch all menu items from database based on current language
   const { data: allMenuItems = [] } = useQuery({
@@ -50,12 +62,14 @@ const Header = () => {
       {/* Main navigation */}
       <nav className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center">
-          <img 
-            src={settings.site_logo || "/lovable-uploads/7b254a6b-841e-44ed-ba5d-5a43caa59b9a.png"} 
-            alt={`${settings.site_title || "IMV"} Logo`} 
-            className="h-12 w-auto brightness-0 invert"
-            style={{ filter: 'brightness(0) invert(1)' }}
-          />
+          <Link to={createUrl('/')}>
+            <img 
+              src={settings.site_logo || "/lovable-uploads/7b254a6b-841e-44ed-ba5d-5a43caa59b9a.png"} 
+              alt={`${settings.site_title || "IMV"} Logo`} 
+              className="h-12 w-auto brightness-0 invert"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
+          </Link>
         </div>
 
         {/* Desktop Menu */}
@@ -73,17 +87,25 @@ const Header = () => {
                   <DropdownMenuContent>
                     {children.map((child) => (
                       <DropdownMenuItem key={child.id} asChild>
-                        <a href={child.url} target={child.target}>{child.title}</a>
+                        {child.url.startsWith('http') ? (
+                          <a href={child.url} target={child.target}>{child.title}</a>
+                        ) : (
+                          <Link to={createUrl(child.url)}>{child.title}</Link>
+                        )}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               );
             } else {
-              return (
+              return item.url.startsWith('http') ? (
                 <a key={item.id} href={item.url} className="hover:underline font-medium text-sm" target={item.target}>
                   {item.title}
                 </a>
+              ) : (
+                <Link key={item.id} to={createUrl(item.url)} className="hover:underline font-medium text-sm">
+                  {item.title}
+                </Link>
               );
             }
           })}
@@ -128,17 +150,27 @@ const Header = () => {
                   <div key={item.id} className="space-y-2">
                     <div className="font-semibold">{item.title}</div>
                     {children.map((child) => (
-                      <a key={child.id} href={child.url} className="block pl-4 text-sm hover:underline" target={child.target}>
-                        {child.title}
-                      </a>
+                      child.url.startsWith('http') ? (
+                        <a key={child.id} href={child.url} className="block pl-4 text-sm hover:underline" target={child.target}>
+                          {child.title}
+                        </a>
+                      ) : (
+                        <Link key={child.id} to={createUrl(child.url)} className="block pl-4 text-sm hover:underline">
+                          {child.title}
+                        </Link>
+                      )
                     ))}
                   </div>
                 );
               } else {
-                return (
+                return item.url.startsWith('http') ? (
                   <a key={item.id} href={item.url} className="block hover:underline" target={item.target}>
                     {item.title}
                   </a>
+                ) : (
+                  <Link key={item.id} to={createUrl(item.url)} className="block hover:underline">
+                    {item.title}
+                  </Link>
                 );
               }
             })}
