@@ -125,22 +125,22 @@ const Header = () => {
                     
                     {/* Mega Menu */}
                     {isBrandMegaMenuOpen && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[900px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 z-50 animate-fade-in">
-                        <div className="grid grid-cols-3 gap-8">
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[95vw] max-w-6xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 lg:p-8 z-50 animate-fade-in">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                           {/* Featured Brands Column */}
-                          <div className="col-span-2">
-                            <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-200 pb-2">
+                          <div className="lg:col-span-2">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 lg:mb-6 border-b border-gray-200 pb-2">
                               {currentLanguage === 'en' ? 'Our Brands' : 'Thương hiệu của chúng tôi'}
                             </h3>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                               {brands.slice(0, 4).map((brand) => (
                                 <Link
                                   key={brand.id}
                                   to={createUrl(`/brands/${brand.slug}`)}
-                                  className="group p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
+                                  className="group p-3 lg:p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 p-2">
+                                    <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 p-2">
                                       <img 
                                         src={brand.image_url || '/placeholder.svg'} 
                                         alt={brand.name}
@@ -161,7 +161,7 @@ const Header = () => {
                             </div>
                             
                             {/* View All Brands */}
-                            <div className="mt-6 pt-4 border-t border-gray-200">
+                            <div className="mt-4 lg:mt-6 pt-4 border-t border-gray-200">
                               <Link 
                                 to={createUrl('/brands')}
                                 className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm transition-colors"
@@ -172,12 +172,12 @@ const Header = () => {
                           </div>
                           
                           {/* Categories Column */}
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-200 pb-2">
+                          <div className="border-t lg:border-t-0 lg:border-l border-gray-200 pt-4 lg:pt-0 lg:pl-6">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 lg:mb-6 border-b border-gray-200 pb-2">
                               {currentLanguage === 'en' ? 'Categories' : 'Danh mục'}
                             </h3>
                             <div className="space-y-3">
-                              {Object.keys(brandCategories).map((category) => (
+                              {Object.keys(brandCategories).slice(0, 4).map((category) => (
                                 <div key={category} className="group">
                                   <h4 className="font-medium text-gray-700 mb-2 text-sm">
                                     {category}
