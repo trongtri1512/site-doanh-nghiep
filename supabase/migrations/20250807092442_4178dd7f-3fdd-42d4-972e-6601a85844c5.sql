@@ -1,0 +1,35 @@
+-- Insert translation keys for news section
+INSERT INTO translations (language_code, translation_key, translation_value, category) VALUES
+-- Vietnamese translations
+('vi', 'news.page_title', 'Tin tức & Sự kiện', 'news'),
+('vi', 'news.page_subtitle', 'Cập nhật những thông tin mới nhất về các thương hiệu, sản phẩm và hoạt động của IMV', 'news'),
+('vi', 'news.back_to_home', 'Quay lại trang chủ', 'navigation'),
+('vi', 'news.featured', 'Nổi bật', 'news'),
+('vi', 'news.load_more', 'Xem thêm tin tức', 'news'),
+('vi', 'news.newsletter_title', 'Đăng ký nhận bản tin', 'news'),
+('vi', 'news.newsletter_subtitle', 'Nhận thông tin mới nhất về các sản phẩm, thương hiệu và sự kiện của IMV', 'news'),
+('vi', 'news.newsletter_placeholder', 'Nhập email của bạn', 'news'),
+('vi', 'news.newsletter_button', 'Đăng ký', 'news'),
+('vi', 'categories.all', 'Tất cả', 'categories'),
+('vi', 'categories.brands', 'Thương hiệu', 'categories'),
+('vi', 'categories.products', 'Sản phẩm', 'categories'),
+('vi', 'categories.achievements', 'Thành tích', 'categories'),
+('vi', 'categories.events', 'Sự kiện', 'categories'),
+('vi', 'categories.trends', 'Xu hướng', 'categories'),
+
+-- English translations
+('en', 'news.page_title', 'News & Events', 'news'),
+('en', 'news.page_subtitle', 'Stay updated with the latest information about IMV brands, products and activities', 'news'),
+('en', 'news.back_to_home', 'Back to homepage', 'navigation'),
+('en', 'news.featured', 'Featured', 'news'),
+('en', 'news.load_more', 'Load more news', 'news'),
+('en', 'news.newsletter_title', 'Subscribe to newsletter', 'news'),
+('en', 'news.newsletter_subtitle', 'Get the latest updates about IMV products, brands and events', 'news'),
+('en', 'news.newsletter_placeholder', 'Enter your email', 'news'),
+('en', 'news.newsletter_button', 'Subscribe', 'news'),
+('en', 'categories.all', 'All', 'categories'),
+('en', 'categories.brands', 'Brands', 'categories'),
+('en', 'categories.products', 'Products', 'categories'),
+('en', 'categories.achievements', 'Achievements', 'categories'),
+('en', 'categories.events', 'Events', 'categories'),
+('en', 'categories.trends', 'Trends', 'categories');

@@ -9,10 +9,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const News = () => {
   const [newsArticles, setNewsArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const [selectedCategory, setSelectedCategory] = useState("categories.all");
   const { currentLanguage, t } = useLanguage();
 
-  const categories = ["Tất cả", "Thương hiệu", "Sản phẩm", "Thành tích", "Sự kiện", "Xu hướng"];
+  const categories = [
+    { key: "categories.all", label: "Tất cả" },
+    { key: "categories.brands", label: "Thương hiệu" },
+    { key: "categories.products", label: "Sản phẩm" },
+    { key: "categories.achievements", label: "Thành tích" },
+    { key: "categories.events", label: "Sự kiện" },
+    { key: "categories.trends", label: "Xu hướng" }
+  ];
 
   useEffect(() => {
     loadNews();
@@ -36,9 +43,9 @@ const News = () => {
     }
   };
 
-  const filteredArticles = selectedCategory === "Tất cả" 
+  const filteredArticles = selectedCategory === "categories.all" 
     ? newsArticles 
-    : newsArticles.filter(article => article.category === selectedCategory);
+    : newsArticles.filter(article => article.category === categories.find(cat => cat.key === selectedCategory)?.label);
 
   if (loading) {
     return (
@@ -59,15 +66,15 @@ const News = () => {
       <main className="container mx-auto px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
-          Quay lại trang chủ
+          {t('news.back_to_home', 'Quay lại trang chủ')}
         </Link>
         
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Tin tức & Sự kiện</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">{t('news.page_title', 'Tin tức & Sự kiện')}</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Cập nhật những thông tin mới nhất về các thương hiệu, sản phẩm và hoạt động của IMV
+              {t('news.page_subtitle', 'Cập nhật những thông tin mới nhất về các thương hiệu, sản phẩm và hoạt động của IMV')}
             </p>
           </div>
 
@@ -75,15 +82,15 @@ const News = () => {
           <div className="flex flex-wrap gap-2 mb-8 justify-center">
             {categories.map((category) => (
               <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
+                key={category.key}
+                onClick={() => setSelectedCategory(category.key)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  category === selectedCategory
+                  category.key === selectedCategory
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {category}
+                {t(category.key, category.label)}
               </button>
             ))}
           </div>
@@ -95,7 +102,7 @@ const News = () => {
                 <div className="grid md:grid-cols-2 gap-8 p-8">
                   <div>
                     <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-sm rounded-full mb-3">
-                      Nổi bật
+                      {t('news.featured', 'Nổi bật')}
                     </span>
                     <h2 className="text-2xl font-bold text-foreground mb-4">
                       {filteredArticles[0].title}
@@ -119,7 +126,7 @@ const News = () => {
                     </div>
                     <Link to={`/news/${filteredArticles[0].slug}`}>
                       <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
-                        Đọc thêm
+                        {t('common.read_more', 'Đọc thêm')}
                       </button>
                     </Link>
                   </div>
@@ -167,7 +174,7 @@ const News = () => {
                     </div>
                     <Link to={`/news/${article.slug}`}>
                       <button className="text-primary hover:underline text-sm font-medium">
-                        Đọc thêm
+                        {t('common.read_more', 'Đọc thêm')}
                       </button>
                     </Link>
                   </div>
@@ -179,26 +186,26 @@ const News = () => {
           {/* Load More */}
           <div className="text-center mt-12">
             <button className="bg-muted hover:bg-muted/80 text-muted-foreground px-8 py-3 rounded-lg transition-colors">
-              Xem thêm tin tức
+              {t('news.load_more', 'Xem thêm tin tức')}
             </button>
           </div>
 
           {/* Newsletter Signup */}
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-8 text-center mt-12">
             <h3 className="text-2xl font-semibold text-foreground mb-4">
-              Đăng ký nhận bản tin
+              {t('news.newsletter_title', 'Đăng ký nhận bản tin')}
             </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Nhận thông tin mới nhất về các sản phẩm, thương hiệu và sự kiện của IMV
+              {t('news.newsletter_subtitle', 'Nhận thông tin mới nhất về các sản phẩm, thương hiệu và sự kiện của IMV')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <input
                 type="email"
-                placeholder="Nhập email của bạn"
+                placeholder={t('news.newsletter_placeholder', 'Nhập email của bạn')}
                 className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
               <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
-                Đăng ký
+                {t('news.newsletter_button', 'Đăng ký')}
               </button>
             </div>
           </div>
