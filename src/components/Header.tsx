@@ -16,6 +16,7 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isBrandMegaMenuOpen, setIsBrandMegaMenuOpen] = useState(false);
   const { settings } = useSiteSettings();
   const { t: translate, currentLanguage } = useLanguage();
   
@@ -47,6 +48,22 @@ const Header = () => {
     }
   });
 
+  // Fetch brands for mega menu
+  const { data: brands = [] } = useQuery({
+    queryKey: ['brands-megamenu', currentLanguage],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('active', true)
+        .eq('language_code', currentLanguage)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   // Organize menu items into parent-child structure
   const parentMenuItems = allMenuItems.filter(item => !item.parent_id);
   const childMenuItems = allMenuItems.filter(item => item.parent_id);
@@ -54,6 +71,16 @@ const Header = () => {
   const getChildItems = (parentId: string) => {
     return childMenuItems.filter(child => child.parent_id === parentId);
   };
+
+  // Group brands by category for mega menu
+  const brandCategories = brands.reduce((acc, brand) => {
+    const category = brand.category || 'Other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(brand);
+    return acc;
+  }, {} as Record<string, typeof brands>);
 
 
   return (
@@ -77,6 +104,105 @@ const Header = () => {
           {parentMenuItems.map((item) => {
             const children = getChildItems(item.id);
             
+            // Special handling for Brands menu with Mega Menu
+            if (item.title.toLowerCase().includes('brand') || item.url.includes('/brands')) {
+              return (
+                <div 
+                  key={item.id}
+                  className="relative"
+                  onMouseEnter={() => setIsBrandMegaMenuOpen(true)}
+                  onMouseLeave={() => setIsBrandMegaMenuOpen(false)}
+                >
+                  <Link 
+                    to={createUrl(item.url)}
+                    className="flex items-center gap-1 hover:underline font-medium text-sm transition-colors py-2"
+                  >
+                    {item.title}
+                    <ChevronDown size={14} className="transition-transform duration-200" />
+                  </Link>
+                  
+                  {/* Mega Menu */}
+                  {isBrandMegaMenuOpen && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-[800px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 z-50 animate-fade-in">
+                      <div className="grid grid-cols-3 gap-8">
+                        {/* Featured Brands Column */}
+                        <div className="col-span-2">
+                          <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-200 pb-2">
+                            {currentLanguage === 'en' ? 'Our Brands' : 'Thương hiệu của chúng tôi'}
+                          </h3>
+                          <div className="grid grid-cols-2 gap-4">
+                            {brands.slice(0, 4).map((brand) => (
+                              <Link
+                                key={brand.id}
+                                to={createUrl(`/brands/${brand.slug}`)}
+                                className="group p-4 rounded-xl border border-gray-100 hover:border-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0">
+                                    <img 
+                                      src={brand.image_url || '/placeholder.svg'} 
+                                      alt={brand.name}
+                                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors text-sm mb-1">
+                                      {brand.name}
+                                    </h4>
+                                    <p className="text-xs text-gray-600 line-clamp-2">
+                                      {brand.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                          
+                          {/* View All Brands */}
+                          <div className="mt-6 pt-4 border-t border-gray-200">
+                            <Link 
+                              to={createUrl('/brands')}
+                              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm transition-colors"
+                            >
+                              {currentLanguage === 'en' ? 'View All Brands' : 'Xem tất cả thương hiệu'} →
+                            </Link>
+                          </div>
+                        </div>
+                        
+                        {/* Categories Column */}
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-200 pb-2">
+                            {currentLanguage === 'en' ? 'Categories' : 'Danh mục'}
+                          </h3>
+                          <div className="space-y-3">
+                            {Object.keys(brandCategories).map((category) => (
+                              <div key={category} className="group">
+                                <h4 className="font-medium text-gray-700 mb-2 text-sm">
+                                  {category}
+                                </h4>
+                                <div className="space-y-1">
+                                  {brandCategories[category].slice(0, 3).map((brand) => (
+                                    <Link
+                                      key={brand.id}
+                                      to={createUrl(`/brands/${brand.slug}`)}
+                                      className="block text-xs text-gray-600 hover:text-primary transition-colors py-1 hover:bg-gray-50 px-2 rounded"
+                                    >
+                                      {brand.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            
+            // Regular dropdown for other menu items
             if (children.length > 0) {
               return (
                 <DropdownMenu key={item.id}>
