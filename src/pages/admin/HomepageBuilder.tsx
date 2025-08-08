@@ -63,7 +63,7 @@ const HomepageBuilder = () => {
   const [elements, setElements] = useState<PageElement[]>([]);
 
   useEffect(() => {
-    if (layouts) {
+    if (layouts && layouts.length > 0) {
       const convertedElements = layouts.map(layout => ({
         id: layout.id,
         type: layout.section_type as PageElement['type'],
@@ -74,7 +74,16 @@ const HomepageBuilder = () => {
         display_order: layout.display_order,
         is_active: layout.is_active
       }));
-      setElements(convertedElements);
+      
+      // Only update if the elements have actually changed
+      setElements(prevElements => {
+        if (JSON.stringify(prevElements) !== JSON.stringify(convertedElements)) {
+          return convertedElements;
+        }
+        return prevElements;
+      });
+    } else if (layouts && layouts.length === 0) {
+      setElements([]);
     }
   }, [layouts]);
 
@@ -303,6 +312,30 @@ const HomepageBuilder = () => {
     toast("Đã cập nhật phần tử");
   }, []);
 
+  // Delete element mutation
+  const deleteElementMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('homepage_layouts')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: (deletedId) => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-layouts'] });
+      setElements(prev => prev.filter(el => el.id !== deletedId));
+      if (editingElement?.id === deletedId) {
+        setEditingElement(null);
+      }
+      toast.success("Đã xóa section thành công!");
+    },
+    onError: (error) => {
+      toast.error("Lỗi khi xóa section: " + error.message);
+    }
+  });
+
   const deleteElement = useCallback((id: string) => {
     const element = elements.find(el => el.id === id);
     if (element && ['hero', 'stats', 'brands', 'news'].includes(element.type)) {
@@ -310,12 +343,8 @@ const HomepageBuilder = () => {
       return;
     }
     
-    setElements(prev => prev.filter(el => el.id !== id));
-    if (editingElement?.id === id) {
-      setEditingElement(null);
-    }
-    toast("Đã xóa phần tử");
-  }, [editingElement]);
+    deleteElementMutation.mutate(id);
+  }, [elements, editingElement, deleteElementMutation]);
 
   const saveLayout = useCallback(() => {
     // Update display order based on current order
