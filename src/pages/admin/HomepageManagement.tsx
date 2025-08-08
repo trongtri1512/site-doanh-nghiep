@@ -83,21 +83,44 @@ const HomepageManagement = () => {
 
   const handleSaveHero = async () => {
     try {
-      const { data, error } = await supabase
+      // Check if hero section exists
+      const { data: existingHero } = await supabase
         .from('homepage_layouts')
-        .upsert({
-          section_type: 'hero',
-          language_code: activeTab,
-          title: 'Hero Section',
-          content: heroContent,
-          is_active: true,
-          display_order: 1
-        }, {
-          onConflict: 'section_type,language_code'
-        });
+        .select('id')
+        .eq('section_type', 'hero')
+        .eq('language_code', activeTab)
+        .single();
 
-      if (error) throw error;
+      if (existingHero) {
+        // Update existing hero
+        const { error } = await supabase
+          .from('homepage_layouts')
+          .update({
+            content: heroContent,
+            title: 'Hero Section',
+            is_active: true,
+            display_order: 1
+          })
+          .eq('id', existingHero.id);
+        
+        if (error) throw error;
+      } else {
+        // Insert new hero
+        const { error } = await supabase
+          .from('homepage_layouts')
+          .insert({
+            section_type: 'hero',
+            language_code: activeTab,
+            title: 'Hero Section',
+            content: heroContent,
+            is_active: true,
+            display_order: 1
+          });
+        
+        if (error) throw error;
+      }
 
+      await loadHomepageData(); // Reload data
       toast.success('Đã lưu Hero Section thành công');
     } catch (error) {
       console.error('Error saving hero content:', error);
@@ -107,21 +130,44 @@ const HomepageManagement = () => {
 
   const handleSaveStats = async () => {
     try {
-      const { data, error } = await supabase
+      // Check if stats section exists
+      const { data: existingStats } = await supabase
         .from('homepage_layouts')
-        .upsert({
-          section_type: 'stats',
-          language_code: activeTab,
-          title: 'Statistics',
-          content: { stats: statsData },
-          is_active: true,
-          display_order: 2
-        }, {
-          onConflict: 'section_type,language_code'
-        });
+        .select('id')
+        .eq('section_type', 'stats')
+        .eq('language_code', activeTab)
+        .single();
 
-      if (error) throw error;
+      if (existingStats) {
+        // Update existing stats
+        const { error } = await supabase
+          .from('homepage_layouts')
+          .update({
+            content: { stats: statsData },
+            title: 'Statistics',
+            is_active: true,
+            display_order: 2
+          })
+          .eq('id', existingStats.id);
+        
+        if (error) throw error;
+      } else {
+        // Insert new stats
+        const { error } = await supabase
+          .from('homepage_layouts')
+          .insert({
+            section_type: 'stats',
+            language_code: activeTab,
+            title: 'Statistics',
+            content: { stats: statsData },
+            is_active: true,
+            display_order: 2
+          });
+        
+        if (error) throw error;
+      }
 
+      await loadHomepageData(); // Reload data
       toast.success('Đã lưu thống kê thành công');
     } catch (error) {
       console.error('Error saving stats:', error);
@@ -249,7 +295,7 @@ const HomepageManagement = () => {
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                      <span>{section.order}</span>
+                      <span>{section.display_order}</span>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{section.title}</TableCell>
