@@ -8,6 +8,7 @@ import { SiteSettingsProvider } from "@/contexts/SiteSettingsContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import IndexDynamic from "./pages/IndexDynamic";
 import NotFound from "./pages/NotFound";
+import Search from "./pages/Search";
 import Careers from "./pages/Careers";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
@@ -64,6 +65,7 @@ const App = () => (
         <Routes>
           {/* Vietnamese routes (default) */}
           <Route path="/" element={<IndexDynamic />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/news" element={<News />} />
@@ -74,6 +76,7 @@ const App = () => (
           
           {/* English routes with /en prefix */}
           <Route path="/en" element={<IndexDynamic />} />
+          <Route path="/en/search" element={<Search />} />
           <Route path="/en/careers" element={<Careers />} />
           <Route path="/en/contact" element={<Contact />} />
           <Route path="/en/news" element={<News />} />

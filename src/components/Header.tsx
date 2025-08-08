@@ -367,6 +367,42 @@ const Header = () => {
         {/* Mobile Menu Button and Language Switcher */}
         <div className="lg:hidden flex items-center gap-2">
           <LanguageSwitcher />
+          
+          {/* Mobile Search Button */}
+          <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-white/20 p-2"
+              >
+                <Search size={16} />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md mx-4">
+              <DialogHeader>
+                <DialogTitle>
+                  {currentLanguage === 'en' ? 'Search Website' : 'Tìm kiếm Website'}
+                </DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSearch} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="grid flex-1 gap-2">
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={currentLanguage === 'en' ? 'Enter search keywords...' : 'Nhập từ khóa tìm kiếm...'}
+                      className="w-full"
+                      autoFocus
+                    />
+                  </div>
+                  <Button type="submit" size="sm" className="px-3">
+                    <Search size={16} />
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
           <Button
             variant="ghost"
             size="sm"
