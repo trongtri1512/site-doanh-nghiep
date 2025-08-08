@@ -48,7 +48,7 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
         return (
           <section 
             key={element.id}
-            className="relative py-20 px-4"
+            className="relative py-20"
             style={styles}
           >
             <div 
@@ -58,14 +58,14 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
               }}
             >
               {element.content?.backgroundImage && (
-                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute inset-0 bg-foreground/50" />
               )}
             </div>
-            <div className="relative z-10 max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
+            <div className="relative z-10 container mx-auto text-center">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
                 {element.content?.title || "Hero Title"}
               </h1>
-              <p className="text-xl md:text-2xl mb-8 text-white/90">
+              <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
                 {element.content?.subtitle || "Hero subtitle"}
               </p>
               {element.content?.buttonText && (
@@ -82,8 +82,8 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "text":
         return (
-          <section key={element.id} className="py-12 px-4" style={styles}>
-            <div className="max-w-4xl mx-auto">
+          <section key={element.id} className="py-12" style={styles}>
+            <div className="container mx-auto">
               <div 
                 className="prose prose-lg max-w-none"
                 dangerouslySetInnerHTML={{ 
@@ -96,8 +96,8 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "about":
         return (
-          <section key={element.id} className="py-16 px-4" style={styles}>
-            <div className="max-w-6xl mx-auto">
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -126,15 +126,15 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "contact":
         return (
-          <section key={element.id} className="py-16 px-4 bg-muted/30" style={styles}>
-            <div className="max-w-4xl mx-auto">
+          <section key={element.id} className="py-16 bg-muted/30" style={styles}>
+            <div className="container mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
                 {element.content?.title || "Contact Us"}
               </h2>
               <div className="grid md:grid-cols-2 gap-8">
                 {element.content?.address && (
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm">
                       📍
                     </div>
                     <div>
@@ -145,7 +145,7 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
                 )}
                 {element.content?.phone && (
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm">
                       📞
                     </div>
                     <div>
@@ -156,7 +156,7 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
                 )}
                 {element.content?.email && (
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm">
                       ✉️
                     </div>
                     <div>
@@ -167,7 +167,7 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
                 )}
                 {element.content?.workingHours && (
                   <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm">
                       🕒
                     </div>
                     <div>
@@ -183,8 +183,8 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "faq":
         return (
-          <section key={element.id} className="py-16 px-4" style={styles}>
-            <div className="max-w-4xl mx-auto">
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
                 {element.content?.title || "FAQ"}
               </h2>
@@ -207,8 +207,8 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "video":
         return (
-          <section key={element.id} className="py-16 px-4" style={styles}>
-            <div className="max-w-4xl mx-auto text-center">
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 {element.content?.title || "Video"}
               </h2>
@@ -233,8 +233,8 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
 
       case "services":
         return (
-          <section key={element.id} className="py-16 px-4 bg-muted/30" style={styles}>
-            <div className="max-w-6xl mx-auto">
+          <section key={element.id} className="py-16 bg-muted/30" style={styles}>
+            <div className="container mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
                 {element.content?.title || "Services"}
               </h2>

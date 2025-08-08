@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PageRenderer } from "@/components/PageRenderer";
 
+
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isApplicationFormOpen, setIsApplicationFormOpen] = useState(false);

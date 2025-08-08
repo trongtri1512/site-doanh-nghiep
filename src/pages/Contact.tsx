@@ -158,161 +158,176 @@ const Contact = () => {
     <>
       <Header />
       <PageRenderer pageType="contact" language={currentLanguage} className="min-h-[30vh]" />
-      <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              {pageContent[`page_title_${currentLanguage}`]?.content || pageContent['page_title_en']?.content || "Liên hệ với chúng tôi"}
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              {pageContent[`page_description_${currentLanguage}`]?.content || pageContent['page_description_en']?.content || "Chúng tôi luôn sẵn sàng hỗ trợ và lắng nghe ý kiến của bạn"}
-            </p>
-          </div>
+      {/* Render static contact page (info + form) ONLY when no dynamic layout exists */}
+      {useQuery({
+        queryKey: ['page-layout-count','contact', currentLanguage],
+        queryFn: async () => {
+          const { count, error } = await supabase
+            .from('page_layouts')
+            .select('*', { count: 'exact', head: true })
+            .eq('page_type', 'contact')
+            .eq('language_code', currentLanguage)
+            .eq('is_active', true);
+          if (error) throw error;
+          return count || 0;
+        }
+      }).data === 0 && (
+        <div className="min-h-screen bg-background py-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-4xl font-bold text-foreground mb-4">
+                  {pageContent[`page_title_${currentLanguage}`]?.content || pageContent['page_title_en']?.content || "Liên hệ với chúng tôi"}
+                </h1>
+                <p className="text-lg text-muted-foreground">
+                  {pageContent[`page_description_${currentLanguage}`]?.content || pageContent['page_description_en']?.content || "Chúng tôi luôn sẵn sàng hỗ trợ và lắng nghe ý kiến của bạn"}
+                </p>
+              </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">
-                {pageContent[`contact_info_title_${currentLanguage}`]?.content || pageContent['contact_info_title_en']?.content || "Thông tin liên hệ"}
-              </h2>
-              
-              {contactInfo.map((info) => (
-                <Card key={info.id} className="border-border">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-3 text-lg">
-                      {getIcon(info.section_key)}
-                      {info.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="text-muted-foreground whitespace-pre-wrap font-sans">
-                      {info.content}
-                    </pre>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className="grid lg:grid-cols-2 gap-12">
+                {/* Contact Information */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-foreground mb-6">
+                    {pageContent[`contact_info_title_${currentLanguage}`]?.content || pageContent['contact_info_title_en']?.content || "Thông tin liên hệ"}
+                  </h2>
+                  
+                  {contactInfo.map((info) => (
+                    <Card key={info.id} className="border-border">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="flex items-center gap-3 text-lg">
+                          {getIcon(info.section_key)}
+                          {info.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <pre className="text-muted-foreground whitespace-pre-wrap font-sans">
+                          {info.content}
+                        </pre>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Contact Form */}
+                <div>
+                  <Card className="border-border">
+                    <CardHeader>
+                      <CardTitle className="text-2xl">
+                        {pageContent[`form_title_${currentLanguage}`]?.content || pageContent['form_title_en']?.content || "Gửi tin nhắn cho chúng tôi"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    {pageContent[`form_name_label_${currentLanguage}`]?.content || pageContent['form_name_label_en']?.content || "Họ và tên *"}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder={pageContent[`form_name_placeholder_${currentLanguage}`]?.content || pageContent['form_name_placeholder_en']?.content || "Nhập họ và tên"} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    {pageContent[`form_email_label_${currentLanguage}`]?.content || pageContent['form_email_label_en']?.content || "Email *"}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input type="email" placeholder={pageContent[`form_email_placeholder_${currentLanguage}`]?.content || pageContent['form_email_placeholder_en']?.content || "Nhập email"} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    {pageContent[`form_phone_label_${currentLanguage}`]?.content || pageContent['form_phone_label_en']?.content || "Số điện thoại"}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder={pageContent[`form_phone_placeholder_${currentLanguage}`]?.content || pageContent['form_phone_placeholder_en']?.content || "Nhập số điện thoại"} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="subject"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>
+                                    {pageContent[`form_subject_label_${currentLanguage}`]?.content || pageContent['form_subject_label_en']?.content || "Tiêu đề *"}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder={pageContent[`form_subject_placeholder_${currentLanguage}`]?.content || pageContent['form_subject_placeholder_en']?.content || "Nhập tiêu đề"} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={form.control}
+                            name="message"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  {pageContent[`form_message_label_${currentLanguage}`]?.content || pageContent['form_message_label_en']?.content || "Tin nhắn *"}
+                                </FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder={pageContent[`form_message_placeholder_${currentLanguage}`]?.content || pageContent['form_message_placeholder_en']?.content || "Nhập tin nhắn của bạn"}
+                                    className="min-h-[120px]"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <Button 
+                            type="submit" 
+                            size="lg" 
+                            className="w-full"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? 
+                              (pageContent[`form_submitting_button_${currentLanguage}`]?.content || pageContent['form_submitting_button_en']?.content || "Đang gửi...") : 
+                              (pageContent[`form_submit_button_${currentLanguage}`]?.content || pageContent['form_submit_button_en']?.content || "Gửi tin nhắn")
+                            }
+                          </Button>
+                        </form>
+                      </Form>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              </div>
             </div>
-
-            {/* Contact Form */}
-            <div>
-              <Card className="border-border">
-                <CardHeader>
-                  <CardTitle className="text-2xl">
-                    {pageContent[`form_title_${currentLanguage}`]?.content || pageContent['form_title_en']?.content || "Gửi tin nhắn cho chúng tôi"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {pageContent[`form_name_label_${currentLanguage}`]?.content || pageContent['form_name_label_en']?.content || "Họ và tên *"}
-                              </FormLabel>
-                              <FormControl>
-                                <Input placeholder={pageContent[`form_name_placeholder_${currentLanguage}`]?.content || pageContent['form_name_placeholder_en']?.content || "Nhập họ và tên"} {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {pageContent[`form_email_label_${currentLanguage}`]?.content || pageContent['form_email_label_en']?.content || "Email *"}
-                              </FormLabel>
-                              <FormControl>
-                                <Input type="email" placeholder={pageContent[`form_email_placeholder_${currentLanguage}`]?.content || pageContent['form_email_placeholder_en']?.content || "Nhập email"} {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {pageContent[`form_phone_label_${currentLanguage}`]?.content || pageContent['form_phone_label_en']?.content || "Số điện thoại"}
-                              </FormLabel>
-                              <FormControl>
-                                <Input placeholder={pageContent[`form_phone_placeholder_${currentLanguage}`]?.content || pageContent['form_phone_placeholder_en']?.content || "Nhập số điện thoại"} {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="subject"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {pageContent[`form_subject_label_${currentLanguage}`]?.content || pageContent['form_subject_label_en']?.content || "Tiêu đề *"}
-                              </FormLabel>
-                              <FormControl>
-                                <Input placeholder={pageContent[`form_subject_placeholder_${currentLanguage}`]?.content || pageContent['form_subject_placeholder_en']?.content || "Nhập tiêu đề"} {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="message"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              {pageContent[`form_message_label_${currentLanguage}`]?.content || pageContent['form_message_label_en']?.content || "Tin nhắn *"}
-                            </FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder={pageContent[`form_message_placeholder_${currentLanguage}`]?.content || pageContent['form_message_placeholder_en']?.content || "Nhập tin nhắn của bạn"}
-                                className="min-h-[120px]"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button 
-                        type="submit" 
-                        size="lg" 
-                        className="w-full"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? 
-                          (pageContent[`form_submitting_button_${currentLanguage}`]?.content || pageContent['form_submitting_button_en']?.content || "Đang gửi...") : 
-                          (pageContent[`form_submit_button_${currentLanguage}`]?.content || pageContent['form_submit_button_en']?.content || "Gửi tin nhắn")
-                        }
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-          </div>
         </div>
-      </div>
+      )}
       <Footer />
     </>
   );
