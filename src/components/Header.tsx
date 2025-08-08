@@ -6,20 +6,31 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBrandMegaMenuOpen, setIsBrandMegaMenuOpen] = useState(false);
   const [megaMenuTimeout, setMegaMenuTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { settings } = useSiteSettings();
   const { t: translate, currentLanguage } = useLanguage();
+  const navigate = useNavigate();
   
   // Helper function to get language prefix for URLs
   const getLanguagePrefix = () => currentLanguage === 'en' ? '/en' : '';
@@ -97,6 +108,17 @@ const Header = () => {
       setIsBrandMegaMenuOpen(false);
     }, 300); // 300ms delay
     setMegaMenuTimeout(timeout);
+  };
+
+  // Handle search functionality
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      const languagePrefix = getLanguagePrefix();
+      navigate(`${languagePrefix}/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
   };
 
   return (
@@ -305,14 +327,41 @@ const Header = () => {
           <LanguageSwitcher />
           
           {/* Search Button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-white hover:bg-white/20 gap-1 transition-colors"
-          >
-            <Search size={16} />
-            <span className="hidden xl:inline">{translate('header.search_site', 'Search site')}</span>
-          </Button>
+          <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-white/20 gap-1 transition-colors"
+              >
+                <Search size={16} />
+                <span className="hidden xl:inline">{translate('header.search_site', 'Search site')}</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>
+                  {currentLanguage === 'en' ? 'Search Website' : 'Tìm kiếm Website'}
+                </DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSearch} className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="grid flex-1 gap-2">
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={currentLanguage === 'en' ? 'Enter search keywords...' : 'Nhập từ khóa tìm kiếm...'}
+                      className="w-full"
+                      autoFocus
+                    />
+                  </div>
+                  <Button type="submit" size="sm" className="px-3">
+                    <Search size={16} />
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Mobile Menu Button and Language Switcher */}
