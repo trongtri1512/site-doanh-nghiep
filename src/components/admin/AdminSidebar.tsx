@@ -15,7 +15,8 @@ import {
   SquareActivity,
   Shield,
   Mail,
-  Globe
+  Globe,
+  Edit3
 } from "lucide-react";
 import {
   Sidebar,
@@ -33,25 +34,34 @@ import {
 const adminMenuItems = [
   { title: "Tổng quan", url: "/admin", icon: Home },
   { title: "Quản lý người dùng", url: "/admin/users", icon: Shield },
-  
-  // Nhóm Quản lý trang chủ
-  { title: "Giao diện trang chủ", url: "/admin/homepage-builder", icon: Layout },
+];
+
+const pageBuilderItems = [
+  { title: "Trang chủ Builder", url: "/admin/homepage-builder", icon: Layout },
+  { title: "Giới thiệu Builder", url: "/admin/about-page-builder", icon: Edit3 },
+  { title: "Tuyển dụng Builder", url: "/admin/careers-page-builder", icon: Edit3 },
+  { title: "Liên hệ Builder", url: "/admin/contact-page-builder", icon: Edit3 },
+  { title: "Tin tức Builder", url: "/admin/news-page-builder", icon: Edit3 },
+];
+
+const contentItems = [
   { title: "Quản lý Banner", url: "/admin/banner", icon: Image },
   { title: "Quản lý Nhãn hàng", url: "/admin/brands", icon: Package },
-  
-  // Nhóm Nội dung
   { title: "Tin tức", url: "/admin/news", icon: Newspaper },
   { title: "Nghề nghiệp", url: "/admin/careers", icon: Users },
   { title: "Về chúng tôi", url: "/admin/about", icon: Info },
-  
-  // Nhóm Giao diện
+];
+
+const designItems = [
   { title: "Quản lý Menu", url: "/admin/menus", icon: Menu },
   { title: "Quản lý liên hệ", url: "/admin/contact", icon: Mail },
   { title: "Ngôn ngữ", url: "/admin/languages", icon: Globe },
   { title: "Header & Logo", url: "/admin/header", icon: Image },
   { title: "Quản lý Footer", url: "/admin/footer", icon: SquareActivity },
   { title: "Menu Footer", url: "/admin/footer-menu", icon: Link },
-  
+];
+
+const settingsItems = [
   { title: "Cài đặt", url: "/admin/settings", icon: Settings },
 ];
 
@@ -81,10 +91,82 @@ export function AdminSidebar() {
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/80">Quản lý nội dung</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Tổng quan</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} end className={getNavClass}>
+                        <item.icon className="h-4 w-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Page Builders</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {pageBuilderItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} end className={getNavClass}>
+                        <item.icon className="h-4 w-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Nội dung</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {contentItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} end className={getNavClass}>
+                        <item.icon className="h-4 w-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Giao diện</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {designItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} end className={getNavClass}>
+                        <item.icon className="h-4 w-4" />
+                        {state !== "collapsed" && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/80">Cài đặt</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {settingsItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} end className={getNavClass}>

@@ -586,6 +586,48 @@ export type Database = {
         }
         Relationships: []
       }
+      page_layouts: {
+        Row: {
+          content: Json
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          language_code: string
+          page_type: string
+          section_type: string
+          styles: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          page_type: string
+          section_type: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          page_type?: string
+          section_type?: string
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           category: string

@@ -47,6 +47,10 @@ import AboutManagement from "./pages/admin/AboutManagement";
 import FooterManagement from "./pages/admin/FooterManagement";
 import FooterMenuManagement from "./pages/admin/FooterMenuManagement";
 import Settings from "./pages/admin/Settings";
+import AboutPageBuilder from "./pages/admin/AboutPageBuilder";
+import CareersPageBuilder from "./pages/admin/CareersPageBuilder";
+import ContactPageBuilder from "./pages/admin/ContactPageBuilder";
+import NewsPageBuilder from "./pages/admin/NewsPageBuilder";
 
 // Dynamic brand router
 import BrandDynamicRouter from "./pages/brands/BrandDynamicRouter";
@@ -105,6 +109,12 @@ const App = () => (
             <Route path="footer" element={<FooterManagement />} />
             <Route path="footer-menu" element={<FooterMenuManagement />} />
             <Route path="settings" element={<Settings />} />
+            
+            {/* Page Builders */}
+            <Route path="about-page-builder" element={<AboutPageBuilder />} />
+            <Route path="careers-page-builder" element={<CareersPageBuilder />} />
+            <Route path="contact-page-builder" element={<ContactPageBuilder />} />
+            <Route path="news-page-builder" element={<NewsPageBuilder />} />
           </Route>
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
