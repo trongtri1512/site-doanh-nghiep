@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PageRenderer } from "@/components/PageRenderer";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
@@ -156,6 +157,7 @@ const Contact = () => {
   return (
     <>
       <Header />
+      <PageRenderer pageType="contact" language={currentLanguage} className="min-h-[30vh]" />
       <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">

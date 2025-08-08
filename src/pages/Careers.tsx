@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PageRenderer } from "@/components/PageRenderer";
 
 const Careers = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
@@ -68,6 +69,7 @@ const Careers = () => {
       <Header />
       
       <main className="container mx-auto px-6 py-8">
+        <PageRenderer pageType="careers" language={currentLanguage} className="mb-10" />
         <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
           {content.back_to_home?.content || "Quay lại trang chủ"}
