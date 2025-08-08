@@ -89,6 +89,9 @@ const CareersManagement = () => {
 
   const departments = [
     "Kinh doanh",
+    "FMCG - MT",
+    "FMCG - GT",
+    "Tiếp tân",
     "Marketing", 
     "Logistics",
     "Nhân sự",
@@ -118,8 +121,9 @@ const CareersManagement = () => {
   ];
 
   const locations = [
-    "TP. Hồ Chí Minh",
-    "Hà Nội",
+    "TP. Hồ Chí Minh - Q7",
+    "TP. Hồ Chí Minh - Nhà máy Củ Chi",
+    "CN Hà Nội",
     "Đà Nẵng",
     "Bình Dương",
     "Đồng Nai",
