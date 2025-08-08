@@ -238,6 +238,160 @@ export function InlineEditableElement({
           </div>
         );
 
+      case "vision_mission":
+        return (
+          <div className="space-y-3">
+            <Input
+              value={tempContent.visionTitle || ""}
+              onChange={(e) => handleContentChange("visionTitle", e.target.value)}
+              placeholder="Tiêu đề Tầm nhìn"
+              className="font-semibold"
+            />
+            <Textarea
+              value={tempContent.visionText || ""}
+              onChange={(e) => handleContentChange("visionText", e.target.value)}
+              placeholder="Nội dung Tầm nhìn"
+              rows={3}
+            />
+            <Input
+              value={tempContent.missionTitle || ""}
+              onChange={(e) => handleContentChange("missionTitle", e.target.value)}
+              placeholder="Tiêu đề Sứ mệnh"
+              className="font-semibold"
+            />
+            <Textarea
+              value={tempContent.missionText || ""}
+              onChange={(e) => handleContentChange("missionText", e.target.value)}
+              placeholder="Nội dung Sứ mệnh"
+              rows={3}
+            />
+          </div>
+        );
+
+      case "core_values":
+        return (
+          <div className="space-y-3">
+            <Input
+              value={tempContent.title || ""}
+              onChange={(e) => handleContentChange("title", e.target.value)}
+              placeholder="Tiêu đề: Giá trị cốt lõi"
+              className="font-bold"
+            />
+            <div className="space-y-2">
+              {(tempContent.items || []).map((item: any, index: number) => (
+                <div key={index} className="border rounded p-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">Giá trị #{index + 1}</span>
+                    <Button size="sm" variant="ghost" onClick={() => handleArrayRemove("items", index)}>
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <Input
+                    value={item.title || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "title", e.target.value)}
+                    placeholder="Tên giá trị"
+                    className="text-sm"
+                  />
+                  <Textarea
+                    value={item.description || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "description", e.target.value)}
+                    placeholder="Mô tả"
+                    rows={2}
+                    className="text-sm"
+                  />
+                </div>
+              ))}
+              <Button size="sm" variant="outline" className="w-full" onClick={() => handleArrayAdd("items", { title: "", description: "" })}>
+                <Plus className="h-3 w-3 mr-1" /> Thêm giá trị
+              </Button>
+            </div>
+          </div>
+        );
+
+      case "business_sectors":
+        return (
+          <div className="space-y-3">
+            <Input
+              value={tempContent.title || ""}
+              onChange={(e) => handleContentChange("title", e.target.value)}
+              placeholder="Tiêu đề: Các lĩnh vực kinh doanh"
+              className="font-bold"
+            />
+            <div className="space-y-2">
+              {(tempContent.items || []).map((item: any, index: number) => (
+                <div key={index} className="border rounded p-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">Lĩnh vực #{index + 1}</span>
+                    <Button size="sm" variant="ghost" onClick={() => handleArrayRemove("items", index)}>
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <Input
+                    value={item.title || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "title", e.target.value)}
+                    placeholder="Tên lĩnh vực"
+                    className="text-sm"
+                  />
+                  <Textarea
+                    value={item.description || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "description", e.target.value)}
+                    placeholder="Mô tả"
+                    rows={2}
+                    className="text-sm"
+                  />
+                  <Input
+                    value={item.image || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "image", e.target.value)}
+                    placeholder="URL hình ảnh"
+                    className="text-sm"
+                  />
+                  <Input
+                    value={item.url || ""}
+                    onChange={(e) => handleArrayUpdate("items", index, "url", e.target.value)}
+                    placeholder="Liên kết (tuỳ chọn)"
+                    className="text-sm"
+                  />
+                </div>
+              ))}
+              <Button size="sm" variant="outline" className="w-full" onClick={() => handleArrayAdd("items", { title: "", description: "", image: "", url: "" })}>
+                <Plus className="h-3 w-3 mr-1" /> Thêm lĩnh vực
+              </Button>
+            </div>
+          </div>
+        );
+
+      case "cta":
+        return (
+          <div className="space-y-3">
+            <Input
+              value={tempContent.title || ""}
+              onChange={(e) => handleContentChange("title", e.target.value)}
+              placeholder="Tiêu đề CTA"
+              className="font-bold"
+            />
+            <Textarea
+              value={tempContent.description || ""}
+              onChange={(e) => handleContentChange("description", e.target.value)}
+              placeholder="Mô tả CTA"
+              rows={3}
+            />
+            <div className="flex gap-2">
+              <Input
+                value={tempContent.buttonText || ""}
+                onChange={(e) => handleContentChange("buttonText", e.target.value)}
+                placeholder="Text nút"
+                className="flex-1"
+              />
+              <Input
+                value={tempContent.buttonUrl || ""}
+                onChange={(e) => handleContentChange("buttonUrl", e.target.value)}
+                placeholder="Liên kết nút"
+                className="flex-1"
+              />
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="text-center py-4 text-muted-foreground">

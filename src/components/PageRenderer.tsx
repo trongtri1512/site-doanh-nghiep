@@ -253,6 +253,85 @@ export function PageRenderer({ pageType, language = "vi", className = "" }: Page
           </section>
         );
 
+      case "vision_mission":
+        return (
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto">
+              <div className="grid md:grid-cols-2 gap-8 items-start">
+                <article className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-2xl font-bold mb-2">{element.content?.visionTitle || "Tầm nhìn"}</h3>
+                  <p className="text-muted-foreground">{element.content?.visionText}</p>
+                </article>
+                <article className="bg-card rounded-lg p-6 shadow-sm">
+                  <h3 className="text-2xl font-bold mb-2">{element.content?.missionTitle || "Sứ mệnh"}</h3>
+                  <p className="text-muted-foreground">{element.content?.missionText}</p>
+                </article>
+              </div>
+            </div>
+          </section>
+        );
+
+      case "core_values":
+        return (
+          <section key={element.id} className="py-16 bg-muted/30" style={styles}>
+            <div className="container mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{element.title || "Giá trị cốt lõi"}</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {(element.content?.items || []).map((item: any, index: number) => (
+                  <article key={index} className="bg-card rounded-lg p-6 shadow-sm text-center">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">✨</div>
+                    <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground text-sm">{item.description}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+      case "business_sectors":
+        return (
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{element.title || "Các lĩnh vực kinh doanh"}</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {(element.content?.items || []).map((item: any, index: number) => (
+                  <a key={index} href={item.url || '#'} className="group block rounded-lg overflow-hidden shadow-sm bg-card">
+                    {item.image ? (
+                      <div className="aspect-[4/3] w-full bg-cover bg-center" style={{ backgroundImage: `url(${item.image})` }} />
+                    ) : (
+                      <div className="aspect-[4/3] w-full bg-muted" />
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">{item.title}</h3>
+                      <p className="text-muted-foreground text-sm">{item.description}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+
+      case "cta":
+        return (
+          <section key={element.id} className="py-16" style={styles}>
+            <div className="container mx-auto">
+              <div className="bg-primary text-primary-foreground rounded-xl p-8 md:p-12 text-center shadow-lg">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">{element.content?.title || "Kết nối cùng chúng tôi"}</h2>
+                {element.content?.description && (
+                  <p className="mb-6 opacity-90">{element.content.description}</p>
+                )}
+                {element.content?.buttonText && (
+                  <a href={element.content?.buttonUrl || '/contact'} className="inline-block bg-primary-foreground text-primary px-6 py-3 rounded-lg font-semibold">
+                    {element.content.buttonText}
+                  </a>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+
       default:
         return (
           <section key={element.id} className="py-8 px-4" style={styles}>

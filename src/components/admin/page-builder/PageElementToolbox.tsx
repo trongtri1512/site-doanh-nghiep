@@ -124,9 +124,27 @@ export function ElementToolbox({ onAddElement, pageType }: PageElementToolboxPro
     about: [
       {
         type: "about" as const,
-        label: "About Section",
+        label: "Giới thiệu công ty",
         icon: <Info className="h-5 w-5" />,
-        description: "Giới thiệu công ty"
+        description: "Tổng quan công ty với hình ảnh"
+      },
+      {
+        type: "vision_mission" as const,
+        label: "Tầm nhìn & Sứ mệnh",
+        icon: <Sparkles className="h-5 w-5" />,
+        description: "Tầm nhìn và Sứ mệnh của công ty"
+      },
+      {
+        type: "core_values" as const,
+        label: "Giá trị cốt lõi",
+        icon: <Star className="h-5 w-5" />,
+        description: "4 giá trị cốt lõi của doanh nghiệp"
+      },
+      {
+        type: "business_sectors" as const,
+        label: "Lĩnh vực kinh doanh",
+        icon: <Briefcase className="h-5 w-5" />,
+        description: "Các mảng: Ảnh & In ấn, Mẹ & Bé, Mỹ phẩm, Y tế"
       },
       {
         type: "team" as const,

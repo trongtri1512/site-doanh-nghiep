@@ -28,7 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface PageElement {
   id: string;
-  type: "hero" | "stats" | "brands" | "news" | "text" | "image" | "layout" | "gallery" | "testimonials" | "cta" | "features" | "team" | "contact" | "about" | "form" | "map" | "video" | "faq" | "services" | "portfolio";
+  type: "hero" | "stats" | "brands" | "news" | "text" | "image" | "layout" | "gallery" | "testimonials" | "cta" | "features" | "team" | "contact" | "about" | "form" | "map" | "video" | "faq" | "services" | "portfolio" | "vision_mission" | "core_values" | "business_sectors";
   content: any;
   styles?: any;
   section_type?: string;
@@ -217,6 +217,37 @@ export const UniversalPageBuilder = ({ pageType, pageTitle }: UniversalPageBuild
           { title: "Dịch vụ 2", description: "Mô tả dịch vụ 2", icon: "star" }
         ]
       },
+      vision_mission: {
+        visionTitle: "Tầm nhìn",
+        visionText: "Trở thành đối tác phân phối tiên phong tại Việt Nam.",
+        missionTitle: "Sứ mệnh",
+        missionText: "Mang đến sản phẩm chất lượng và giá trị bền vững cho khách hàng, đối tác và cộng đồng.",
+        image: ""
+      },
+      core_values: {
+        title: "Giá trị cốt lõi",
+        items: [
+          { title: "Chính trực", description: "Minh bạch, trung thực trong mọi hoạt động." },
+          { title: "Tôn trọng", description: "Tôn trọng khách hàng, đối tác và đồng nghiệp." },
+          { title: "Hợp tác", description: "Cùng nhau phát triển trên tinh thần win-win." },
+          { title: "Sáng tạo", description: "Luôn đổi mới để tạo ra giá trị vượt trội." }
+        ]
+      },
+      business_sectors: {
+        title: "Các lĩnh vực kinh doanh",
+        items: [
+          { title: "Ảnh & In ấn", description: "Giải pháp hình ảnh và in ấn chuyên nghiệp.", image: "", url: "#" },
+          { title: "Chăm sóc Mẹ & Bé", description: "Sản phẩm an toàn dành cho mẹ và bé.", image: "", url: "#" },
+          { title: "Mỹ phẩm", description: "Mỹ phẩm chăm sóc sắc đẹp chất lượng.", image: "", url: "#" },
+          { title: "Y tế", description: "Thiết bị và vật tư y tế đáng tin cậy.", image: "", url: "#" }
+        ]
+      },
+      cta: {
+        title: "Kết nối cùng IMV",
+        description: "Liên hệ với chúng tôi để hợp tác và phát triển.",
+        buttonText: "Liên hệ chúng tôi",
+        buttonUrl: "/contact"
+      },
       portfolio: {
         title: "Portfolio",
         items: [
@@ -285,7 +316,11 @@ export const UniversalPageBuilder = ({ pageType, pageTitle }: UniversalPageBuild
       video: "Video",
       faq: "FAQ",
       services: "Dịch vụ",
-      portfolio: "Portfolio"
+      portfolio: "Portfolio",
+      vision_mission: "Tầm nhìn & Sứ mệnh",
+      core_values: "Giá trị cốt lõi",
+      business_sectors: "Lĩnh vực kinh doanh",
+      cta: "CTA"
     };
     return titles[type] || type;
   };
