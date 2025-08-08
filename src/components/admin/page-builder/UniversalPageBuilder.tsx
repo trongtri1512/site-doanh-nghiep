@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageSortableItem } from "./PageSortableItem";
 import { ElementToolbox } from "./PageElementToolbox";
 import { PageElementEditor } from "./PageElementEditor";
+import { InlineEditableElement } from "./InlineEditableElement";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -402,11 +403,11 @@ export const UniversalPageBuilder = ({ pageType, pageTitle }: UniversalPageBuild
                       </div>
                     ) : (
                       elements.map((element) => (
-                        <PageSortableItem
+                        <InlineEditableElement
                           key={element.id}
                           element={element}
                           isPreview={previewMode}
-                          onEdit={() => setEditingElement(element)}
+                          onUpdate={(updates) => updateElement(element.id, updates)}
                           onDelete={() => deleteElement(element.id)}
                         />
                       ))
