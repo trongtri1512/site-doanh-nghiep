@@ -36,6 +36,7 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserRole, setNewUserRole] = useState<'admin' | 'user' | 'hr_manager' | 'content_editor' | 'moderator'>('user');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -96,20 +97,31 @@ const UserManagement = () => {
 
   // Create new user mutation
   const createUserMutation = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true
+    mutationFn: async ({ email, password, role }: { email: string; password: string; role: string }) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Không có phiên đăng nhập');
+
+      const response = await fetch('/functions/v1/create-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ email, password, role }),
       });
-      
-      if (error) throw error;
-      return data;
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Không thể tạo người dùng');
+      }
+
+      return await response.json();
     },
     onSuccess: () => {
       toast.success("Tạo người dùng thành công!");
       setNewUserEmail("");
       setNewUserPassword("");
+      setNewUserRole('user');
       setIsCreateDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
@@ -147,7 +159,7 @@ const UserManagement = () => {
 
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
-    createUserMutation.mutate({ email: newUserEmail, password: newUserPassword });
+    createUserMutation.mutate({ email: newUserEmail, password: newUserPassword, role: newUserRole });
   };
 
   const handleUpdateRole = (role: 'admin' | 'user' | 'hr_manager' | 'content_editor' | 'moderator') => {
@@ -229,6 +241,21 @@ const UserManagement = () => {
                   required
                   minLength={6}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">Vai trò</Label>
+                <Select value={newUserRole} onValueChange={(value: any) => setNewUserRole(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn vai trò" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">Người dùng</SelectItem>
+                    <SelectItem value="content_editor">Biên tập nội dung</SelectItem>
+                    <SelectItem value="hr_manager">Quản lý nhân sự</SelectItem>
+                    <SelectItem value="moderator">Kiểm duyệt viên</SelectItem>
+                    <SelectItem value="admin">Quản trị viên</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <Alert>
                 <AlertDescription>
