@@ -5,19 +5,21 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, Calendar, User, Tag, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [relatedNews, setRelatedNews] = useState<any[]>([]);
+  const { currentLanguage, t } = useLanguage();
 
   useEffect(() => {
     if (slug) {
       loadArticle();
       loadRelatedNews();
     }
-  }, [slug]);
+  }, [slug, currentLanguage]);
 
   const loadArticle = async () => {
     try {
@@ -26,6 +28,7 @@ const NewsDetail = () => {
         .select('*')
         .eq('slug', slug)
         .eq('status', 'published')
+        .eq('language_code', currentLanguage)
         .single();
 
       if (error) throw error;
@@ -43,6 +46,7 @@ const NewsDetail = () => {
         .from('news')
         .select('*')
         .eq('status', 'published')
+        .eq('language_code', currentLanguage)
         .neq('slug', slug)
         .order('created_at', { ascending: false })
         .limit(3);
@@ -59,7 +63,7 @@ const NewsDetail = () => {
       <div className="min-h-screen">
         <Header />
         <main className="container mx-auto px-6 py-8">
-          <div className="text-center py-16">Đang tải...</div>
+          <div className="text-center py-16">{t('news.loading', 'Đang tải...')}</div>
         </main>
         <Footer />
       </div>
@@ -72,9 +76,9 @@ const NewsDetail = () => {
         <Header />
         <main className="container mx-auto px-6 py-8">
           <div className="text-center py-16">
-            <h1 className="text-2xl font-bold mb-4">Không tìm thấy bài viết</h1>
-            <Link to="/news" className="text-primary hover:underline">
-              Quay lại trang tin tức
+            <h1 className="text-2xl font-bold mb-4">{t('news.not_found_title', 'Không tìm thấy bài viết')}</h1>
+            <Link to={currentLanguage === 'en' ? '/en/news' : '/news'} className="text-primary hover:underline">
+              {t('news.not_found_link', 'Quay lại trang tin tức')}
             </Link>
           </div>
         </main>
@@ -88,9 +92,9 @@ const NewsDetail = () => {
       <Header />
       
       <main className="container mx-auto px-6 py-8">
-        <Link to="/news" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+        <Link to={currentLanguage === 'en' ? '/en/news' : '/news'} className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
-          Quay lại tin tức
+          {t('news.back_to_news', 'Quay lại tin tức')}
         </Link>
         
         <article className="max-w-4xl mx-auto">
@@ -102,7 +106,7 @@ const NewsDetail = () => {
               </Badge>
               {article.featured && (
                 <Badge className="ml-2">
-                  Nổi bật
+                  {t('news.featured_badge', 'Nổi bật')}
                 </Badge>
               )}
             </div>
@@ -126,19 +130,19 @@ const NewsDetail = () => {
                 <Calendar size={16} />
                 <span>
                   {article.published_at 
-                    ? new Date(article.published_at).toLocaleDateString('vi-VN', {
+                    ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                       })
-                    : 'Chưa đặt ngày'
+                    : t('news.no_date', 'Chưa đặt ngày')
                   }
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock size={16} />
                 <span>
-                  {new Date(article.created_at).toLocaleDateString('vi-VN', {
+                  {new Date(article.created_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
@@ -162,7 +166,7 @@ const NewsDetail = () => {
           {/* Article Content */}
           <div className="prose prose-lg max-w-none mb-12">
             <div className="text-foreground leading-relaxed whitespace-pre-wrap">
-              {article.content || "Nội dung bài viết đang được cập nhật..."}
+              {article.content || t('news.content_placeholder', 'Nội dung bài viết đang được cập nhật...')}
             </div>
           </div>
 
@@ -171,12 +175,12 @@ const NewsDetail = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Tag size={16} className="text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Danh mục:</span>
+                <span className="text-sm text-muted-foreground">{t('news.category_label', 'Danh mục:')}</span>
                 <Badge variant="outline">{article.category}</Badge>
               </div>
               
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">Chia sẻ:</span>
+                <span className="text-sm text-muted-foreground">{t('news.share_label', 'Chia sẻ:')}</span>
                 <div className="flex gap-2">
                   <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
                     Facebook
@@ -196,12 +200,12 @@ const NewsDetail = () => {
         {/* Related News */}
         {relatedNews.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold mb-8">Bài viết liên quan</h2>
+            <h2 className="text-2xl font-bold mb-8">{t('news.related_articles', 'Bài viết liên quan')}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedNews.map((item) => (
                 <Link
                   key={item.id}
-                  to={`/news/${item.slug}`}
+                  to={currentLanguage === 'en' ? `/en/news/${item.slug}` : `/news/${item.slug}`}
                   className="group bg-card rounded-lg overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow"
                 >
                   <img
@@ -222,7 +226,7 @@ const NewsDetail = () => {
                     <div className="flex items-center text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
-                        {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                        {item.published_at ? new Date(item.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
                       </span>
                     </div>
                   </div>

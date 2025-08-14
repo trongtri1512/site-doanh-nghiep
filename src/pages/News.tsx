@@ -52,7 +52,7 @@ const News = () => {
       <div className="min-h-screen">
         <Header />
         <main className="container mx-auto px-6 py-8">
-          <div className="text-center py-16">Đang tải...</div>
+          <div className="text-center py-16">{t('news.loading', 'Đang tải...')}</div>
         </main>
         <Footer />
       </div>
@@ -113,7 +113,7 @@ const News = () => {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                       <span className="flex items-center gap-1">
                         <Calendar size={16} />
-                        {filteredArticles[0].published_at ? new Date(filteredArticles[0].published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                        {filteredArticles[0].published_at ? new Date(filteredArticles[0].published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
                       </span>
                       <span className="flex items-center gap-1">
                         <User size={16} />
@@ -124,7 +124,7 @@ const News = () => {
                         {filteredArticles[0].category}
                       </span>
                     </div>
-                    <Link to={`/news/${filteredArticles[0].slug}`}>
+                    <Link to={currentLanguage === 'en' ? `/en/news/${filteredArticles[0].slug}` : `/news/${filteredArticles[0].slug}`}>
                       <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
                         {t('common.read_more', 'Đọc thêm')}
                       </button>
@@ -165,14 +165,14 @@ const News = () => {
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
-                        {article.published_at ? new Date(article.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
+                        {article.published_at ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
                       </span>
                       <span className="flex items-center gap-1">
                         <User size={12} />
                         {article.author}
                       </span>
                     </div>
-                    <Link to={`/news/${article.slug}`}>
+                    <Link to={currentLanguage === 'en' ? `/en/news/${article.slug}` : `/news/${article.slug}`}>
                       <button className="text-primary hover:underline text-sm font-medium">
                         {t('common.read_more', 'Đọc thêm')}
                       </button>

@@ -105,8 +105,19 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       newPath = languageCode === 'en' 
         ? `/en/brands/${targetSlug}`
         : `/brands/${targetSlug}`;
-    } else if (currentPath.startsWith('/news/')) {
-      // Handle news articles
+    } else if (currentPath.startsWith('/news/') || currentPath.startsWith('/en/news/')) {
+      // Handle news articles - keep the slug when switching languages
+      const newsSlug = currentPath.startsWith('/en/news/') 
+        ? currentPath.replace('/en/news/', '') 
+        : currentPath.replace('/news/', '');
+      
+      if (newsSlug) {
+        newPath = languageCode === 'en' ? `/en/news/${newsSlug}` : `/news/${newsSlug}`;
+      } else {
+        newPath = languageCode === 'en' ? `/en/news` : '/news';
+      }
+    } else if (currentPath === '/news' || currentPath === '/en/news') {
+      // Handle news listing page
       newPath = languageCode === 'en' ? `/en/news` : '/news';
     } else if (currentPath.startsWith('/admin')) {
       // Admin routes don't use language prefix
