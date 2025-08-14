@@ -45,7 +45,10 @@ const News = () => {
 
   const filteredArticles = selectedCategory === "categories.all" 
     ? newsArticles 
-    : newsArticles.filter(article => article.category === categories.find(cat => cat.key === selectedCategory)?.label);
+    : newsArticles.filter(article => {
+        const categoryTranslation = t(selectedCategory, categories.find(cat => cat.key === selectedCategory)?.label || '');
+        return article.category === categoryTranslation;
+      });
 
   if (loading) {
     return (
