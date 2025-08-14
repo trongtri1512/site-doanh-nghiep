@@ -64,7 +64,7 @@ const News = () => {
       <Header />
       
       <main className="container mx-auto px-6 py-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
+        <Link to={currentLanguage === 'en' ? '/en' : '/'} className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
           {t('news.back_to_home', 'Quay lại trang chủ')}
         </Link>
@@ -113,7 +113,7 @@ const News = () => {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                       <span className="flex items-center gap-1">
                         <Calendar size={16} />
-                        {filteredArticles[0].published_at ? new Date(filteredArticles[0].published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
+                        {filteredArticles[0].published_at ? new Date(filteredArticles[0].published_at).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN') : t('news.no_date', 'Chưa đặt')}
                       </span>
                       <span className="flex items-center gap-1">
                         <User size={16} />
@@ -165,7 +165,7 @@ const News = () => {
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
-                        {article.published_at ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
+                        {article.published_at ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN') : t('news.no_date', 'Chưa đặt')}
                       </span>
                       <span className="flex items-center gap-1">
                         <User size={12} />

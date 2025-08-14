@@ -130,7 +130,7 @@ const NewsDetail = () => {
                 <Calendar size={16} />
                 <span>
                   {article.published_at 
-                    ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US', {
+                    ? new Date(article.published_at).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
@@ -142,7 +142,7 @@ const NewsDetail = () => {
               <div className="flex items-center gap-2">
                 <Clock size={16} />
                 <span>
-                  {new Date(article.created_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US', {
+                  {new Date(article.created_at).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
@@ -226,7 +226,7 @@ const NewsDetail = () => {
                     <div className="flex items-center text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
-                        {item.published_at ? new Date(item.published_at).toLocaleDateString(currentLanguage === 'vi' ? 'vi-VN' : 'en-US') : t('news.no_date', 'Chưa đặt')}
+                        {item.published_at ? new Date(item.published_at).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'vi-VN') : t('news.no_date', 'Chưa đặt')}
                       </span>
                     </div>
                   </div>
