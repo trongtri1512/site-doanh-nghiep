@@ -2,71 +2,64 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Users, Target, Eye, Globe, TrendingUp, Building } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import imvBuilding from "@/assets/imv-building.png";
 import ourBusiness from "@/assets/our-business.png";
 
 const About = () => {
+  const { t } = useLanguage();
+
   const achievements = [
     {
       icon: <Globe className="text-primary" size={32} />,
-      title: "25+",
-      subtitle: "Năm kinh nghiệm"
+      title: t('about.achievement_years_title'),
+      subtitle: t('about.achievement_years_subtitle')
     },
     {
       icon: <Users className="text-primary" size={32} />,
-      title: "200+",
-      subtitle: "Nhân viên chuyên nghiệp"
+      title: t('about.achievement_employees_title'),
+      subtitle: t('about.achievement_employees_subtitle')
     },
     {
       icon: <Building className="text-primary" size={32} />,
-      title: "15+",
-      subtitle: "Thương hiệu quốc tế"
+      title: t('about.achievement_brands_title'),
+      subtitle: t('about.achievement_brands_subtitle')
     },
     {
       icon: <TrendingUp className="text-primary" size={32} />,
-      title: "1000+",
-      subtitle: "Điểm bán trên toàn quốc"
+      title: t('about.achievement_customers_title'),
+      subtitle: t('about.achievement_customers_subtitle')
     }
   ];
 
   const brands = [
     {
-      category: "Ảnh & In Ấn",
-      description: "Các sản phẩm máy ảnh, máy in và giải pháp in ấn chuyên nghiệp",
+      category: t('about.business_healthcare_category'),
+      description: t('about.business_healthcare_description'),
       items: ["FUJIFILM Instax", "FUJIFILM Photo Imaging", "FUJIFILM Printing Solutions"]
     },
     {
-      category: "Chăm Sóc Mẹ & Bé", 
-      description: "Sản phẩm chăm sóc mẹ và bé an toàn, chất lượng từ Nhật Bản",
-      items: ["Pigeon", "Etsuko", "Các sản phẩm chăm sóc trẻ em"]
+      category: t('about.business_baby_category'), 
+      description: t('about.business_baby_description'),
+      items: ["Pigeon", "Etsuko"]
     },
     {
-      category: "Mỹ Phẩm & Chăm Sóc Da",
-      description: "Thương hiệu mỹ phẩm cao cấp và sản phẩm chăm sóc da tiên tiến",
-      items: ["ASTALIFT", "Verites", "Các thương hiệu skincare premium"]
-    },
-    {
-      category: "Y Tế & Chẩn Đoán Hình Ảnh",
-      description: "Thiết bị y tế và giải pháp chẩn đoán hình ảnh hiện đại",
-      items: ["FUJIFILM Medical Systems", "Thiết bị X-ray", "Hệ thống chẩn đoán"]
+      category: t('about.business_lifestyle_category'),
+      description: t('about.business_lifestyle_description'),
+      items: ["ASTALIFT", "Verites"]
     }
   ];
 
   const partnerships = [
     {
-      name: "FUJIFILM Holdings Corporation",
-      description: "Đối tác chiến lược toàn cầu về công nghệ ảnh, y tế và mỹ phẩm",
+      name: t('about.partnership_fujifilm_name'),
+      description: t('about.partnership_fujifilm_description'),
       since: "2008"
     },
     {
-      name: "Pigeon Corporation",
-      description: "Thương hiệu chăm sóc mẹ và bé hàng đầu từ Nhật Bản",
+      name: t('about.partnership_pigeon_name'),
+      description: t('about.partnership_pigeon_description'),
       since: "2012"
-    },
-    {
-      name: "Các đối tác quốc tế khác",
-      description: "Mạng lưới đối tác rộng khắp từ Nhật Bản, Hàn Quốc, Châu Âu",
-      since: "2004"
     }
   ];
 
@@ -77,31 +70,26 @@ const About = () => {
       <main className="container mx-auto px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-2 text-primary hover:underline mb-6">
           <ArrowLeft size={20} />
-          Quay lại trang chủ
+          {t('about.breadcrumb_home')}
         </Link>
         
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-foreground mb-6">Về chúng tôi</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-6">{t('about.page_title')}</h1>
             <div className="grid md:grid-cols-2 gap-12 items-center mb-12">
               <div className="text-left">
                 <h2 className="text-2xl font-bold text-foreground mb-4">
-                  IMV - CÔNG TY CỔ PHẦN QUỐC TẾ MINH VIỆT
+                  {t('about.hero_title')}
                 </h2>
                 <p className="text-lg text-primary font-semibold mb-4">
-                  Đối tác đáng tin cậy tại thị trường Việt Nam
+                  {t('about.hero_subtitle')}
                 </p>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Với hơn 25 năm kinh nghiệm, IMV là một doanh nghiệp sản xuất và phân phối có vốn đầu tư 
-                  nước ngoài hàng đầu tại Việt Nam. Chúng tôi cam kết đồng hành cùng các thương hiệu trong 
-                  hành trình phát triển, thúc đẩy đổi mới sáng tạo và nuôi dưỡng thế hệ trẻ tài năng – 
-                  tạo nên một hệ sinh thái hợp tác năng động.
+                  {t('about.mission_text')}
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Từ ý tưởng đến tay người tiêu dùng, chúng tôi cung cấp cơ sở hạ tầng, mạng lưới đối tác 
-                  và hiểu biết sâu sắc về thị trường để biến những sản phẩm xuất sắc thành những thương hiệu 
-                  được yêu mến tại Việt Nam.
+                  {t('about.vision_text')}
                 </p>
               </div>
               <div>
@@ -131,24 +119,20 @@ const About = () => {
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8">
               <div className="flex items-center gap-3 mb-4">
                 <Target className="text-primary" size={32} />
-                <h2 className="text-2xl font-bold text-foreground">Sứ mệnh</h2>
+                <h2 className="text-2xl font-bold text-foreground">{t('about.mission_title')}</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Mang đến cho người tiêu dùng Việt Nam những sản phẩm chất lượng cao từ các 
-                thương hiệu uy tín quốc tế, góp phần nâng cao chất lượng cuộc sống và trải nghiệm 
-                của khách hàng thông qua dịch vụ phân phối chuyên nghiệp và tận tâm.
+                {t('about.mission_text')}
               </p>
             </div>
             
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8">
               <div className="flex items-center gap-3 mb-4">
                 <Eye className="text-primary" size={32} />
-                <h2 className="text-2xl font-bold text-foreground">Tầm nhìn</h2>
+                <h2 className="text-2xl font-bold text-foreground">{t('about.vision_title')}</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Trở thành công ty phân phối hàng đầu Việt Nam, được tin tưởng bởi các đối tác 
-                quốc tế và yêu mến bởi người tiêu dùng, đồng thời mở rộng ra thị trường khu vực 
-                Đông Nam Á vào năm 2030.
+                {t('about.vision_text')}
               </p>
             </div>
           </div>
@@ -156,7 +140,7 @@ const About = () => {
           {/* Our Business */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-foreground text-center mb-8">
-              Lĩnh vực kinh doanh
+              {t('about.business_title')}
             </h2>
             <div className="text-center mb-8">
               <img 
@@ -188,14 +172,14 @@ const About = () => {
           {/* Strategic Partnerships */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-foreground text-center mb-12">
-              Đối tác chiến lược
+              {t('about.partnerships_title')}
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               {partnerships.map((partner, index) => (
                 <div key={index} className="text-center bg-muted/30 rounded-lg p-6">
                   <div className="mb-4">
                     <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-sm rounded-full">
-                      Từ năm {partner.since}
+                      {t('about.partnership_since')} {partner.since}
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-3">{partner.name}</h3>
@@ -208,18 +192,17 @@ const About = () => {
           {/* Contact CTA */}
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-8 text-center">
             <h3 className="text-2xl font-semibold text-foreground mb-4">
-              Kết nối với chúng tôi
+              {t('about.cta_title')}
             </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Hãy liên hệ để tìm hiểu thêm về các cơ hội hợp tác và những giải pháp 
-              tối ưu mà IMV có thể mang lại cho doanh nghiệp của bạn.
+              {t('about.cta_text')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-primary/90 transition-colors">
-                Liên hệ hợp tác
+                {t('about.cta_contact_button')}
               </button>
               <Link to="/careers" className="bg-muted hover:bg-muted/80 text-muted-foreground px-8 py-3 rounded-lg transition-colors">
-                Cơ hội nghề nghiệp
+                {t('about.cta_careers_button')}
               </Link>
             </div>
           </div>
