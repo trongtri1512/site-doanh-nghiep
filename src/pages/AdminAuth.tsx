@@ -39,7 +39,16 @@ const AdminAuth = () => {
     const { error } = await signIn(email, password);
     
     if (error) {
-      setError(error.message);
+      // Provide more user-friendly error messages
+      if (error.message.includes('Invalid login credentials')) {
+        setError("Email hoặc mật khẩu không đúng. Vui lòng kiểm tra lại thông tin đăng nhập.");
+      } else if (error.message.includes('Email not confirmed')) {
+        setError("Email chưa được xác nhận. Vui lòng kiểm tra hộp thư và xác nhận email.");
+      } else if (error.message.includes('Too many requests')) {
+        setError("Quá nhiều lần thử đăng nhập. Vui lòng thử lại sau ít phút.");
+      } else {
+        setError(error.message);
+      }
     }
     
     setIsLoading(false);
