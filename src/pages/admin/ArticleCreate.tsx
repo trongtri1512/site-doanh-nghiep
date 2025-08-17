@@ -179,7 +179,7 @@ const ArticleCreate = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                
+                <Label>Chuyên mục</Label>
                 <CategorySelector
                   selectedCategories={formData.category ? [formData.category] : []}
                   onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
