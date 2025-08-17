@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import TinyMCEEditor from "@/components/admin/TinyMCEEditor";
+import CategorySelector from "@/components/admin/CategorySelector";
 
 const NewsManagement = () => {
   const [activeTab, setActiveTab] = useState("vi");
@@ -401,22 +403,13 @@ const NewsManagement = () => {
               
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="news-category">Danh mục *</Label>
-                  <Select 
-                    value={formData.category} 
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn danh mục" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CategorySelector
+                    selectedCategories={formData.category ? [formData.category] : []}
+                    onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
+                    languageCode={activeTab}
+                    multiple={false}
+                    placeholder="Chọn danh mục tin tức"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="news-author">Tác giả</Label>
@@ -460,12 +453,11 @@ const NewsManagement = () => {
 
               <div>
                 <Label htmlFor="news-content">Nội dung</Label>
-                <Textarea
-                  id="news-content"
+                <TinyMCEEditor
                   value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                   placeholder="Nội dung đầy đủ bài viết"
-                  rows={10}
+                  height={500}
                 />
               </div>
 

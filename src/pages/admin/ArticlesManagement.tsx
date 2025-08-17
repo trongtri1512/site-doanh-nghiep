@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Plus, Edit, Trash2, Eye, Star, StarOff, Upload } from "lucide-react";
 import { format } from "date-fns";
+import TinyMCEEditor from "@/components/admin/TinyMCEEditor";
+import CategorySelector from "@/components/admin/CategorySelector";
 
 interface Article {
   id: string;
@@ -357,15 +359,13 @@ const ArticlesManagement = () => {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="category">Chuyên mục</Label>
-                <Input
-                  id="category"
-                  value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  placeholder="Nhập tên chuyên mục"
-                />
-              </div>
+              <CategorySelector
+                selectedCategories={formData.category ? [formData.category] : []}
+                onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
+                languageCode={activeTab}
+                multiple={false}
+                placeholder="Chọn chuyên mục bài viết"
+              />
 
               <div>
                 <Label htmlFor="excerpt">Tóm tắt</Label>
@@ -380,12 +380,11 @@ const ArticlesManagement = () => {
 
               <div>
                 <Label htmlFor="content">Nội dung bài viết *</Label>
-                <Textarea
-                  id="content"
+                <TinyMCEEditor
                   value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                   placeholder="Nhập nội dung chi tiết của bài viết"
-                  rows={10}
+                  height={500}
                 />
               </div>
 
