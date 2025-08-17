@@ -13,6 +13,14 @@ import instaxBanner from "@/assets/instax-banner.jpg";
 import veritesBanner from "@/assets/verites-banner.jpg";
 import etsukoBanner from "@/assets/etsuko-banner.jpg";
 
+// Import brand logos
+import pigeonLogo from "@/assets/logos/pigeon-logo.png";
+import astaliftLogo from "@/assets/logos/astalift-logo.png";
+import instaxLogo from "@/assets/logos/instax-logo.png";
+import veritesLogo from "@/assets/logos/verites-logo.png";
+import etsukoLogo from "@/assets/logos/etsuko-logo.png";
+import fujifilmLogo from "@/assets/logos/fujifilm-logo.png";
+
 const BrandsShowcase = () => {
   const { currentLanguage, t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +33,7 @@ const BrandsShowcase = () => {
     {
       id: "pigeon",
       name: "Pigeon",
+      logo: pigeonLogo,
       category: currentLanguage === 'en' ? "Mother & Baby Care" : "Sản phẩm mẹ và bé",
       description: currentLanguage === 'en' 
         ? "Trusted worldwide for premium baby care products and feeding solutions"
@@ -38,6 +47,7 @@ const BrandsShowcase = () => {
     {
       id: "astalift",
       name: "Astalift",
+      logo: astaliftLogo,
       category: currentLanguage === 'en' ? "Japanese Cosmetics" : "Mỹ phẩm Nhật Bản",
       description: currentLanguage === 'en'
         ? "Advanced Japanese skincare technology with astaxanthin for radiant skin"
@@ -51,6 +61,7 @@ const BrandsShowcase = () => {
     {
       id: "instax",
       name: "Instax",
+      logo: instaxLogo,
       category: currentLanguage === 'en' ? "Instant Photography" : "Máy chụp ảnh lấy liền",
       description: currentLanguage === 'en'
         ? "Capture and share life's moments instantly with Fujifilm's innovative cameras"
@@ -64,6 +75,7 @@ const BrandsShowcase = () => {
     {
       id: "verites",
       name: "Verites",
+      logo: veritesLogo,
       category: currentLanguage === 'en' ? "Youth Fragrance" : "Nước hoa cho giới trẻ",
       description: currentLanguage === 'en'
         ? "Trendy fragrances designed for the modern youth lifestyle"
@@ -77,6 +89,7 @@ const BrandsShowcase = () => {
     {
       id: "etsuko",
       name: "Etsuko",
+      logo: etsukoLogo,
       category: currentLanguage === 'en' ? "Baby Bath Care" : "Sữa tắm cho bé",
       description: currentLanguage === 'en'
         ? "Gentle and safe bath products specially formulated for babies' delicate skin"
@@ -90,6 +103,7 @@ const BrandsShowcase = () => {
     {
       id: "fujifilm",
       name: "Fujifilm",
+      logo: fujifilmLogo,
       category: currentLanguage === 'en' ? "Photo Development" : "Phim rửa hình",
       description: currentLanguage === 'en'
         ? "Professional photo development and imaging solutions with decades of expertise"
@@ -174,9 +188,13 @@ const BrandsShowcase = () => {
                     </span>
                   </div>
                   
-                  <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
-                    {brand.name}
-                  </h3>
+                  <div className="mb-4">
+                    <img 
+                      src={brand.logo} 
+                      alt={brand.name + " logo"}
+                      className="h-12 w-auto object-contain max-w-full"
+                    />
+                  </div>
                   
                   <p className="text-muted-foreground mb-6 line-clamp-3 leading-relaxed">
                     {brand.description}
