@@ -62,7 +62,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
   }, [uploadImage]);
 
   const editorConfig = {
-    apiKey: 'ndar70rcuod4hyvd2zee9vxxb4txsd83alog2gepr2snatzd',
     height,
     menubar: false,
     plugins: [
