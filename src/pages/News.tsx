@@ -125,9 +125,11 @@ const News = () => {
                     <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-sm rounded-full mb-3">
                       {t('news.featured', 'Nổi bật')}
                     </span>
-                    <h2 className="text-2xl font-bold text-foreground mb-4">
-                      {filteredArticles[0].title}
-                    </h2>
+                    <Link to={currentLanguage === 'en' ? `/en/news/${filteredArticles[0].slug}` : `/news/${filteredArticles[0].slug}`}>
+                      <h2 className="text-2xl font-bold text-foreground mb-4 hover:text-primary transition-colors cursor-pointer">
+                        {filteredArticles[0].title}
+                      </h2>
+                    </Link>
                     <p className="text-muted-foreground mb-4">
                       {filteredArticles[0].excerpt}
                     </p>
@@ -176,9 +178,11 @@ const News = () => {
                   <span className="inline-block px-2 py-1 bg-accent text-accent-foreground text-xs rounded mb-3">
                     {article.category}
                   </span>
-                  <h3 className="text-lg font-semibold text-foreground mb-3 line-clamp-2">
-                    {article.title}
-                  </h3>
+                  <Link to={currentLanguage === 'en' ? `/en/news/${article.slug}` : `/news/${article.slug}`}>
+                    <h3 className="text-lg font-semibold text-foreground mb-3 line-clamp-2 hover:text-primary transition-colors cursor-pointer">
+                      {article.title}
+                    </h3>
+                  </Link>
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                     {article.excerpt}
                   </p>
