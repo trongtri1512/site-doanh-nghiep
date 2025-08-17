@@ -51,6 +51,9 @@ import Settings from "./pages/admin/Settings";
 
 // Dynamic brand router
 import BrandDynamicRouter from "./pages/brands/BrandDynamicRouter";
+import NewsPageManagement from "./pages/admin/NewsPageManagement";
+import ArticlesManagement from "./pages/admin/ArticlesManagement";
+import CategoriesManagement from "./pages/admin/CategoriesManagement";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +105,9 @@ const App = () => (
             <Route path="brands" element={<BrandsManagement />} />
             <Route path="brands/:brandSlug/builder" element={<BrandPageBuilder />} />
             <Route path="news" element={<NewsManagement />} />
+            <Route path="news-page" element={<NewsPageManagement />} />
+            <Route path="articles" element={<ArticlesManagement />} />
+            <Route path="categories" element={<CategoriesManagement />} />
             <Route path="careers" element={<CareersManagement />} />
             <Route path="about" element={<AboutManagement />} />
             <Route path="footer" element={<FooterManagement />} />
