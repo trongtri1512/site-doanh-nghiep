@@ -237,15 +237,14 @@ const NewsCreate = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Chuyên mục *</Label>
-                  <CategorySelector
-                    selectedCategories={formData.category ? [formData.category] : []}
-                    onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
-                    languageCode={formData.language_code}
-                    multiple={false}
-                    placeholder="Chọn chuyên mục"
-                  />
-                </div>
+                   <CategorySelector
+                     selectedCategories={formData.category ? [formData.category] : []}
+                     onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
+                     languageCode={formData.language_code}
+                     multiple={false}
+                     placeholder="Chọn chuyên mục"
+                   />
+                 </div>
 
                 <div className="space-y-2">
                    <Label>Ngôn ngữ</Label>
