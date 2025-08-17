@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, ExternalLink, X, Globe, Link2, AlertCircle, CheckCircle } from 'lucide-react';
+import { ExternalLink, X, Globe, Link2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface RelatedArticleSelectorProps {
@@ -88,13 +88,6 @@ const RelatedArticleSelector = ({
     }
   };
 
-  const handleCreateRelatedArticle = () => {
-    if (currentArticleId) {
-      // Navigate to create new article with related_id parameter
-      const targetLanguage = currentLanguage === 'vi' ? 'en' : 'vi';
-      navigate(`/admin/news/create?related_id=${currentArticleId}&lang=${targetLanguage}`);
-    }
-  };
 
   const removeRelatedArticle = () => {
     setRelatedArticle(null);
@@ -246,20 +239,6 @@ const RelatedArticleSelector = ({
               </Select>
             </div>
 
-            {/* Quick Create Options */}
-            {currentArticleId && (
-              <div className="space-y-2">
-                <div className="text-sm text-muted-foreground mb-2">Hoặc tạo bài viết mới:</div>
-                <Button
-                  variant="outline"
-                  onClick={handleCreateRelatedArticle}
-                  className="w-full border-dashed border-2 hover:border-primary hover:bg-primary/5"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tạo bài viết cho ngôn ngữ {currentLanguage === 'vi' ? 'English' : 'Tiếng Việt'}
-                </Button>
-              </div>
-            )}
 
             {/* No Link Status */}
             <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
