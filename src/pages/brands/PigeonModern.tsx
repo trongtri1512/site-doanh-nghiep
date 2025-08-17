@@ -23,7 +23,7 @@ import {
 import pigeonHeroModern from "@/assets/pigeon-hero-modern.jpg";
 import pigeonResearch from "@/assets/pigeon-research.jpg";
 import pigeonProductsModern from "@/assets/pigeon-products-modern.jpg";
-import pigeonLogo from "@/assets/logos/pigeon-logo.png";
+import pigeonLogo from "@/assets/logos/pigeon-logo.svg";
 
 const PigeonModern = () => {
   const { currentLanguage } = useLanguage();
