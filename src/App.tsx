@@ -58,6 +58,7 @@ import BrandDynamicRouter from "./pages/brands/BrandDynamicRouter";
 import NewsPageManagement from "./pages/admin/NewsPageManagement";
 import ArticlesManagement from "./pages/admin/ArticlesManagement";
 import CategoriesManagement from "./pages/admin/CategoriesManagement";
+import BrandsShowcase from "./pages/BrandsShowcase";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,7 @@ const App = () => (
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsDetail />} />
           <Route path="/about" element={<About />} />
+          <Route path="/brands" element={<BrandsShowcase />} />
           {/* Dynamic brand routes */}
           <Route path="/brands/:slug" element={<BrandDynamicRouter />} />
           
@@ -92,6 +94,7 @@ const App = () => (
           <Route path="/en/news" element={<News />} />
           <Route path="/en/news/:slug" element={<NewsDetail />} />
           <Route path="/en/about" element={<About />} />
+          <Route path="/en/brands" element={<BrandsShowcase />} />
           {/* Dynamic brand routes for English */}
           <Route path="/en/brands/:slug" element={<BrandDynamicRouter />} />
           
