@@ -24,17 +24,7 @@ const BrandDynamicRouter = () => {
   const { currentLanguage } = useLanguage();
   const [elements, setElements] = useState<BrandPageElement[]>([]);
 
-  // Special handling for Pigeon brand - use dynamic component
-  if (slug === 'pigeon' || slug === 'pigeon-en') {
-    return <PigeonDynamic />;
-  }
-
-  // Special handling for Astalift brand - redirect to AstaliftDynamic
-  if (slug === 'astalift' || slug === 'astalift-en') {
-    return <Navigate to={`/brands/astalift-dynamic?lang=${slug === 'astalift-en' ? 'en' : 'vi'}`} replace />;
-  }
-
-  // Fetch brand data by slug
+  // Fetch brand data by slug - ALWAYS call hooks first
   const { data: brand, isLoading: brandLoading } = useQuery({
     queryKey: ["brand", slug],
     queryFn: async () => {
@@ -48,7 +38,7 @@ const BrandDynamicRouter = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!slug
+    enabled: !!slug && slug !== 'pigeon' && slug !== 'pigeon-en' && slug !== 'astalift' && slug !== 'astalift-en'
   });
 
   // Fetch brand page elements
@@ -65,7 +55,7 @@ const BrandDynamicRouter = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!brand?.id
+    enabled: !!brand?.id && slug !== 'pigeon' && slug !== 'pigeon-en' && slug !== 'astalift' && slug !== 'astalift-en'
   });
 
   useEffect(() => {
@@ -73,6 +63,15 @@ const BrandDynamicRouter = () => {
       setElements(brandElements);
     }
   }, [brandElements]);
+
+  // Handle special cases AFTER all hooks are called
+  if (slug === 'pigeon' || slug === 'pigeon-en') {
+    return <PigeonDynamic />;
+  }
+
+  if (slug === 'astalift' || slug === 'astalift-en') {
+    return <Navigate to={`/brands/astalift-dynamic?lang=${slug === 'astalift-en' ? 'en' : 'vi'}`} replace />;
+  }
 
   const renderElement = (element: BrandPageElement) => {
     const content = element.content || {};
