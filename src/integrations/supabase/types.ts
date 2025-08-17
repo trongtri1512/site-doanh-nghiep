@@ -357,6 +357,33 @@ export type Database = {
         }
         Relationships: []
       }
+      hashtags: {
+        Row: {
+          created_at: string | null
+          id: string
+          language_code: string
+          name: string
+          updated_at: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          language_code?: string
+          name: string
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          language_code?: string
+          name?: string
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       homepage_layouts: {
         Row: {
           content: Json
@@ -540,9 +567,13 @@ export type Database = {
           created_at: string
           excerpt: string | null
           featured: boolean
+          focus_keyword: string | null
+          hashtags: string[] | null
           id: string
           image_url: string | null
           language_code: string
+          meta_description: string | null
+          meta_title: string | null
           published_at: string | null
           scheduled_at: string | null
           slug: string
@@ -557,9 +588,13 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           featured?: boolean
+          focus_keyword?: string | null
+          hashtags?: string[] | null
           id?: string
           image_url?: string | null
           language_code?: string
+          meta_description?: string | null
+          meta_title?: string | null
           published_at?: string | null
           scheduled_at?: string | null
           slug: string
@@ -574,9 +609,13 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           featured?: boolean
+          focus_keyword?: string | null
+          hashtags?: string[] | null
           id?: string
           image_url?: string | null
           language_code?: string
+          meta_description?: string | null
+          meta_title?: string | null
           published_at?: string | null
           scheduled_at?: string | null
           slug?: string

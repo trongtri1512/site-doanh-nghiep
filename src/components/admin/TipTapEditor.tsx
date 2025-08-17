@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -13,6 +13,8 @@ import Highlight from '@tiptap/extension-highlight';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import {
   Bold,
   Italic,
@@ -46,6 +48,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({
   placeholder = "Nhập nội dung...",
   height = 400
 }) => {
+  const { toast } = useToast();
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -96,7 +99,53 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({
     return null;
   }
 
+  const uploadImage = useCallback(async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('article-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('article-images')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Lỗi upload ảnh",
+        description: "Không thể upload ảnh. Vui lòng thử lại.",
+        variant: "destructive"
+      });
+      throw error;
+    }
+  }, [toast]);
+
   const addImage = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        try {
+          const url = await uploadImage(file);
+          editor.chain().focus().setImage({ src: url }).run();
+        } catch (error) {
+          // Error already handled in uploadImage
+        }
+      }
+    };
+    input.click();
+  };
+
+  const addImageFromUrl = () => {
     const url = window.prompt('URL của ảnh:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
@@ -277,9 +326,29 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({
         <Button variant="ghost" size="sm" onClick={addLink}>
           <LinkIcon className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" onClick={addImage}>
-          <ImageIcon className="h-4 w-4" />
-        </Button>
+        <div className="relative group">
+          <Button variant="ghost" size="sm">
+            <ImageIcon className="h-4 w-4" />
+          </Button>
+          <div className="absolute top-full left-0 mt-1 hidden group-hover:flex flex-col w-32 bg-background border rounded-md shadow-lg z-10">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start text-xs"
+              onClick={addImage}
+            >
+              Upload ảnh
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start text-xs"
+              onClick={addImageFromUrl}
+            >
+              Từ URL
+            </Button>
+          </div>
+        </div>
         <Button variant="ghost" size="sm" onClick={insertTable}>
           <TableIcon className="h-4 w-4" />
         </Button>

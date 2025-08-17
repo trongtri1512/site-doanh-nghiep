@@ -1,308 +1,160 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Eye, Image, Calendar, Upload, Clock } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-import TipTapEditor from "@/components/admin/TipTapEditor";
-import CategorySelector from "@/components/admin/CategorySelector";
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CalendarIcon, Edit, Trash2, Plus, Eye, EyeOff, Hash, Search } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import TipTapEditor from '@/components/admin/TipTapEditor';
+import CategorySelector from '@/components/admin/CategorySelector';
+import HashtagInput from '@/components/admin/HashtagInput';
+import SEOFields from '@/components/admin/SEOFields';
+
+interface News {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image_url: string | null;
+  category: string;
+  author: string;
+  status: 'draft' | 'published' | 'scheduled';
+  featured: boolean;
+  published_at: string | null;
+  scheduled_at: string | null;
+  created_at: string;
+  updated_at: string;
+  language_code: string;
+  hashtags: string[] | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  focus_keyword: string | null;
+}
 
 const NewsManagement = () => {
-  const [activeTab, setActiveTab] = useState("vi");
-  const [news, setNews] = useState<any[]>([]);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingNews, setEditingNews] = useState<any>(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    slug: "",
-    category: "",
-    excerpt: "",
-    content: "",
-    author: "Admin",
-    publishDate: "",
-    scheduledDate: "",
-    status: "draft",
+  const [editingNews, setEditingNews] = useState<News | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState('vi');
+
+  const [formData, setFormData] = useState<{
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    image_url: string;
+    category: string;
+    author: string;
+    status: 'draft' | 'published' | 'scheduled';
+    featured: boolean;
+    scheduled_at: Date | null;
+    language_code: string;
+    hashtags: string[];
+    meta_title: string;
+    meta_description: string;
+    focus_keyword: string;
+  }>({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    image_url: '',
+    category: '',
+    author: 'Admin',
+    status: 'draft',
     featured: false,
-    imageFile: null as File | null,
-    imageUrl: ""
+    scheduled_at: null,
+    language_code: 'vi',
+    hashtags: [],
+    meta_title: '',
+    meta_description: '',
+    focus_keyword: ''
   });
 
-  const categories = [
-    "Sản phẩm",
-    "Sự kiện", 
-    "Xu hướng",
-    "Tin tức công ty",
-    "Hướng dẫn",
-    "Thương hiệu",
-    "Thành tích",
-    "Khác"
-  ];
-
-  const statuses = [
-    { value: "draft", label: "Nháp", variant: "secondary" },
-    { value: "published", label: "Đã xuất bản", variant: "default" },
-    { value: "scheduled", label: "Lên lịch", variant: "outline" },
-    { value: "archived", label: "Lưu trữ", variant: "outline" }
-  ];
-
-  // Load news from Supabase
   useEffect(() => {
-    loadNews();
-  }, [activeTab]);
+    fetchNews();
+  }, [selectedLanguage]);
 
-  const loadNews = async () => {
+  const fetchNews = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('news')
         .select('*')
-        .eq('language_code', activeTab)
+        .eq('language_code', selectedLanguage)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setNews(data || []);
+      setNews((data || []) as News[]);
     } catch (error) {
-      console.error('Error loading news:', error);
+      console.error('Error fetching news:', error);
       toast({
         title: "Lỗi",
         description: "Không thể tải danh sách tin tức",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      slug: "",
-      category: "",
-      excerpt: "",
-      content: "",
-      author: "Admin",
-      publishDate: "",
-      scheduledDate: "",
-      status: "draft",
-      featured: false,
-      imageFile: null,
-      imageUrl: ""
-    });
-    setEditingNews(null);
-  };
-
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[đ]/g, "d")
-      .replace(/[^a-z0-9\s]/g, "")
-      .replace(/\s+/g, "-")
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/[^a-z0-9\s]/g, '')
+      .replace(/\s+/g, '-')
       .trim();
   };
 
-  const handleEdit = (newsItem: any) => {
-    setEditingNews(newsItem);
-    setFormData({
-      title: newsItem.title,
-      slug: newsItem.slug,
-      category: newsItem.category,
-      excerpt: newsItem.excerpt || "",
-      content: newsItem.content || "",
-      author: newsItem.author,
-      publishDate: newsItem.published_at ? newsItem.published_at.split('T')[0] : "",
-      scheduledDate: newsItem.scheduled_at ? newsItem.scheduled_at.split('T')[0] : "",
-      status: newsItem.status,
-      featured: newsItem.featured,
-      imageFile: null,
-      imageUrl: newsItem.image_url || ""
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('news')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Thành công",
-        description: "Đã xóa tin tức",
-      });
-      
-      loadNews();
-    } catch (error) {
-      console.error('Error deleting news:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể xóa tin tức",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const toggleFeatured = async (id: string, currentFeatured: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('news')
-        .update({ featured: !currentFeatured })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Thành công",
-        description: `Đã ${!currentFeatured ? "đặt" : "bỏ"} tin tức nổi bật`,
-      });
-      
-      loadNews();
-    } catch (error) {
-      console.error('Error updating featured status:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật trạng thái nổi bật",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const updateStatus = async (id: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from('news')
-        .update({ status: newStatus })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Thành công",
-        description: "Đã cập nhật trạng thái",
-      });
-      
-      loadNews();
-    } catch (error) {
-      console.error('Error updating status:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật trạng thái",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const uploadImage = async (file: File): Promise<string | null> => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error } = await supabase.storage
-        .from('news-images')
-        .upload(filePath, file);
-
-      if (error) throw error;
-
-      const { data } = supabase.storage
-        .from('news-images')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Lỗi",
-        description: "Không thể tải lên hình ảnh",
-        variant: "destructive",
-      });
-      return null;
-    }
-  };
-
-  const handlePaste = async (e: React.ClipboardEvent) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const file = items[i].getAsFile();
-        if (file) {
-          const imageUrl = await uploadImage(file);
-          if (imageUrl) {
-            setFormData(prev => ({ ...prev, imageUrl }));
-            toast({
-              title: "Thành công",
-              description: "Đã tải lên hình ảnh từ clipboard",
-            });
-          }
-        }
-      }
-    }
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const imageUrl = await uploadImage(file);
-    if (imageUrl) {
-      setFormData(prev => ({ ...prev, imageUrl }));
-      toast({
-        title: "Thành công",
-        description: "Đã tải lên hình ảnh",
-      });
-    }
-  };
-
-  const handleSubmit = async (status: string = 'draft') => {
+  const handleSubmit = async () => {
     if (!formData.title || !formData.category) {
       toast({
         title: "Lỗi",
         description: "Vui lòng điền đầy đủ thông tin bắt buộc",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
-    // Validate scheduled posts
-    if (status === 'scheduled' && !formData.scheduledDate) {
-      toast({
-        title: "Lỗi",
-        description: "Vui lòng chọn ngày lên lịch",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const slug = formData.slug || generateSlug(formData.title);
 
     try {
+      const slug = formData.slug || generateSlug(formData.title);
       const newsData = {
         title: formData.title,
-        slug,
-        category: formData.category,
+        slug: formData.slug,
         excerpt: formData.excerpt,
         content: formData.content,
+        image_url: formData.image_url || null,
+        category: formData.category,
         author: formData.author,
-        image_url: formData.imageUrl,
-        published_at: status === 'published' ? new Date().toISOString() : (formData.publishDate ? new Date(formData.publishDate).toISOString() : null),
-        scheduled_at: status === 'scheduled' ? new Date(formData.scheduledDate).toISOString() : null,
-        status,
+        status: formData.status,
         featured: formData.featured,
-        language_code: activeTab
+        scheduled_at: formData.scheduled_at?.toISOString() || null,
+        language_code: formData.language_code,
+        hashtags: formData.hashtags,
+        meta_title: formData.meta_title || null,
+        meta_description: formData.meta_description || null,
+        focus_keyword: formData.focus_keyword || null
       };
 
       let error;
@@ -321,29 +173,126 @@ const NewsManagement = () => {
 
       toast({
         title: "Thành công",
-        description: editingNews ? "Đã cập nhật tin tức" : "Đã tạo tin tức mới",
+        description: editingNews ? "Đã cập nhật tin tức" : "Đã tạo tin tức mới"
       });
 
       setIsDialogOpen(false);
       resetForm();
-      loadNews();
+      fetchNews();
     } catch (error) {
       console.error('Error saving news:', error);
       toast({
         title: "Lỗi",
         description: "Không thể lưu tin tức",
-        variant: "destructive",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      slug: '',
+      excerpt: '',
+      content: '',
+      image_url: '',
+      category: '',
+      author: 'Admin',
+      status: 'draft' as const,
+      featured: false,
+      scheduled_at: null,
+      language_code: 'vi',
+      hashtags: [],
+      meta_title: '',
+      meta_description: '',
+      focus_keyword: ''
+    });
+    setEditingNews(null);
+  };
+
+  const handleEdit = (news: News) => {
+    setEditingNews(news);
+    setFormData({
+      title: news.title,
+      slug: news.slug,
+      excerpt: news.excerpt,
+      content: news.content,
+      image_url: news.image_url || '',
+      category: news.category,
+      author: news.author,
+      status: news.status,
+      featured: news.featured,
+      scheduled_at: news.scheduled_at ? new Date(news.scheduled_at) : null,
+      language_code: news.language_code,
+      hashtags: news.hashtags || [],
+      meta_title: news.meta_title || '',
+      meta_description: news.meta_description || '',
+      focus_keyword: news.focus_keyword || ''
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: "Đã xóa tin tức"
+      });
+
+      fetchNews();
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể xóa tin tức",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleFeatured = async (id: string, featured: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .update({ featured: !featured })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Thành công",
+        description: `Đã ${!featured ? 'đặt' : 'bỏ'} tin tức nổi bật`
+      });
+
+      fetchNews();
+    } catch (error) {
+      console.error('Error updating featured status:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái nổi bật",
+        variant: "destructive"
       });
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig = statuses.find(s => s.value === status);
-    return (
-      <Badge variant={statusConfig?.variant as any}>
-        {statusConfig?.label}
-      </Badge>
-    );
+    switch (status) {
+      case 'published':
+        return <Badge variant="default">Đã xuất bản</Badge>;
+      case 'draft':
+        return <Badge variant="secondary">Bản nháp</Badge>;
+      case 'scheduled':
+        return <Badge variant="outline">Lên lịch</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
   };
 
   return (
@@ -351,7 +300,7 @@ const NewsManagement = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quản lý Tin tức</h1>
-          <p className="text-muted-foreground">Tạo và quản lý bài viết tin tức</p>
+          <p className="text-muted-foreground">Tạo và quản lý bài viết tin tức với SEO và hashtag</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
@@ -363,281 +312,320 @@ const NewsManagement = () => {
               Thêm tin tức
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingNews ? "Chỉnh sửa tin tức" : "Thêm tin tức mới"}
+                {editingNews ? 'Chỉnh sửa tin tức' : 'Thêm tin tức mới'}
               </DialogTitle>
-              <DialogDescription>
-                Tạo hoặc chỉnh sửa bài viết tin tức
-              </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4" onPaste={handlePaste}>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="news-title">Tiêu đề *</Label>
-                  <Input
-                    id="news-title"
-                    value={formData.title}
-                    onChange={(e) => {
-                      const title = e.target.value;
-                      setFormData(prev => ({
-                        ...prev,
-                        title,
-                        slug: generateSlug(title)
-                      }));
-                    }}
-                    placeholder="Nhập tiêu đề bài viết"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="news-slug">Slug (URL)</Label>
-                  <Input
-                    id="news-slug"
-                    value={formData.slug}
-                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                    placeholder="tieu-de-bai-viet"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <CategorySelector
-                    selectedCategories={formData.category ? [formData.category] : []}
-                    onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
-                    languageCode={activeTab}
-                    multiple={false}
-                    placeholder="Chọn danh mục tin tức"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="news-author">Tác giả</Label>
-                  <Input
-                    id="news-author"
-                    value={formData.author}
-                    onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
-                    placeholder="Tên tác giả"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="news-date">Ngày xuất bản</Label>
-                  <Input
-                    id="news-date"
-                    type="date"
-                    value={formData.publishDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, publishDate: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="scheduled-date">Ngày lên lịch</Label>
-                  <Input
-                    id="scheduled-date"
-                    type="datetime-local"
-                    value={formData.scheduledDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, scheduledDate: e.target.value }))}
-                  />
-                </div>
-              </div>
 
-              <div>
-                <Label htmlFor="news-excerpt">Tóm tắt</Label>
-                <Textarea
-                  id="news-excerpt"
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                  placeholder="Tóm tắt ngắn gọn về bài viết"
-                  rows={3}
-                />
-              </div>
+            <div className="py-4">
+              <div className="space-y-6">
+                <Tabs defaultValue="content" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="content">Nội dung</TabsTrigger>
+                    <TabsTrigger value="seo">
+                      <Search className="h-4 w-4 mr-1" />
+                      SEO
+                    </TabsTrigger>
+                    <TabsTrigger value="settings">Cài đặt</TabsTrigger>
+                  </TabsList>
 
-              <div>
-                <Label htmlFor="news-content">Nội dung</Label>
-                <TipTapEditor
-                  value={formData.content}
-                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                  placeholder="Nội dung đầy đủ bài viết"
-                  height={500}
-                />
-              </div>
+                  <TabsContent value="content" className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="title">Tiêu đề *</Label>
+                        <Input
+                          id="title"
+                          value={formData.title}
+                          onChange={(e) => {
+                            const title = e.target.value;
+                            setFormData(prev => ({
+                              ...prev,
+                              title,
+                              slug: generateSlug(title)
+                            }));
+                          }}
+                          placeholder="Nhập tiêu đề bài viết"
+                        />
+                      </div>
 
-              <div>
-                <Label>Hình ảnh đại diện</Label>
-                <div className="mt-2 space-y-2">
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1" onClick={() => document.getElementById('image-upload')?.click()}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Tải lên hình ảnh
-                    </Button>
-                    <Button variant="outline" type="button">
-                      Paste ảnh (Ctrl+V)
-                    </Button>
-                  </div>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                  {formData.imageUrl && (
-                    <div className="mt-2">
-                      <img 
-                        src={formData.imageUrl} 
-                        alt="Preview" 
-                        className="w-32 h-32 object-cover rounded border"
+                      <div className="space-y-2">
+                        <Label htmlFor="slug">Slug (URL)</Label>
+                        <Input
+                          id="slug"
+                          value={formData.slug}
+                          onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                          placeholder="ten-bai-viet"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="image_url">Ảnh đại diện</Label>
+                        <Input
+                          id="image_url"
+                          value={formData.image_url}
+                          onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
+                          placeholder="URL ảnh đại diện"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="author">Tác giả</Label>
+                        <Input
+                          id="author"
+                          value={formData.author}
+                          onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
+                          placeholder="Tên tác giả"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Chuyên mục *</Label>
+                        <CategorySelector
+                          selectedCategories={formData.category ? [formData.category] : []}
+                          onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
+                          languageCode={selectedLanguage}
+                          multiple={false}
+                          placeholder="Chọn chuyên mục"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Ngôn ngữ</Label>
+                        <Select
+                          value={formData.language_code}
+                          onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="vi">Tiếng Việt</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="excerpt">Tóm tắt</Label>
+                      <Textarea
+                        id="excerpt"
+                        value={formData.excerpt}
+                        onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                        placeholder="Tóm tắt ngắn gọn về bài viết"
+                        rows={3}
                       />
                     </div>
-                  )}
+
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Hash className="h-4 w-4" />
+                        Hashtags
+                      </Label>
+                      <HashtagInput
+                        value={formData.hashtags}
+                        onChange={(hashtags) => setFormData(prev => ({ ...prev, hashtags }))}
+                        placeholder="Thêm hashtag..."
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Nội dung</Label>
+                      <TipTapEditor
+                        value={formData.content}
+                        onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                        placeholder="Nhập nội dung bài viết..."
+                        height={400}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="seo" className="space-y-6">
+                    <SEOFields
+                      title={formData.title}
+                      metaTitle={formData.meta_title}
+                      metaDescription={formData.meta_description}
+                      focusKeyword={formData.focus_keyword}
+                      content={formData.content}
+                      onMetaTitleChange={(meta_title) => setFormData(prev => ({ ...prev, meta_title }))}
+                      onMetaDescriptionChange={(meta_description) => setFormData(prev => ({ ...prev, meta_description }))}
+                      onFocusKeywordChange={(focus_keyword) => setFormData(prev => ({ ...prev, focus_keyword }))}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="settings" className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Trạng thái</Label>
+                        <Select
+                          value={formData.status}
+                          onValueChange={(value: 'draft' | 'published' | 'scheduled') => 
+                            setFormData(prev => ({ ...prev, status: value }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="draft">Bản nháp</SelectItem>
+                            <SelectItem value="published">Đã xuất bản</SelectItem>
+                            <SelectItem value="scheduled">Lên lịch</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          id="featured"
+                          checked={formData.featured}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, featured: checked }))}
+                        />
+                        <Label htmlFor="featured">Bài viết nổi bật</Label>
+                      </div>
+                    </div>
+
+                    {formData.status === 'scheduled' && (
+                      <div className="space-y-2">
+                        <Label>Thời gian xuất bản</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !formData.scheduled_at && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {formData.scheduled_at ? format(formData.scheduled_at, "PPP") : "Chọn ngày"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={formData.scheduled_at}
+                              onSelect={(date) => setFormData(prev => ({ ...prev, scheduled_at: date }))}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+
+                <div className="flex justify-end space-x-2 pt-4 border-t">
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    Hủy
+                  </Button>
+                  <Button onClick={handleSubmit}>
+                    {editingNews ? 'Cập nhật' : 'Tạo mới'}
+                  </Button>
                 </div>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                />
-                <Label htmlFor="featured">Đặt làm tin tức nổi bật</Label>
-              </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Hủy
-              </Button>
-              <Button variant="outline" onClick={() => handleSubmit('draft')}>
-                Lưu nháp
-              </Button>
-              <Button variant="outline" onClick={() => handleSubmit('scheduled')}>
-                Lên lịch
-              </Button>
-              <Button onClick={() => handleSubmit('published')}>
-                Xuất bản
-              </Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="vi">Tiếng Việt</TabsTrigger>
-          <TabsTrigger value="en">English</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="space-y-6 mt-6">
-
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách tin tức</CardTitle>
-          <CardDescription>
-            Quản lý tất cả bài viết tin tức
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <CardTitle>Danh sách tin tức</CardTitle>
+            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="vi">Tiếng Việt</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">Đang tải...</div>
+            <div className="text-center py-4">Đang tải...</div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Hình ảnh</TableHead>
                   <TableHead>Tiêu đề</TableHead>
-                  <TableHead>Danh mục</TableHead>
-                  <TableHead>Tác giả</TableHead>
-                  <TableHead>Ngày xuất bản</TableHead>
-                  <TableHead>Lên lịch</TableHead>
-                  <TableHead>Nổi bật</TableHead>
+                  <TableHead>Chuyên mục</TableHead>
+                  <TableHead>Hashtags</TableHead>
                   <TableHead>Trạng thái</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
+                  <TableHead>Nổi bật</TableHead>
+                  <TableHead>Ngày tạo</TableHead>
+                  <TableHead>Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {news.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell>
-                      <img
-                        src={item.image_url || "/placeholder.svg"}
-                        alt={item.title}
-                        className="w-12 h-12 object-cover rounded"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium max-w-xs">
-                      <div className="truncate">{item.title}</div>
-                      <div className="text-sm text-muted-foreground truncate">
-                        {item.excerpt}
+                    <TableCell className="max-w-xs">
+                      <div>
+                        <div className="font-medium truncate">{item.title}</div>
+                        <div className="text-sm text-muted-foreground truncate">{item.slug}</div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{item.category}</Badge>
                     </TableCell>
-                    <TableCell>{item.author}</TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-3 w-3" />
-                        <span className="text-sm">
-                          {item.published_at ? new Date(item.published_at).toLocaleDateString('vi-VN') : 'Chưa đặt'}
-                        </span>
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {item.hashtags?.slice(0, 3).map((tag, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            #{tag}
+                          </Badge>
+                        ))}
+                        {item.hashtags && item.hashtags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{item.hashtags.length - 3}
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-3 w-3" />
-                        <span className="text-sm">
-                          {item.scheduled_at ? new Date(item.scheduled_at).toLocaleString('vi-VN') : '-'}
-                        </span>
-                      </div>
-                    </TableCell>
+                    <TableCell>{getStatusBadge(item.status)}</TableCell>
                     <TableCell>
                       <Button
-                        variant={item.featured ? "default" : "outline"}
+                        variant="ghost"
                         size="sm"
                         onClick={() => toggleFeatured(item.id, item.featured)}
                       >
-                        {item.featured ? "Nổi bật" : "Thường"}
+                        {item.featured ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </Button>
                     </TableCell>
                     <TableCell>
-                      <Select 
-                        value={item.status} 
-                        onValueChange={(value) => updateStatus(item.id, value)}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {statuses.map((status) => (
-                            <SelectItem key={status.value} value={status.value}>
-                              {status.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {format(new Date(item.created_at), 'dd/MM/yyyy')}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(`/news/${item.slug}`, '_blank')}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(item)}
-                        >
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(item.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Bạn có chắc chắn muốn xóa tin tức "{item.title}"? Hành động này không thể hoàn tác.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Hủy</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(item.id)}>
+                                Xóa
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -647,8 +635,6 @@ const NewsManagement = () => {
           )}
         </CardContent>
       </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };
