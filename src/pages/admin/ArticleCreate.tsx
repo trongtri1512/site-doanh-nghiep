@@ -187,14 +187,14 @@ const ArticleCreate = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <CategorySelector
                     selectedCategories={formData.category ? [formData.category] : []}
                     onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
                     languageCode={formData.language_code}
                     multiple={false}
-                    placeholder="Chọn chuyên mục bài viết"
+                    placeholder="Chọn chuyên mục"
                   />
                 </div>
 
@@ -212,6 +212,16 @@ const ArticleCreate = () => {
                       <SelectItem value="en">English</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="flex items-center space-x-2 mt-6">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+                  />
+                  <Label htmlFor="featured">Bài viết nổi bật</Label>
                 </div>
               </div>
 
@@ -255,15 +265,6 @@ const ArticleCreate = () => {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                />
-                <Label htmlFor="featured">Bài viết nổi bật</Label>
-              </div>
             </TabsContent>
 
             <TabsContent value="settings" className="space-y-6 mt-6">

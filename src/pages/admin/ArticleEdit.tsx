@@ -12,6 +12,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Save, Upload, Eye, Loader2 } from "lucide-react";
 import TinyMCEEditor from "@/components/admin/TinyMCEEditor";
 import CategorySelector from "@/components/admin/CategorySelector";
+import RelatedArticleSelector from "@/components/admin/RelatedArticleSelector";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Article {
   id: string;
@@ -28,6 +30,7 @@ interface Article {
   created_at: string;
   updated_at: string;
   language_code: string;
+  related_article_id?: string;
 }
 
 const ArticleEdit = () => {
@@ -48,7 +51,8 @@ const ArticleEdit = () => {
     category: "",
     status: "draft",
     featured: false,
-    language_code: "vi"
+    language_code: "vi",
+    related_article_id: null as string | null
   });
 
   useEffect(() => {
@@ -79,7 +83,8 @@ const ArticleEdit = () => {
           category: data.category,
           status: data.status,
           featured: data.featured,
-          language_code: data.language_code
+          language_code: data.language_code,
+          related_article_id: (data as any).related_article_id || null
         });
       }
     } catch (error) {
@@ -167,7 +172,8 @@ const ArticleEdit = () => {
         status,
         author: user?.email || 'admin',
         language_code: formData.language_code,
-        published_at: status === 'published' && !article?.published_at ? new Date().toISOString() : article?.published_at
+        published_at: status === 'published' && !article?.published_at ? new Date().toISOString() : article?.published_at,
+        related_article_id: formData.related_article_id || null
       };
 
       const { error } = await supabase
@@ -234,113 +240,130 @@ const ArticleEdit = () => {
 
       <Card>
         <CardContent className="p-6">
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="title">Tiêu đề *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      title: e.target.value,
-                      slug: generateSlug(e.target.value)
-                    }));
-                  }}
-                  placeholder="Nhập tiêu đề bài viết"
-                />
-              </div>
-              <div>
-                <Label htmlFor="slug">Slug URL</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                  placeholder="url-bai-viet"
-                />
-              </div>
-            </div>
+          <Tabs defaultValue="content" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="content">Nội dung</TabsTrigger>
+              <TabsTrigger value="settings">Cài đặt</TabsTrigger>
+            </TabsList>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-               
-                <CategorySelector
-                  selectedCategories={formData.category ? [formData.category] : []}
-                  onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
-                  languageCode={formData.language_code}
-                  multiple={false}
-                  placeholder="Chọn chuyên mục bài viết"
-                />
-              </div>
-
-              <div>
-                <Label>Ngôn ngữ</Label>
-                <Select
-                  value={formData.language_code}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="vi">Tiếng Việt</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="excerpt">Tóm tắt</Label>
-              <Textarea
-                id="excerpt"
-                value={formData.excerpt}
-                onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                placeholder="Nhập tóm tắt ngắn gọn về bài viết"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="content">Nội dung bài viết *</Label>
-              <TinyMCEEditor
-                value={formData.content}
-                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                placeholder="Nhập nội dung chi tiết của bài viết"
-                height={500}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="image_url">Hình ảnh đại diện</Label>
-              <div className="space-y-2">
-                {formData.image_url && (
-                  <img
-                    src={formData.image_url}
-                    alt="Preview"
-                    className="h-32 w-auto rounded-lg"
+            <TabsContent value="content" className="space-y-6 mt-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="title">Tiêu đề *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        title: e.target.value,
+                        slug: generateSlug(e.target.value)
+                      }));
+                    }}
+                    placeholder="Nhập tiêu đề bài viết"
                   />
-                )}
-                <Input
-                  id="image_url"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
+                </div>
+                <div>
+                  <Label htmlFor="slug">Slug URL</Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                    placeholder="url-bai-viet"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <CategorySelector
+                    selectedCategories={formData.category ? [formData.category] : []}
+                    onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
+                    languageCode={formData.language_code}
+                    multiple={false}
+                    placeholder="Chọn chuyên mục"
+                  />
+                </div>
+
+                <div>
+                  <Label>Ngôn ngữ</Label>
+                  <Select
+                    value={formData.language_code}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="vi">Tiếng Việt</SelectItem>
+                      <SelectItem value="en">English</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center space-x-2 mt-6">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={formData.featured}
+                    onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+                  />
+                  <Label htmlFor="featured">Bài viết nổi bật</Label>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="excerpt">Tóm tắt</Label>
+                <Textarea
+                  id="excerpt"
+                  value={formData.excerpt}
+                  onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                  placeholder="Nhập tóm tắt ngắn gọn về bài viết"
+                  rows={3}
                 />
               </div>
-            </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="featured"
-                checked={formData.featured}
-                onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+              <div>
+                <Label htmlFor="content">Nội dung bài viết *</Label>
+                <TinyMCEEditor
+                  value={formData.content}
+                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                  placeholder="Nhập nội dung chi tiết của bài viết"
+                  height={500}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="image_url">Hình ảnh đại diện</Label>
+                <div className="space-y-2">
+                  {formData.image_url && (
+                    <img
+                      src={formData.image_url}
+                      alt="Preview"
+                      className="h-32 w-auto rounded-lg"
+                    />
+                  )}
+                  <Input
+                    id="image_url"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-6 mt-6">
+              <RelatedArticleSelector
+                currentArticleId={article?.id}
+                relatedArticleId={formData.related_article_id}
+                onRelatedArticleChange={(articleId) => 
+                  setFormData(prev => ({ ...prev, related_article_id: articleId }))
+                }
+                currentLanguage={formData.language_code}
               />
-              <Label htmlFor="featured">Bài viết nổi bật</Label>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
             <Button 
