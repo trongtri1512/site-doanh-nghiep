@@ -85,6 +85,7 @@ const App = () => (
           <Route path="/brands" element={<BrandsShowcase />} />
           {/* Dynamic brand routes */}
           <Route path="/brands/:slug" element={<BrandDynamicRouter />} />
+          <Route path="/brands/astalift-dynamic" element={<AstaliftDynamic />} />
           
           {/* English routes with /en prefix */}
           <Route path="/en" element={<IndexDynamic />} />

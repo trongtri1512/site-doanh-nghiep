@@ -29,6 +29,11 @@ const BrandDynamicRouter = () => {
     return <PigeonDynamic />;
   }
 
+  // Special handling for Astalift brand - redirect to AstaliftDynamic
+  if (slug === 'astalift' || slug === 'astalift-en') {
+    return <Navigate to={`/brands/astalift-dynamic?lang=${slug === 'astalift-en' ? 'en' : 'vi'}`} replace />;
+  }
+
   // Fetch brand data by slug
   const { data: brand, isLoading: brandLoading } = useQuery({
     queryKey: ["brand", slug],
