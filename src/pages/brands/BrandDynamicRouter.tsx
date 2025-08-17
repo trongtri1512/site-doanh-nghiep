@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import PigeonModern from "./PigeonModern";
+import PigeonDynamic from "./PigeonDynamic";
 
 interface BrandPageElement {
   id: string;
@@ -24,9 +24,9 @@ const BrandDynamicRouter = () => {
   const { currentLanguage } = useLanguage();
   const [elements, setElements] = useState<BrandPageElement[]>([]);
 
-  // Special handling for Pigeon brand - use modern component
-  if (slug === 'pigeon') {
-    return <PigeonModern />;
+  // Special handling for Pigeon brand - use dynamic component
+  if (slug === 'pigeon' || slug === 'pigeon-en') {
+    return <PigeonDynamic />;
   }
 
   // Fetch brand data by slug
