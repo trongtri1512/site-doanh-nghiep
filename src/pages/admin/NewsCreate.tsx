@@ -376,6 +376,14 @@ const NewsCreate = () => {
                   </div>
                 )}
               </div>
+
+              <RelatedArticleSelector
+                relatedArticleId={formData.related_article_id}
+                onRelatedArticleChange={(articleId) => 
+                  setFormData(prev => ({ ...prev, related_article_id: articleId }))
+                }
+                currentLanguage={formData.language_code}
+              />
             </TabsContent>
           </Tabs>
 

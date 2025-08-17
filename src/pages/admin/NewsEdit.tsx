@@ -21,6 +21,7 @@ import CategorySelector from '@/components/admin/CategorySelector';
 import HashtagInput from '@/components/admin/HashtagInput';
 import SEOFields from '@/components/admin/SEOFields';
 import RelatedArticleSelector from '@/components/admin/RelatedArticleSelector';
+import ArticleWorkflowTracker from '@/components/admin/ArticleWorkflowTracker';
 
 interface News {
   id: string;
@@ -230,7 +231,9 @@ const NewsEdit = () => {
         </div>
       </div>
 
-      <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card>
         <CardContent className="p-6">
           <Tabs defaultValue="content" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -461,6 +464,25 @@ const NewsEdit = () => {
           </div>
         </CardContent>
       </Card>
+    </div>
+
+        <div className="space-y-6">
+          <ArticleWorkflowTracker
+            currentArticle={{
+              id: news?.id || '',
+              status: news?.status || 'draft',
+              language_code: news?.language_code || 'vi',
+              title: news?.title || ''
+            }}
+            relatedArticle={formData.related_article_id ? {
+              id: formData.related_article_id,
+              status: 'unknown',
+              language_code: formData.language_code === 'vi' ? 'en' : 'vi',
+              title: 'Bài viết liên kết'
+            } : null}
+          />
+        </div>
+      </div>
     </div>
   );
 };
