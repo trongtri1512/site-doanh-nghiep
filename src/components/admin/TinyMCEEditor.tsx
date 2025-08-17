@@ -67,12 +67,13 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
     plugins: [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons', 'paste'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons'
     ],
     toolbar: 'undo redo | formatselect | ' +
       'bold italic forecolor backcolor | alignleft aligncenter ' +
       'alignright alignjustify | bullist numlist outdent indent | ' +
       'removeformat | link image media table | code preview fullscreen | help',
+    toolbar_mode: 'sliding' as const,
     content_style: `
       body { 
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
@@ -87,13 +88,16 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       th { background-color: #f2f2f2; }
     `,
     placeholder,
-    paste_data_images: true,
     images_upload_handler: handleImageUpload,
     automatic_uploads: true,
     file_picker_types: 'image',
     image_advtab: true,
     image_caption: true,
     image_title: true,
+    paste_data_images: true,
+    paste_as_text: false,
+    paste_webkit_styles: 'none',
+    paste_retain_style_properties: 'color font-size',
     quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
     quickbars_insert_toolbar: 'quickimage quicktable',
     contextmenu: 'link image table',
