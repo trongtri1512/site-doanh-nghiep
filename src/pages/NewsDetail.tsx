@@ -6,7 +6,6 @@ import { ArrowLeft, Calendar, User, Tag, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import HTMLContent from "@/components/ui/html-content";
-import ArticleLanguageSwitcher from "@/components/ArticleLanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsDetail = () => {
@@ -91,7 +90,7 @@ const NewsDetail = () => {
 
   return (
     <div className="min-h-screen">
-      <Header articleLanguageSwitcher={article && <ArticleLanguageSwitcher articleId={article.id} articleSlug={article.slug} />} />
+      <Header />
       
       <main className="container mx-auto px-6 py-8">
         <Link to={currentLanguage === 'en' ? '/en/news' : '/news'} className="inline-flex items-center gap-2 text-primary hover:underline mb-6">

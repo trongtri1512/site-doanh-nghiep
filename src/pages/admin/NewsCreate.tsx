@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,14 +20,12 @@ import TinyMCEEditor from '@/components/admin/TinyMCEEditor';
 import CategorySelector from '@/components/admin/CategorySelector';
 import HashtagInput from '@/components/admin/HashtagInput';
 import SEOFields from '@/components/admin/SEOFields';
-import RelatedArticleSelector from '@/components/admin/RelatedArticleSelector';
 
 const NewsCreate = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -44,34 +42,8 @@ const NewsCreate = () => {
     hashtags: [] as string[],
     meta_title: '',
     meta_description: '',
-    focus_keyword: '',
-    related_article_id: ''
+    focus_keyword: ''
   });
-
-  useEffect(() => {
-    const lang = searchParams.get('lang');
-    const relatedId = searchParams.get('related_id');
-    const relatedTitle = searchParams.get('related');
-    
-    if (lang) {
-      setFormData(prev => ({ ...prev, language_code: lang }));
-    }
-    
-    if (relatedId) {
-      setFormData(prev => ({ ...prev, related_article_id: relatedId }));
-    }
-    
-    if (relatedTitle) {
-      const translatedTitle = lang === 'en' 
-        ? `English version: ${relatedTitle}`
-        : `Phiên bản tiếng Việt: ${relatedTitle}`;
-      setFormData(prev => ({ 
-        ...prev, 
-        title: translatedTitle,
-        slug: generateSlug(translatedTitle)
-      }));
-    }
-  }, [searchParams]);
 
   const generateSlug = (title: string) => {
     return title
@@ -113,25 +85,14 @@ const NewsCreate = () => {
         meta_title: formData.meta_title || null,
         meta_description: formData.meta_description || null,
         focus_keyword: formData.focus_keyword || null,
-        related_article_id: formData.related_article_id || null,
         published_at: status === 'published' ? new Date().toISOString() : null
       };
 
-      const { data: insertedData, error } = await supabase
+      const { error } = await supabase
         .from('news')
-        .insert([newsData])
-        .select()
-        .single();
+        .insert([newsData]);
 
       if (error) throw error;
-
-      // If there's a related article, update it to link back
-      if (formData.related_article_id && insertedData) {
-        await supabase
-          .from('news')
-          .update({ related_article_id: insertedData.id })
-          .eq('id', formData.related_article_id);
-      }
 
       toast({
         title: "Thành công",
@@ -255,18 +216,6 @@ const NewsCreate = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <RelatedArticleSelector
-                  currentLanguage={formData.language_code}
-                  relatedArticleId={formData.related_article_id}
-                  onRelatedArticleChange={(articleId) => 
-                    setFormData(prev => ({ ...prev, related_article_id: articleId }))
-                  }
-                  onCreateRelated={() => {
-                    const otherLang = formData.language_code === 'vi' ? 'en' : 'vi';
-                    window.open(`/admin/news/create?lang=${otherLang}&related=${formData.title}`, '_blank');
-                  }}
-                />
               </div>
 
               <div className="space-y-2">

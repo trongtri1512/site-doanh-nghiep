@@ -20,7 +20,6 @@ import TinyMCEEditor from '@/components/admin/TinyMCEEditor';
 import CategorySelector from '@/components/admin/CategorySelector';
 import HashtagInput from '@/components/admin/HashtagInput';
 import SEOFields from '@/components/admin/SEOFields';
-import RelatedArticleSelector from '@/components/admin/RelatedArticleSelector';
 
 interface News {
   id: string;
@@ -42,7 +41,6 @@ interface News {
   meta_title: string | null;
   meta_description: string | null;
   focus_keyword: string | null;
-  related_article_id: string | null;
 }
 
 const NewsEdit = () => {
@@ -69,8 +67,7 @@ const NewsEdit = () => {
     hashtags: [] as string[],
     meta_title: '',
     meta_description: '',
-    focus_keyword: '',
-    related_article_id: ''
+    focus_keyword: ''
   });
 
   useEffect(() => {
@@ -82,9 +79,9 @@ const NewsEdit = () => {
   const fetchNews = async () => {
     try {
       setLoading(true);
-    const { data, error } = await supabase
+      const { data, error } = await supabase
         .from('news')
-        .select('*, related_article_id')
+        .select('*')
         .eq('id', id)
         .single();
 
@@ -107,8 +104,7 @@ const NewsEdit = () => {
           hashtags: data.hashtags || [],
           meta_title: data.meta_title || '',
           meta_description: data.meta_description || '',
-          focus_keyword: data.focus_keyword || '',
-          related_article_id: data.related_article_id || ''
+          focus_keyword: data.focus_keyword || ''
         });
       }
     } catch (error) {
@@ -164,7 +160,6 @@ const NewsEdit = () => {
         meta_title: formData.meta_title || null,
         meta_description: formData.meta_description || null,
         focus_keyword: formData.focus_keyword || null,
-        related_article_id: formData.related_article_id || null,
         published_at: status === 'published' && !news?.published_at ? new Date().toISOString() : news?.published_at
       };
 
@@ -174,25 +169,6 @@ const NewsEdit = () => {
         .eq('id', id);
 
       if (error) throw error;
-
-      // Update related article if there's a change
-      if (formData.related_article_id !== news?.related_article_id) {
-        // Remove old relationship if it exists
-        if (news?.related_article_id) {
-          await supabase
-            .from('news')
-            .update({ related_article_id: null })
-            .eq('id', news.related_article_id);
-        }
-        
-        // Create new relationship if specified
-        if (formData.related_article_id) {
-          await supabase
-            .from('news')
-            .update({ related_article_id: id })
-            .eq('id', formData.related_article_id);
-        }
-      }
 
       toast({
         title: "Thành công",
@@ -336,19 +312,6 @@ const NewsEdit = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <RelatedArticleSelector
-                  currentLanguage={formData.language_code}
-                  currentArticleId={id}
-                  relatedArticleId={formData.related_article_id}
-                  onRelatedArticleChange={(articleId) => 
-                    setFormData(prev => ({ ...prev, related_article_id: articleId }))
-                  }
-                  onCreateRelated={() => {
-                    const otherLang = formData.language_code === 'vi' ? 'en' : 'vi';
-                    window.open(`/admin/news/create?lang=${otherLang}&related=${formData.title}`, '_blank');
-                  }}
-                />
               </div>
 
               <div className="space-y-2">
