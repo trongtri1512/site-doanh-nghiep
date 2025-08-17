@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import HTMLContent from "@/components/ui/html-content";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ArticleLanguageSwitcher from "@/components/ArticleLanguageSwitcher";
 
 const NewsDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -97,6 +98,8 @@ const NewsDetail = () => {
           <ArrowLeft size={20} />
           {t('news.back_to_news', 'Quay lại tin tức')}
         </Link>
+
+        <ArticleLanguageSwitcher />
         
         <article className="max-w-4xl mx-auto">
           {/* Article Header */}

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,12 +20,14 @@ import TinyMCEEditor from '@/components/admin/TinyMCEEditor';
 import CategorySelector from '@/components/admin/CategorySelector';
 import HashtagInput from '@/components/admin/HashtagInput';
 import SEOFields from '@/components/admin/SEOFields';
+import RelatedArticleSelector from '@/components/admin/RelatedArticleSelector';
 
 const NewsCreate = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,12 +40,44 @@ const NewsCreate = () => {
     status: 'draft' as 'draft' | 'published' | 'scheduled',
     featured: false,
     scheduled_at: null as Date | null,
-    language_code: 'vi',
+    language_code: searchParams.get('lang') || 'vi',
     hashtags: [] as string[],
     meta_title: '',
     meta_description: '',
-    focus_keyword: ''
+    focus_keyword: '',
+    related_article_id: searchParams.get('related_id') || null
   });
+
+  useEffect(() => {
+    const relatedId = searchParams.get('related_id');
+    const targetLang = searchParams.get('lang');
+    
+    if (relatedId && targetLang) {
+      loadRelatedArticleInfo(relatedId);
+    }
+  }, [searchParams]);
+
+  const loadRelatedArticleInfo = async (relatedId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('news')
+        .select('title, category, hashtags')
+        .eq('id', relatedId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setFormData(prev => ({
+          ...prev,
+          category: data.category,
+          hashtags: data.hashtags || []
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading related article:', error);
+    }
+  };
 
   const generateSlug = (title: string) => {
     return title
@@ -85,14 +119,26 @@ const NewsCreate = () => {
         meta_title: formData.meta_title || null,
         meta_description: formData.meta_description || null,
         focus_keyword: formData.focus_keyword || null,
-        published_at: status === 'published' ? new Date().toISOString() : null
+        published_at: status === 'published' ? new Date().toISOString() : null,
+        related_article_id: formData.related_article_id || null
       };
 
-      const { error } = await supabase
+      const { data: insertedData, error } = await supabase
         .from('news')
-        .insert([newsData]);
+        .insert([newsData])
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // If this article has a related article, update the related article to link back
+      if (formData.related_article_id && insertedData) {
+        await supabase
+          .from('news')
+          .update({ related_article_id: insertedData.id })
+          .eq('id', formData.related_article_id);
+      }
+
 
       toast({
         title: "Thành công",
@@ -202,21 +248,29 @@ const NewsCreate = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Ngôn ngữ</Label>
-                  <Select
-                    value={formData.language_code}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="vi">Tiếng Việt</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                   <Label>Ngôn ngữ</Label>
+                   <Select
+                     value={formData.language_code}
+                     onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
+                   >
+                     <SelectTrigger>
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="vi">Tiếng Việt</SelectItem>
+                       <SelectItem value="en">English</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+
+               <RelatedArticleSelector
+                 relatedArticleId={formData.related_article_id}
+                 onRelatedArticleChange={(articleId) => 
+                   setFormData(prev => ({ ...prev, related_article_id: articleId }))
+                 }
+                 currentLanguage={formData.language_code}
+               />
 
               <div className="space-y-2">
                 <Label htmlFor="excerpt">Tóm tắt</Label>
