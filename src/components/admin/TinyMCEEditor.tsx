@@ -97,7 +97,6 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
     paste_data_images: true,
     paste_as_text: false,
     paste_webkit_styles: 'none',
-    paste_retain_style_properties: 'color font-size',
     quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
     quickbars_insert_toolbar: 'quickimage quicktable',
     contextmenu: 'link image table',
