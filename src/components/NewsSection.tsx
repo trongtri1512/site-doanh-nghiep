@@ -63,9 +63,11 @@ const NewsSection = () => {
                 <div className="text-xs text-muted-foreground mb-2">
                   {new Date(item.created_at).toLocaleDateString('vi-VN')} • {item.category}
                 </div>
-                <h3 className="text-base font-semibold mb-2 line-clamp-2 flex-1">{item.title}</h3>
+                <Link to={currentLanguage === 'en' ? `/en/news/${item.slug}` : `/news/${item.slug}`}>
+                  <h3 className="text-base font-semibold mb-2 line-clamp-2 flex-1 hover:text-primary transition-colors cursor-pointer">{item.title}</h3>
+                </Link>
                 <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{item.excerpt}</p>
-                <Link to={`/news/${item.slug}`} className="mt-auto">
+                <Link to={currentLanguage === 'en' ? `/en/news/${item.slug}` : `/news/${item.slug}`} className="mt-auto">
                   <Button variant="outline" size="sm" className="w-full text-xs">
                     {t('common.read_more', 'Đọc thêm')}
                   </Button>
@@ -76,7 +78,7 @@ const NewsSection = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Link to="/news">
+          <Link to={currentLanguage === 'en' ? '/en/news' : '/news'}>
             <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
               {t('news.view_all', 'Xem tất cả tin tức')}
             </Button>

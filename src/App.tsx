@@ -58,6 +58,7 @@ import BrandDynamicRouter from "./pages/brands/BrandDynamicRouter";
 import NewsPageManagement from "./pages/admin/NewsPageManagement";
 import ArticlesManagement from "./pages/admin/ArticlesManagement";
 import CategoriesManagement from "./pages/admin/CategoriesManagement";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <LanguageProvider>
+            <ScrollToTop />
         <Routes>
           {/* Vietnamese routes (default) */}
           <Route path="/" element={<IndexDynamic />} />
