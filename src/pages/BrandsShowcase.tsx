@@ -5,21 +5,15 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ChevronRight, Star, Award, Users, TrendingUp } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
-// Import existing brand assets
+// Import existing brand assets for fallback
 import pigeonBanner from "@/assets/pigeon-banner.jpg";
 import astaliftBanner from "@/assets/astalift-banner.png";
 import instaxBanner from "@/assets/instax-banner.jpg";
 import veritesBanner from "@/assets/verites-banner.jpg";
 import etsukoBanner from "@/assets/etsuko-banner.jpg";
-
-// Import brand logos
-import pigeonLogo from "@/assets/logos/pigeon-logo.png";
-import astaliftLogo from "@/assets/logos/astalift-logo.png";
-import instaxLogo from "@/assets/logos/instax-logo.png";
-import veritesLogo from "@/assets/logos/verites-logo.png";
-import etsukoLogo from "@/assets/logos/etsuko-logo.png";
-import fujifilmLogo from "@/assets/logos/fujifilm-logo.png";
 
 const BrandsShowcase = () => {
   const { currentLanguage, t } = useLanguage();
@@ -29,92 +23,72 @@ const BrandsShowcase = () => {
     setIsVisible(true);
   }, []);
 
-  const brands = [
-    {
-      id: "pigeon",
-      name: "Pigeon",
-      logo: pigeonLogo,
-      category: currentLanguage === 'en' ? "Mother & Baby Care" : "Sản phẩm mẹ và bé",
-      description: currentLanguage === 'en' 
-        ? "Trusted worldwide for premium baby care products and feeding solutions"
-        : "Thương hiệu đáng tin cậy toàn cầu về sản phẩm chăm sóc em bé và giải pháp nuôi dưỡng",
-      image: pigeonBanner,
-      color: "from-pink-500 to-rose-400",
-      accent: "border-pink-200",
-      icon: <Users className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/pigeon" : "/brands/pigeon"
-    },
-    {
-      id: "astalift",
-      name: "Astalift",
-      logo: astaliftLogo,
-      category: currentLanguage === 'en' ? "Japanese Cosmetics" : "Mỹ phẩm Nhật Bản",
-      description: currentLanguage === 'en'
-        ? "Advanced Japanese skincare technology with astaxanthin for radiant skin"
-        : "Công nghệ chăm sóc da tiên tiến từ Nhật Bản với astaxanthin cho làn da rạng rỡ",
-      image: astaliftBanner,
-      color: "from-red-500 to-orange-400",
-      accent: "border-red-200",
-      icon: <Star className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/astalift" : "/brands/astalift"
-    },
-    {
-      id: "instax",
-      name: "Instax",
-      logo: instaxLogo,
-      category: currentLanguage === 'en' ? "Instant Photography" : "Máy chụp ảnh lấy liền",
-      description: currentLanguage === 'en'
-        ? "Capture and share life's moments instantly with Fujifilm's innovative cameras"
-        : "Ghi lại và chia sẻ những khoảnh khắc cuộc sống ngay lập tức với máy ảnh sáng tạo của Fujifilm",
-      image: instaxBanner,
-      color: "from-blue-500 to-cyan-400",
-      accent: "border-blue-200",
-      icon: <Award className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/instax-camera" : "/brands/instax-camera"
-    },
-    {
-      id: "verites",
-      name: "Verites",
-      logo: veritesLogo,
-      category: currentLanguage === 'en' ? "Youth Fragrance" : "Nước hoa cho giới trẻ",
-      description: currentLanguage === 'en'
-        ? "Trendy fragrances designed for the modern youth lifestyle"
-        : "Nước hoa thời thượng được thiết kế cho lối sống hiện đại của giới trẻ",
-      image: veritesBanner,
-      color: "from-purple-500 to-indigo-400",
-      accent: "border-purple-200",
-      icon: <TrendingUp className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/verites" : "/brands/verites"
-    },
-    {
-      id: "etsuko",
-      name: "Etsuko",
-      logo: etsukoLogo,
-      category: currentLanguage === 'en' ? "Baby Bath Care" : "Sữa tắm cho bé",
-      description: currentLanguage === 'en'
-        ? "Gentle and safe bath products specially formulated for babies' delicate skin"
-        : "Sản phẩm tắm gội nhẹ nhàng và an toàn được điều chế đặc biệt cho làn da mỏng manh của bé",
-      image: etsukoBanner,
-      color: "from-green-500 to-emerald-400",
-      accent: "border-green-200",
-      icon: <Users className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/etsuko" : "/brands/etsuko"
-    },
-    {
-      id: "fujifilm",
-      name: "Fujifilm",
-      logo: fujifilmLogo,
-      category: currentLanguage === 'en' ? "Photo Development" : "Phim rửa hình",
-      description: currentLanguage === 'en'
-        ? "Professional photo development and imaging solutions with decades of expertise"
-        : "Giải pháp phát triển ảnh và hình ảnh chuyên nghiệp với nhiều thập kỷ kinh nghiệm",
-      image: instaxBanner, // Using instax image as placeholder for Fujifilm
-      color: "from-gray-600 to-slate-500",
-      accent: "border-gray-200",
-      icon: <Award className="w-6 h-6" />,
-      link: currentLanguage === 'en' ? "/en/brands/fujifilm-image" : "/brands/fujifilm-image"
+  // Fetch brands from database
+  const { data: brandsData = [], isLoading } = useQuery({
+    queryKey: ['brands', currentLanguage],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('language_code', currentLanguage)
+        .eq('active', true)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      return data;
     }
-  ];
+  });
+
+  // Fallback images mapping
+  const fallbackImages = {
+    'pigeon': pigeonBanner,
+    'astalift': astaliftBanner,
+    'instax': instaxBanner,
+    'instax-camera': instaxBanner,
+    'verites': veritesBanner,
+    'etsuko': etsukoBanner,
+    'fujifilm': instaxBanner,
+    'fujifilm-image': instaxBanner
+  };
+
+  // Color schemes for different categories
+  const getColorScheme = (category: string, index: number) => {
+    const schemes = [
+      { color: "from-pink-500 to-rose-400", accent: "border-pink-200", icon: <Users className="w-6 h-6" /> },
+      { color: "from-red-500 to-orange-400", accent: "border-red-200", icon: <Star className="w-6 h-6" /> },
+      { color: "from-blue-500 to-cyan-400", accent: "border-blue-200", icon: <Award className="w-6 h-6" /> },
+      { color: "from-purple-500 to-indigo-400", accent: "border-purple-200", icon: <TrendingUp className="w-6 h-6" /> },
+      { color: "from-green-500 to-emerald-400", accent: "border-green-200", icon: <Users className="w-6 h-6" /> },
+      { color: "from-gray-600 to-slate-500", accent: "border-gray-200", icon: <Award className="w-6 h-6" /> }
+    ];
+    
+    if (category?.toLowerCase().includes('baby') || category?.toLowerCase().includes('bé')) {
+      return schemes[0];
+    } else if (category?.toLowerCase().includes('beauty') || category?.toLowerCase().includes('đẹp')) {
+      return schemes[1];
+    } else if (category?.toLowerCase().includes('camera') || category?.toLowerCase().includes('ảnh')) {
+      return schemes[2];
+    } else {
+      return schemes[index % schemes.length];
+    }
+  };
+
+  // Transform database brands to component format
+  const brands = brandsData.map((brand, index) => {
+    const scheme = getColorScheme(brand.category, index);
+    return {
+      id: brand.slug,
+      name: brand.name,
+      logo: brand.image_url,
+      category: brand.category,
+      description: brand.description,
+      image: fallbackImages[brand.slug as keyof typeof fallbackImages] || pigeonBanner,
+      color: scheme.color,
+      accent: scheme.accent,
+      icon: scheme.icon,
+      link: currentLanguage === 'en' ? `/en/brands/${brand.slug}` : `/brands/${brand.slug}`
+    };
+  });
 
   return (
     <div className="min-h-screen bg-background">
