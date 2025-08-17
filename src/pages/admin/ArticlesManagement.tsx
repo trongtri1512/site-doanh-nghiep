@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ interface Article {
 }
 
 const ArticlesManagement = () => {
+  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -113,19 +115,7 @@ const ArticlesManagement = () => {
   };
 
   const handleEdit = (article: Article) => {
-    setFormData({
-      title: article.title,
-      slug: article.slug,
-      content: article.content,
-      excerpt: article.excerpt,
-      image_url: article.image_url,
-      category: article.category,
-      status: article.status,
-      featured: article.featured,
-      language_code: article.language_code
-    });
-    setEditingArticle(article);
-    setDialogOpen(true);
+    navigate(`/admin/articles/edit/${article.id}`);
   };
 
   const handleDelete = async (id: string) => {
@@ -317,124 +307,10 @@ const ArticlesManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Quản lý bài viết</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm}>
-              <Plus className="mr-2 h-4 w-4" />
-              Thêm bài viết
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingArticle ? "Chỉnh sửa bài viết" : "Thêm bài viết mới"}
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title">Tiêu đề *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        title: e.target.value,
-                        slug: generateSlug(e.target.value)
-                      }));
-                    }}
-                    placeholder="Nhập tiêu đề bài viết"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="slug">Slug URL</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                    placeholder="url-bai-viet"
-                  />
-                </div>
-              </div>
-
-              <CategorySelector
-                selectedCategories={formData.category ? [formData.category] : []}
-                onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
-                languageCode={activeTab}
-                multiple={false}
-                placeholder="Chọn chuyên mục bài viết"
-              />
-
-              <div>
-                <Label htmlFor="excerpt">Tóm tắt</Label>
-                <Textarea
-                  id="excerpt"
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                  placeholder="Nhập tóm tắt ngắn gọn về bài viết"
-                  rows={3}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="content">Nội dung bài viết *</Label>
-                <TinyMCEEditor
-                  value={formData.content}
-                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                  placeholder="Nhập nội dung chi tiết của bài viết"
-                  height={500}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="image_url">Hình ảnh đại diện</Label>
-                <div className="space-y-2">
-                  {formData.image_url && (
-                    <img
-                      src={formData.image_url}
-                      alt="Preview"
-                      className="h-32 w-auto rounded-lg"
-                    />
-                  )}
-                  <Input
-                    id="image_url"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                />
-                <Label htmlFor="featured">Bài viết nổi bật</Label>
-              </div>
-
-              <div className="flex space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleSubmit("draft")}
-                >
-                  Lưu nháp
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => handleSubmit("published")}
-                >
-                  Xuất bản
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => navigate('/admin/articles/create')}>
+          <Plus className="mr-2 h-4 w-4" />
+          Thêm bài viết
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>

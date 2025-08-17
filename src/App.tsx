@@ -43,6 +43,10 @@ import HomepageBuilder from "./pages/admin/HomepageBuilder";
 import BrandsManagement from "./pages/admin/BrandsManagement";
 import BrandPageBuilder from "./pages/admin/BrandPageBuilder";
 import NewsManagement from "./pages/admin/NewsManagement";
+import NewsCreate from "./pages/admin/NewsCreate";
+import NewsEdit from "./pages/admin/NewsEdit";
+import ArticleCreate from "./pages/admin/ArticleCreate";
+import ArticleEdit from "./pages/admin/ArticleEdit";
 import CareersManagement from "./pages/admin/CareersManagement";
 import AboutManagement from "./pages/admin/AboutManagement";
 import FooterManagement from "./pages/admin/FooterManagement";
@@ -105,8 +109,12 @@ const App = () => (
             <Route path="brands" element={<BrandsManagement />} />
             <Route path="brands/:brandSlug/builder" element={<BrandPageBuilder />} />
             <Route path="news" element={<NewsManagement />} />
+            <Route path="news/create" element={<NewsCreate />} />
+            <Route path="news/edit/:id" element={<NewsEdit />} />
             <Route path="news-page" element={<NewsPageManagement />} />
             <Route path="articles" element={<ArticlesManagement />} />
+            <Route path="articles/create" element={<ArticleCreate />} />
+            <Route path="articles/edit/:id" element={<ArticleEdit />} />
             <Route path="categories" element={<CategoriesManagement />} />
             <Route path="careers" element={<CareersManagement />} />
             <Route path="about" element={<AboutManagement />} />

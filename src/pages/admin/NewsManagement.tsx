@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,7 @@ interface News {
 }
 
 const NewsManagement = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [news, setNews] = useState<News[]>([]);
@@ -211,25 +213,7 @@ const NewsManagement = () => {
   };
 
   const handleEdit = (news: News) => {
-    setEditingNews(news);
-    setFormData({
-      title: news.title,
-      slug: news.slug,
-      excerpt: news.excerpt,
-      content: news.content,
-      image_url: news.image_url || '',
-      category: news.category,
-      author: news.author,
-      status: news.status,
-      featured: news.featured,
-      scheduled_at: news.scheduled_at ? new Date(news.scheduled_at) : null,
-      language_code: news.language_code,
-      hashtags: news.hashtags || [],
-      meta_title: news.meta_title || '',
-      meta_description: news.meta_description || '',
-      focus_keyword: news.focus_keyword || ''
-    });
-    setIsDialogOpen(true);
+    navigate(`/admin/news/edit/${news.id}`);
   };
 
   const handleDelete = async (id: string) => {
@@ -302,232 +286,10 @@ const NewsManagement = () => {
           <h1 className="text-3xl font-bold">Quản lý Tin tức</h1>
           <p className="text-muted-foreground">Tạo và quản lý bài viết tin tức với SEO và hashtag</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) resetForm();
-        }}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm}>
-              <Plus className="h-4 w-4 mr-2" />
-              Thêm tin tức
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingNews ? 'Chỉnh sửa tin tức' : 'Thêm tin tức mới'}
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="py-4">
-              <div className="space-y-6">
-                <Tabs defaultValue="content" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="content">Nội dung</TabsTrigger>
-                    <TabsTrigger value="seo">
-                      <Search className="h-4 w-4 mr-1" />
-                      SEO
-                    </TabsTrigger>
-                    <TabsTrigger value="settings">Cài đặt</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="content" className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="title">Tiêu đề *</Label>
-                        <Input
-                          id="title"
-                          value={formData.title}
-                          onChange={(e) => {
-                            const title = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              title,
-                              slug: generateSlug(title)
-                            }));
-                          }}
-                          placeholder="Nhập tiêu đề bài viết"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="slug">Slug (URL)</Label>
-                        <Input
-                          id="slug"
-                          value={formData.slug}
-                          onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                          placeholder="ten-bai-viet"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="image_url">Ảnh đại diện</Label>
-                        <Input
-                          id="image_url"
-                          value={formData.image_url}
-                          onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-                          placeholder="URL ảnh đại diện"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="author">Tác giả</Label>
-                        <Input
-                          id="author"
-                          value={formData.author}
-                          onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
-                          placeholder="Tên tác giả"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Chuyên mục *</Label>
-                        <CategorySelector
-                          selectedCategories={formData.category ? [formData.category] : []}
-                          onCategoriesChange={(categories) => setFormData(prev => ({ ...prev, category: categories[0] || '' }))}
-                          languageCode={selectedLanguage}
-                          multiple={false}
-                          placeholder="Chọn chuyên mục"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Ngôn ngữ</Label>
-                        <Select
-                          value={formData.language_code}
-                          onValueChange={(value) => setFormData(prev => ({ ...prev, language_code: value }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="vi">Tiếng Việt</SelectItem>
-                            <SelectItem value="en">English</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="excerpt">Tóm tắt</Label>
-                      <Textarea
-                        id="excerpt"
-                        value={formData.excerpt}
-                        onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                        placeholder="Tóm tắt ngắn gọn về bài viết"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
-                        Hashtags
-                      </Label>
-                      <HashtagInput
-                        value={formData.hashtags}
-                        onChange={(hashtags) => setFormData(prev => ({ ...prev, hashtags }))}
-                        placeholder="Thêm hashtag..."
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Nội dung</Label>
-                      <TinyMCEEditor
-                        value={formData.content}
-                        onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                        placeholder="Nhập nội dung bài viết..."
-                        height={400}
-                      />
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="seo" className="space-y-6">
-                    <SEOFields
-                      title={formData.title}
-                      metaTitle={formData.meta_title}
-                      metaDescription={formData.meta_description}
-                      focusKeyword={formData.focus_keyword}
-                      content={formData.content}
-                      onMetaTitleChange={(meta_title) => setFormData(prev => ({ ...prev, meta_title }))}
-                      onMetaDescriptionChange={(meta_description) => setFormData(prev => ({ ...prev, meta_description }))}
-                      onFocusKeywordChange={(focus_keyword) => setFormData(prev => ({ ...prev, focus_keyword }))}
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="settings" className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Trạng thái</Label>
-                        <Select
-                          value={formData.status}
-                          onValueChange={(value: 'draft' | 'published' | 'scheduled') => 
-                            setFormData(prev => ({ ...prev, status: value }))
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="draft">Bản nháp</SelectItem>
-                            <SelectItem value="published">Đã xuất bản</SelectItem>
-                            <SelectItem value="scheduled">Lên lịch</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="featured"
-                          checked={formData.featured}
-                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, featured: checked }))}
-                        />
-                        <Label htmlFor="featured">Bài viết nổi bật</Label>
-                      </div>
-                    </div>
-
-                    {formData.status === 'scheduled' && (
-                      <div className="space-y-2">
-                        <Label>Thời gian xuất bản</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !formData.scheduled_at && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formData.scheduled_at ? format(formData.scheduled_at, "PPP") : "Chọn ngày"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <Calendar
-                              mode="single"
-                              selected={formData.scheduled_at}
-                              onSelect={(date) => setFormData(prev => ({ ...prev, scheduled_at: date }))}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
-
-                <div className="flex justify-end space-x-2 pt-4 border-t">
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Hủy
-                  </Button>
-                  <Button onClick={handleSubmit}>
-                    {editingNews ? 'Cập nhật' : 'Tạo mới'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => navigate('/admin/news/create')}>
+          <Plus className="h-4 w-4 mr-2" />
+          Thêm tin tức
+        </Button>
       </div>
 
       <Card>
