@@ -178,3 +178,47 @@ All colors MUST be HSL.
 .tox-dialog-wrap__backdrop {
   pointer-events: auto !important;
 }
+
+/* Pigeon Brand Colors */
+:root {
+  --pigeon-primary: 340 75% 55%;
+  --pigeon-secondary: 200 80% 45%;
+  --pigeon-accent: 45 90% 60%;
+  --pigeon-neutral: 210 15% 95%;
+}
+
+/* Pigeon Timeline Styles */
+.timeline-point {
+  position: relative;
+}
+
+.timeline-point::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, hsl(var(--pigeon-primary)), hsl(var(--pigeon-secondary)));
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}
+
+.timeline-point::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: hsl(var(--pigeon-primary));
+  border: 3px solid hsl(var(--background));
+  border-radius: 50%;
+  left: 50%;
+  top: 24px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 20px hsl(var(--pigeon-primary) / 0.3);
+}
+
+/* Counter Animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

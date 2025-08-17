@@ -14,7 +14,7 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Pigeon from "./pages/brands/Pigeon";
+import PigeonModern from "./pages/brands/PigeonModern";
 import Verites from "./pages/brands/Verites";
 import InstaxCamera from "./pages/brands/InstaxCamera";
 import FujifilmImage from "./pages/brands/FujifilmImage";

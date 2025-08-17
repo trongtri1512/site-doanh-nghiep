@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import PigeonModern from "./PigeonModern";
 
 interface BrandPageElement {
   id: string;
@@ -19,7 +21,13 @@ interface BrandPageElement {
 
 const BrandDynamicRouter = () => {
   const { slug } = useParams();
+  const { currentLanguage } = useLanguage();
   const [elements, setElements] = useState<BrandPageElement[]>([]);
+
+  // Special handling for Pigeon brand - use modern component
+  if (slug === 'pigeon') {
+    return <PigeonModern />;
+  }
 
   // Fetch brand data by slug
   const { data: brand, isLoading: brandLoading } = useQuery({

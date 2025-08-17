@@ -159,7 +159,11 @@ export default {
 				'wave-3': 'wave-3 15s ease-in-out infinite',
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 2s ease-in-out infinite',
-				'slide-in-up': 'slide-in-up 0.6s ease-out forwards'
+				'slide-in-up': 'slide-in-up 0.6s ease-out forwards',
+				'timeline-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'counter-up': 'count-up 1s ease-out forwards',
+				'magnetic': 'scale-in 0.2s ease-out',
+				'reveal-up': 'slide-in-up 0.6s ease-out'
 			}
 		}
 	},
