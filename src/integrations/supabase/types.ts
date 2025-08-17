@@ -575,6 +575,7 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           published_at: string | null
+          related_article_id: string | null
           scheduled_at: string | null
           slug: string
           status: string
@@ -596,6 +597,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           published_at?: string | null
+          related_article_id?: string | null
           scheduled_at?: string | null
           slug: string
           status?: string
@@ -617,13 +619,22 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           published_at?: string | null
+          related_article_id?: string | null
           scheduled_at?: string | null
           slug?: string
           status?: string
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "news_related_article_id_fkey"
+            columns: ["related_article_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_layouts: {
         Row: {

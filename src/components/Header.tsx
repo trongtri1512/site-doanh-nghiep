@@ -22,7 +22,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-const Header = () => {
+interface HeaderProps {
+  articleLanguageSwitcher?: React.ReactNode;
+}
+
+const Header: React.FC<HeaderProps> = ({ articleLanguageSwitcher }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBrandMegaMenuOpen, setIsBrandMegaMenuOpen] = useState(false);
   const [megaMenuTimeout, setMegaMenuTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -324,7 +328,7 @@ const Header = () => {
           })}
           
           {/* Language Switcher */}
-          <LanguageSwitcher />
+          {articleLanguageSwitcher || <LanguageSwitcher />}
           
           {/* Search Button */}
           <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
@@ -366,7 +370,7 @@ const Header = () => {
 
         {/* Mobile Menu Button and Language Switcher */}
         <div className="lg:hidden flex items-center gap-2">
-          <LanguageSwitcher />
+          {articleLanguageSwitcher || <LanguageSwitcher />}
           
           {/* Mobile Search Button */}
           <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
