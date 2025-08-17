@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, Calendar, User, Tag, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import HTMLContent from "@/components/ui/html-content";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsDetail = () => {
@@ -164,10 +165,11 @@ const NewsDetail = () => {
           )}
 
           {/* Article Content */}
-          <div className="prose prose-lg max-w-none mb-12">
-            <div className="text-foreground leading-relaxed whitespace-pre-wrap">
-              {article.content || t('news.content_placeholder', 'Nội dung bài viết đang được cập nhật...')}
-            </div>
+          <div className="mb-12">
+            <HTMLContent 
+              content={article.content || t('news.content_placeholder', 'Nội dung bài viết đang được cập nhật...')}
+              className="text-foreground leading-relaxed"
+            />
           </div>
 
           {/* Article Footer */}
