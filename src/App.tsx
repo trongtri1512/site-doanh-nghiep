@@ -27,6 +27,7 @@ import EtsukoDynamic from "./pages/brands/EtsukoDynamic";
 import InstaxCameraDynamic from "./pages/brands/InstaxCameraDynamic";
 import FujifilmImageDynamic from "./pages/brands/FujifilmImageDynamic";
 import AdminAuth from "./pages/AdminAuth";
+import AdminResetPassword from "./pages/AdminResetPassword";
 import BannerManagement from "./pages/admin/BannerManagement";
 
 // Admin imports
@@ -87,6 +88,7 @@ const App = () => (
           
           {/* Admin Auth Route */}
           <Route path="/admin/auth" element={<AdminAuth />} />
+          <Route path="/admin/reset-password" element={<AdminResetPassword />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<UserManagement />} />
