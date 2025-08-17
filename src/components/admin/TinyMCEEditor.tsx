@@ -117,6 +117,18 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
       editor.on('redo', () => {
         onChange(editor.getContent());
       });
+      
+      // Fix for modal closing issues
+      editor.on('OpenWindow', (e: any) => {
+        setTimeout(() => {
+          const dialogs = document.querySelectorAll('.tox-dialog');
+          dialogs.forEach(dialog => {
+            if (dialog) {
+              (dialog as HTMLElement).style.zIndex = '10001';
+            }
+          });
+        }, 100);
+      });
     }
   };
 

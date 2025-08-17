@@ -126,3 +126,27 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* TinyMCE Modal Fixes */
+.tox-dialog-wrap {
+  z-index: 10000 !important;
+}
+
+.tox-dialog {
+  z-index: 10001 !important;
+}
+
+.tox-dialog__backdrop {
+  z-index: 9999 !important;
+}
+
+/* Fix for popup closing issues */
+.tox-dialog__footer-end button,
+.tox-dialog__header .tox-button {
+  pointer-events: auto !important;
+}
+
+/* Ensure modal overlay is clickable */
+.tox-dialog-wrap__backdrop {
+  pointer-events: auto !important;
+}
