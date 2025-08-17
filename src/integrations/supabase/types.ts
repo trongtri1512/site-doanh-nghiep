@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      brand_page_content: {
+        Row: {
+          brand_slug: string
+          content: Json
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          language_code: string
+          page_type: string
+          section_key: string
+          section_type: string
+          seo_data: Json | null
+          styles: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          brand_slug: string
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          page_type?: string
+          section_key: string
+          section_type: string
+          seo_data?: Json | null
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          brand_slug?: string
+          content?: Json
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          page_type?: string
+          section_key?: string
+          section_type?: string
+          seo_data?: Json | null
+          styles?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      brand_page_media: {
+        Row: {
+          alt_text: string | null
+          brand_slug: string
+          caption: string | null
+          created_at: string
+          dimensions: Json | null
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          is_active: boolean
+          language_code: string
+          media_type: string
+          mime_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          brand_slug: string
+          caption?: string | null
+          created_at?: string
+          dimensions?: Json | null
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          media_type: string
+          mime_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          brand_slug?: string
+          caption?: string | null
+          created_at?: string
+          dimensions?: Json | null
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          is_active?: boolean
+          language_code?: string
+          media_type?: string
+          mime_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       brand_pages: {
         Row: {
           brand_id: string

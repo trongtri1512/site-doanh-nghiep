@@ -45,9 +45,21 @@ const adminMenuGroups = [
       { title: "Trang tin tức", url: "/admin/news-page", icon: Layout, description: "Quản lý giao diện trang tin tức" },
       { title: "Tuyển dụng", url: "/admin/careers", icon: Users, description: "Quản lý vị trí tuyển dụng" },
       { title: "Giới thiệu", url: "/admin/about", icon: Info, description: "Nội dung về công ty" },
-      { title: "Nhãn hàng", url: "/admin/brands", icon: Package, description: "Quản lý thương hiệu sản phẩm" },
       { title: "Banner", url: "/admin/banner", icon: Image, description: "Quản lý hình ảnh banner" },
       { title: "Nội dung Footer", url: "/admin/footer", icon: SquareActivity, description: "Thông tin chân trang" }
+    ]
+  },
+  {
+    title: "Quản lý thương hiệu",
+    items: [
+      { title: "Trang nhãn hàng", url: "/admin/brands", icon: Package, description: "Tổng quan thương hiệu" },
+      { title: "Trang chi tiết Pigeon", url: "/admin/brands/pigeon/builder", icon: Package, description: "Quản lý trang Pigeon" },
+      { title: "Trang chi tiết Astalift", url: "/admin/brands/astalift/builder", icon: Package, description: "Quản lý trang Astalift" },
+      { title: "Trang chi tiết Etsuko", url: "/admin/brands/etsuko/builder", icon: Package, description: "Quản lý trang Etsuko" },
+      { title: "Trang chi tiết Fujifilm", url: "/admin/brands/fujifilm-image/builder", icon: Package, description: "Quản lý trang Fujifilm" },
+      { title: "Trang chi tiết Instax", url: "/admin/brands/instax-camera/builder", icon: Package, description: "Quản lý trang Instax" },
+      { title: "Trang chi tiết Verites", url: "/admin/brands/verites/builder", icon: Package, description: "Quản lý trang Verites" },
+      { title: "Thương hiệu nhãn hàng", url: "/admin/brands/list", icon: Package, description: "Danh sách thương hiệu" }
     ]
   },
   {
