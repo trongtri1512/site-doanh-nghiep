@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import TinyMCEEditor from "@/components/admin/TinyMCEEditor";
+import TipTapEditor from "@/components/admin/TipTapEditor";
 import CategorySelector from "@/components/admin/CategorySelector";
 
 const NewsManagement = () => {
@@ -453,7 +453,7 @@ const NewsManagement = () => {
 
               <div>
                 <Label htmlFor="news-content">Nội dung</Label>
-                <TinyMCEEditor
+                <TipTapEditor
                   value={formData.content}
                   onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                   placeholder="Nội dung đầy đủ bài viết"
