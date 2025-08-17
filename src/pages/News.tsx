@@ -8,22 +8,40 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const News = () => {
   const [newsArticles, setNewsArticles] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("categories.all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const { currentLanguage, t } = useLanguage();
-
-  const categories = [
-    { key: "categories.all", label: "Tất cả" },
-    { key: "categories.brands", label: "Thương hiệu" },
-    { key: "categories.products", label: "Sản phẩm" },
-    { key: "categories.achievements", label: "Thành tích" },
-    { key: "categories.events", label: "Sự kiện" },
-    { key: "categories.trends", label: "Xu hướng" }
-  ];
 
   useEffect(() => {
     loadNews();
+    loadCategories();
   }, [currentLanguage]);
+
+  const loadCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .like('setting_key', `category_${currentLanguage}_%`)
+        .eq('category', 'news_categories')
+        .order('display_name', { ascending: true });
+
+      if (error) throw error;
+      
+      const transformedCategories = [
+        { key: "all", label: currentLanguage === 'vi' ? "Tất cả" : "All" },
+        ...(data || []).map(item => ({
+          key: item.setting_key.replace(`category_${currentLanguage}_`, ''),
+          label: item.display_name
+        }))
+      ];
+      
+      setCategories(transformedCategories);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
 
   const loadNews = async () => {
     try {
@@ -43,11 +61,11 @@ const News = () => {
     }
   };
 
-  const filteredArticles = selectedCategory === "categories.all" 
+  const filteredArticles = selectedCategory === "all" 
     ? newsArticles 
     : newsArticles.filter(article => {
-        const categoryTranslation = t(selectedCategory, categories.find(cat => cat.key === selectedCategory)?.label || '');
-        return article.category === categoryTranslation;
+        const selectedCategoryLabel = categories.find(cat => cat.key === selectedCategory)?.label;
+        return article.category === selectedCategoryLabel;
       });
 
   if (loading) {
@@ -93,7 +111,7 @@ const News = () => {
                     : "bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t(category.key, category.label)}
+                {category.label}
               </button>
             ))}
           </div>
