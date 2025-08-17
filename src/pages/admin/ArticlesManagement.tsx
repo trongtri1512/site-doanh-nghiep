@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Plus, Edit, Trash2, Eye, Star, StarOff, Upload } from "lucide-react";
 import { format } from "date-fns";
-import TipTapEditor from "@/components/admin/TipTapEditor";
+import TinyMCEEditor from "@/components/admin/TinyMCEEditor";
 import CategorySelector from "@/components/admin/CategorySelector";
 
 interface Article {
@@ -380,7 +380,7 @@ const ArticlesManagement = () => {
 
               <div>
                 <Label htmlFor="content">Nội dung bài viết *</Label>
-                <TipTapEditor
+                <TinyMCEEditor
                   value={formData.content}
                   onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                   placeholder="Nhập nội dung chi tiết của bài viết"

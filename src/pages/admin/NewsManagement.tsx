@@ -19,7 +19,7 @@ import { CalendarIcon, Edit, Trash2, Plus, Eye, EyeOff, Hash, Search } from 'luc
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import TipTapEditor from '@/components/admin/TipTapEditor';
+import TinyMCEEditor from '@/components/admin/TinyMCEEditor';
 import CategorySelector from '@/components/admin/CategorySelector';
 import HashtagInput from '@/components/admin/HashtagInput';
 import SEOFields from '@/components/admin/SEOFields';
@@ -433,7 +433,7 @@ const NewsManagement = () => {
 
                     <div className="space-y-2">
                       <Label>Nội dung</Label>
-                      <TipTapEditor
+                      <TinyMCEEditor
                         value={formData.content}
                         onChange={(content) => setFormData(prev => ({ ...prev, content }))}
                         placeholder="Nhập nội dung bài viết..."
