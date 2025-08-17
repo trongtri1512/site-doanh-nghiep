@@ -42,12 +42,19 @@ const adminMenuGroups = [
     title: "Quản lý trang",
     items: [
       { title: "Trang chủ", url: "/admin/homepage-builder", icon: Layout, description: "Thiết kế giao diện trang chủ" },
-      { title: "Tin tức", url: "/admin/news", icon: Newspaper, description: "Quản lý bài viết tin tức" },
+      { title: "Trang tin tức", url: "/admin/news-page", icon: Layout, description: "Quản lý giao diện trang tin tức" },
       { title: "Tuyển dụng", url: "/admin/careers", icon: Users, description: "Quản lý vị trí tuyển dụng" },
       { title: "Giới thiệu", url: "/admin/about", icon: Info, description: "Nội dung về công ty" },
       { title: "Nhãn hàng", url: "/admin/brands", icon: Package, description: "Quản lý thương hiệu sản phẩm" },
       { title: "Banner", url: "/admin/banner", icon: Image, description: "Quản lý hình ảnh banner" },
       { title: "Nội dung Footer", url: "/admin/footer", icon: SquareActivity, description: "Thông tin chân trang" }
+    ]
+  },
+  {
+    title: "Quản lý nội dung",
+    items: [
+      { title: "Bài viết", url: "/admin/articles", icon: Newspaper, description: "Tạo, sửa, xóa bài viết tin tức" },
+      { title: "Chuyên mục", url: "/admin/categories", icon: Package, description: "Quản lý chuyên mục bài viết" }
     ]
   },
   {
