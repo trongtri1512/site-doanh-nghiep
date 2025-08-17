@@ -62,16 +62,14 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
   }, [uploadImage]);
 
   const editorConfig = {
-    apiKey: 'ndar70rcuod4hyvd2zee9vxxb4txsd83alog2gepr2snatzd',
     height,
     menubar: false,
     plugins: [
       'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
-      'emoticons', 'template', 'paste', 'textcolor', 'colorpicker'
+      'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons', 'paste'
     ],
-    toolbar: 'undo redo | blocks | ' +
+    toolbar: 'undo redo | formatselect | ' +
       'bold italic forecolor backcolor | alignleft aligncenter ' +
       'alignright alignjustify | bullist numlist outdent indent | ' +
       'removeformat | link image media table | code preview fullscreen | help',
@@ -100,10 +98,9 @@ const TinyMCEEditor: React.FC<TinyMCEEditorProps> = ({
     quickbars_insert_toolbar: 'quickimage quicktable',
     contextmenu: 'link image table',
     table_use_colgroups: true,
-    table_responsive_width: true,
     resize: 'both' as const,
-    branding: false, // Remove TinyMCE branding
-    promotion: false, // Remove upgrade promotion
+    branding: false,
+    promotion: false,
     setup: (editor: any) => {
       editor.on('change', () => {
         onChange(editor.getContent());
