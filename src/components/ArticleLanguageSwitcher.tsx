@@ -44,11 +44,12 @@ const ArticleLanguageSwitcher = () => {
       setCurrentArticle(current);
 
       // If current article has related_article_id, load the related article
-      if (current?.related_article_id) {
+      const relatedArticleId = (current as any)?.related_article_id;
+      if (relatedArticleId) {
         const { data: related, error: relatedError } = await supabase
           .from('news')
           .select('id, title, slug, language_code')
-          .eq('id', current.related_article_id)
+          .eq('id', relatedArticleId)
           .eq('status', 'published')
           .single();
 

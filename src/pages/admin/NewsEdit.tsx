@@ -108,7 +108,7 @@ const NewsEdit = () => {
           meta_title: data.meta_title || '',
           meta_description: data.meta_description || '',
           focus_keyword: data.focus_keyword || '',
-          related_article_id: data.related_article_id || null
+          related_article_id: (data as any).related_article_id || null
         });
       }
     } catch (error) {
@@ -148,7 +148,7 @@ const NewsEdit = () => {
     setSaving(true);
     try {
       const slug = formData.slug || generateSlug(formData.title);
-      const newsData = {
+      const newsData: any = {
         title: formData.title,
         slug: slug,
         excerpt: formData.excerpt,

@@ -103,7 +103,7 @@ const NewsCreate = () => {
     setLoading(true);
     try {
       const slug = formData.slug || generateSlug(formData.title);
-      const newsData = {
+      const newsData: any = {
         title: formData.title,
         slug: slug,
         excerpt: formData.excerpt,
