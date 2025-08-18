@@ -40,7 +40,12 @@ interface BrandPageElement {
 
 const AstaliftDynamic = () => {
   const [searchParams] = useSearchParams();
-  const lang = searchParams.get('lang') || 'vi';
+  const currentPath = window.location.pathname;
+  
+  // Determine language from URL path instead of query params
+  const lang = currentPath.includes('/en/') ? 'en' : 
+               searchParams.get('lang') === 'en' ? 'en' : 'vi';
+  
   const brandSlug = lang === 'en' ? 'astalift-en' : 'astalift';
   const [elements, setElements] = useState<BrandPageElement[]>([]);
   const [isVisible, setIsVisible] = useState(false);
@@ -524,7 +529,10 @@ const AstaliftDynamic = () => {
       
       <main>
         <div className="container mx-auto px-4 py-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 transition-colors font-medium">
+          <Link 
+            to={lang === 'en' ? "/en" : "/"} 
+            className="inline-flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors font-medium"
+          >
             <ArrowLeft size={20} />
             {lang === 'en' ? 'Back to home' : 'Quay lại trang chủ'}
           </Link>
