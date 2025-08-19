@@ -21,10 +21,10 @@ const AboutManagement = () => {
 
   const [brandPartners, setBrandPartners] = useState([
     { id: 1, name: "Pigeon", description: "Sản phẩm chăm sóc mẹ và bé từ Nhật Bản" },
-    { id: 2, name: "Verites", description: "Mỹ phẩm cao cấp từ Nhật Bản" },
+    { id: 2, name: "Verites", description: "Mỹ phẩm cao cấp cho giới trẻ" },
     { id: 3, name: "Instax Camera", description: "Máy ảnh chụp lấy liền Fujifilm" },
     { id: 4, name: "Fujifilm Image", description: "Giải pháp in ảnh chuyên nghiệp" },
-    { id: 5, name: "Etsuko", description: "Thời trang Nhật Bản cho phụ nữ" },
+    { id: 5, name: "Etsuko", description: "Chăm sóc bé từ khi chào đời" },
     { id: 6, name: "Astalift", description: "Mỹ phẩm chống lão hóa Fujifilm" }
   ]);
 
