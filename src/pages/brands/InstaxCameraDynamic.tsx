@@ -586,7 +586,7 @@ const InstaxCameraDynamic = () => {
                 }
               </p>
               <a 
-                href="https://instax.com/instaxtechnology/"
+                href="https://instax.com/instaxtechnology/en/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
@@ -634,7 +634,7 @@ const InstaxCameraDynamic = () => {
                   {lang === 'en' ? 'Watch on YouTube' : 'Xem trên YouTube'}
                 </a>
                 <a 
-                  href="https://www.youtube.com/@instax"
+                  href="https://www.youtube.com/@fujiinstaxvietnam"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 dark:text-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
