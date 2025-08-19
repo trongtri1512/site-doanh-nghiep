@@ -6,6 +6,14 @@ import Footer from '@/components/Footer';
 import { ArrowLeft, Camera, Film, Award, Users, Heart, Star, ExternalLink, Play, ChevronRight, Zap, Sun, Palette } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 
+// Import hero images
+import instaxHeroBg from '@/assets/instax-hero-bg.jpg';
+import instaxMoment1 from '@/assets/instax-moment-1.jpg';
+import instaxMoment2 from '@/assets/instax-moment-2.png';
+import instaxMoment3 from '@/assets/instax-moment-3.jpg';
+import instaxCameras from '@/assets/instax-cameras.png';
+import instaxFilms from '@/assets/instax-films.png';
+
 interface BrandPageElement {
   id: string;
   section_type: string;
@@ -155,49 +163,135 @@ const InstaxCameraDynamic = () => {
         </div>
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20">
-          <div className="container mx-auto px-4">
+        <section className="relative overflow-hidden min-h-screen flex items-center">
+          {/* Main Background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${instaxHeroBg})`,
+              backgroundAttachment: 'fixed'
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-purple-900/40 to-pink-900/60" />
+          </div>
+
+          {/* Floating Images */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Top Left - Floating Camera */}
+            <div className="absolute top-20 left-10 opacity-80 animate-pulse">
+              <img 
+                src={instaxCameras} 
+                alt="Instax Cameras" 
+                className="w-32 h-32 object-contain drop-shadow-2xl transform rotate-12 hover:rotate-0 transition-transform duration-700"
+              />
+            </div>
+            
+            {/* Top Right - Moment 1 */}
+            <div className="absolute top-32 right-16 opacity-70 animate-bounce">
+              <div className="relative">
+                <img 
+                  src={instaxMoment1} 
+                  alt="Instax Moment" 
+                  className="w-40 h-28 object-cover rounded-xl shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-500"
+                />
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-pink-500 rounded-full animate-ping" />
+              </div>
+            </div>
+
+            {/* Center Left - Moment 2 */}
+            <div className="absolute top-1/2 left-20 transform -translate-y-1/2 opacity-60">
+              <img 
+                src={instaxMoment2} 
+                alt="Instax Community" 
+                className="w-36 h-24 object-cover rounded-lg shadow-xl transform rotate-3 hover:-rotate-3 transition-transform duration-600"
+              />
+            </div>
+
+            {/* Bottom Right - Films */}
+            <div className="absolute bottom-32 right-20 opacity-75">
+              <div className="relative">
+                <img 
+                  src={instaxFilms} 
+                  alt="Instax Films" 
+                  className="w-28 h-28 object-contain drop-shadow-xl transform rotate-12 hover:scale-110 transition-all duration-500"
+                />
+                <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-blue-500 rounded-full animate-pulse" />
+              </div>
+            </div>
+
+            {/* Bottom Left - Moment 3 */}
+            <div className="absolute bottom-40 left-32 opacity-65">
+              <img 
+                src={instaxMoment3} 
+                alt="Instax Sharing" 
+                className="w-32 h-20 object-cover rounded-lg shadow-lg transform -rotate-12 hover:rotate-0 transition-transform duration-700"
+              />
+            </div>
+
+            {/* Floating particles */}
+            <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-yellow-400 rounded-full animate-ping delay-1000" />
+            <div className="absolute top-3/4 right-1/3 w-3 h-3 bg-pink-400 rounded-full animate-bounce delay-2000" />
+            <div className="absolute top-1/2 right-1/4 w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-3000" />
+          </div>
+
+          {/* Hero Content */}
+          <div className="container mx-auto px-4 relative z-10">
             <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="mb-8">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full mb-6">
-                  <Camera className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Fujifilm Technology</span>
+                <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-full mb-8 shadow-xl">
+                  <Camera className="w-6 h-6 text-blue-600" />
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Fujifilm Technology</span>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+                
+                <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-white via-blue-100 to-pink-100 bg-clip-text text-transparent mb-8 drop-shadow-2xl">
                   {t.heroTitle}
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium mb-4">
-                  {t.heroSubtitle}
-                </p>
-                <p className="text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
+                
+                <div className="relative inline-block mb-8">
+                  <p className="text-2xl md:text-3xl text-white font-bold drop-shadow-lg">
+                    {t.heroSubtitle}
+                  </p>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-pink-400 rounded-full" />
+                </div>
+                
+                <p className="text-xl text-white/90 max-w-4xl mx-auto mb-12 leading-relaxed drop-shadow-md">
                   {t.heroDescription}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                
+                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                   <a 
                     href="https://instaxcamera.com.vn/cameras"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold"
+                    className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-2xl hover:scale-110 transition-all duration-300 font-bold text-lg"
                   >
                     {t.exploreProducts}
-                    <ExternalLink size={20} />
+                    <ExternalLink size={24} className="group-hover:rotate-12 transition-transform duration-300" />
                   </a>
-                  <button className="inline-flex items-center gap-2 px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 font-semibold">
-                    <Play size={20} />
-                    {lang === 'en' ? 'Watch Video' : 'Xem Video'}
+                  
+                  <button className="group inline-flex items-center gap-3 px-10 py-5 border-3 border-white text-white rounded-full hover:bg-white hover:text-gray-800 transition-all duration-300 font-bold text-lg backdrop-blur-sm">
+                    <Play size={24} className="group-hover:scale-125 transition-transform duration-300" />
+                    {lang === 'en' ? 'Watch Brand Story' : 'Xem Câu Chuyện'}
                   </button>
+                </div>
+
+                {/* Philosophy tagline */}
+                <div className="mt-12 inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-lg rounded-full border border-white/30">
+                  <Heart className="w-6 h-6 text-pink-300 animate-pulse" />
+                  <span className="text-white font-bold text-lg tracking-wide">
+                    {lang === 'en' ? "don't just take, give.™" : "đừng chỉ chụp, hãy tặng.™"}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Hero Image */}
-          <div className="mt-16 relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-white/50 to-transparent dark:from-gray-900/50 z-10" />
-            <div className="w-full h-96 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
-              <div className="text-center">
-                <Camera size={80} className="text-blue-500 mx-auto mb-4" />
-                <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">Instax Camera Collection</p>
+
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-sm font-medium opacity-75">Scroll to explore</span>
+              <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+                <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse" />
               </div>
             </div>
           </div>
