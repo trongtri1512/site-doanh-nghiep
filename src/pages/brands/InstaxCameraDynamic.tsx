@@ -194,11 +194,12 @@ const InstaxCameraDynamic = () => {
           {/* Hero Image */}
           <div className="mt-16 relative">
             <div className="absolute inset-0 bg-gradient-to-t from-white/50 to-transparent dark:from-gray-900/50 z-10" />
-            <img 
-              src="/lovable-uploads/instax-banner.jpg" 
-              alt="Instax Camera Collection" 
-              className="w-full h-96 object-cover"
-            />
+            <div className="w-full h-96 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
+              <div className="text-center">
+                <Camera size={80} className="text-blue-500 mx-auto mb-4" />
+                <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">Instax Camera Collection</p>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -484,12 +485,20 @@ const InstaxCameraDynamic = () => {
                           <p className="text-xl text-muted-foreground mb-8">
                             {element.content?.subtitle || brand?.description}
                           </p>
-                          {element.content?.background_image && (
+                          {element.content?.background_image && !element.content.background_image.includes('/src/assets/') && (
                             <img 
                               src={element.content.background_image} 
                               alt={element.content?.title || brand?.name} 
                               className="w-full h-64 object-cover rounded-lg shadow-lg"
                             />
+                          )}
+                          {element.content?.background_image?.includes('/src/assets/') && (
+                            <div className="w-full h-64 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center rounded-lg shadow-lg">
+                              <div className="text-center">
+                                <Camera size={48} className="text-blue-500 mx-auto mb-2" />
+                                <p className="text-gray-600 dark:text-gray-300">{element.content?.title || brand?.name}</p>
+                              </div>
+                            </div>
                           )}
                         </div>
                       );
