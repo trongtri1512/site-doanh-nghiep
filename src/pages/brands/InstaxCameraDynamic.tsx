@@ -13,6 +13,7 @@ import instaxMoment2 from '@/assets/instax-moment-2.png';
 import instaxMoment3 from '@/assets/instax-moment-3.jpg';
 import instaxCameras from '@/assets/instax-cameras.png';
 import instaxFilms from '@/assets/instax-films.png';
+import instaxTechnology from '@/assets/instax-technology.jpg';
 
 interface BrandPageElement {
   id: string;
@@ -556,6 +557,89 @@ const InstaxCameraDynamic = () => {
                   className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 font-semibold"
                 >
                   {lang === 'en' ? 'Follow on TikTok' : 'Theo dõi TikTok'}
+                  <ExternalLink size={20} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Technology Hero Section */}
+        <section className="py-20 relative overflow-hidden">
+          <div className="absolute inset-0">
+            <img 
+              src={instaxTechnology} 
+              alt="Instax Technology" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl">
+              <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                {lang === 'en' ? 'Instax Technology' : 'Công Nghệ Instax'}
+              </h2>
+              <p className="text-xl text-white/90 mb-8 max-w-2xl">
+                {lang === 'en' 
+                  ? 'Discover the advanced engineering behind every instant photo. From precision optics to revolutionary film chemistry.'
+                  : 'Khám phá kỹ thuật tiên tiến đằng sau mỗi bức ảnh tức thì. Từ quang học chính xác đến hóa học phim cách mạng.'
+                }
+              </p>
+              <a 
+                href="https://instax.com/instaxtechnology/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
+              >
+                {lang === 'en' ? 'Learn More' : 'Tìm hiểu thêm'}
+                <ExternalLink size={20} />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* YouTube Video Section */}
+        <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto text-center">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6">
+                {lang === 'en' ? 'Experience Instax' : 'Trải Nghiệm Instax'}
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+                {lang === 'en' 
+                  ? 'Watch how Instax cameras capture and share life\'s most precious moments in an instant.'
+                  : 'Xem cách máy ảnh Instax chụp và chia sẻ những khoảnh khắc quý giá nhất của cuộc sống trong tích tắc.'
+                }
+              </p>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-4xl mx-auto">
+                <div className="aspect-video">
+                  <iframe
+                    src="https://www.youtube.com/embed/Tj43E6fjsS4"
+                    title="Instax Experience Video"
+                    className="w-full h-full"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                <a 
+                  href="https://www.youtube.com/watch?v=Tj43E6fjsS4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 font-semibold"
+                >
+                  <Play size={20} />
+                  {lang === 'en' ? 'Watch on YouTube' : 'Xem trên YouTube'}
+                </a>
+                <a 
+                  href="https://www.youtube.com/@instax"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 dark:text-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 font-semibold"
+                >
+                  {lang === 'en' ? 'Subscribe Channel' : 'Đăng ký kênh'}
                   <ExternalLink size={20} />
                 </a>
               </div>
