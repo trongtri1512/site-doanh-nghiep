@@ -628,7 +628,7 @@ const InstaxCameraDynamic = () => {
                   href="https://www.youtube.com/watch?v=Tj43E6fjsS4"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 font-semibold"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 font-semibold shadow-lg"
                 >
                   <Play size={20} />
                   {lang === 'en' ? 'Watch on YouTube' : 'Xem trên YouTube'}
