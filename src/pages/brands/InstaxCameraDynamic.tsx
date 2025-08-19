@@ -647,47 +647,6 @@ const InstaxCameraDynamic = () => {
           </div>
         </section>
 
-        {/* Dynamic content from database */}
-        {elements.length > 0 && (
-          <section className="py-20">
-            <div className="container mx-auto px-4">
-              <div className="max-w-6xl mx-auto">
-                {elements.map((element) => {
-                  switch (element.section_type) {
-                    case "hero":
-                      return (
-                        <div key={element.id} className="text-center mb-12">
-                          <h1 className="text-4xl font-bold text-primary mb-4">
-                            {element.content?.title || brand?.name}
-                          </h1>
-                          <p className="text-xl text-muted-foreground mb-8">
-                            {element.content?.subtitle || brand?.description}
-                          </p>
-                          {element.content?.background_image && !element.content.background_image.includes('/src/assets/') && (
-                            <img 
-                              src={element.content.background_image} 
-                              alt={element.content?.title || brand?.name} 
-                              className="w-full h-64 object-cover rounded-lg shadow-lg"
-                            />
-                          )}
-                          {element.content?.background_image?.includes('/src/assets/') && (
-                            <div className="w-full h-64 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center rounded-lg shadow-lg">
-                              <div className="text-center">
-                                <Camera size={48} className="text-blue-500 mx-auto mb-2" />
-                                <p className="text-gray-600 dark:text-gray-300">{element.content?.title || brand?.name}</p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
-            </div>
-          </section>
-        )}
       </main>
 
       <Footer />
