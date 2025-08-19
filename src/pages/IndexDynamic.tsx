@@ -65,7 +65,7 @@ const IndexDynamic = () => {
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
                   <h1 className="text-4xl lg:text-6xl font-bold text-white mb-8 leading-tight">
                     <span className="inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-2xl">
-                      {content.title || "CHÀO MỪNG BẠN ĐẾN VỚI IMV VIETNAM"}
+                      {content.title || "CHÀO MỪNG BẠN ĐẾN VỚI IMV"}
                     </span>
                   </h1>
                   <p className="text-xl text-white/90 mb-6 leading-relaxed">
