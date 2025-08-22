@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Heart, Sparkles, Star, Globe, Flower, Droplets } from "lucide-react";
 import { Link } from "react-router-dom";
-import veritesLogo from "@/assets/logos/verites-logo-new.png";
+import veritesLogo from "@/assets/logos/verites-official-logo.svg";
 import veritesHero from "@/assets/verites-hero-new.jpg";
 import veritesCollection from "@/assets/verites-collection-new.jpg";
 import veritesCraftsmanship from "@/assets/verites-craftsmanship.jpg";
@@ -208,10 +208,15 @@ const VeritesDynamic = () => {
                     {currentContent.hero.description}
                   </p>
                   
-                  <button className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                  <a 
+                    href="https://verites.vn/cua-hang/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
                     <Sparkles className="w-5 h-5" />
                     {currentContent.hero.cta}
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
