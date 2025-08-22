@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ArrowLeft, Star, Heart, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import etsukoHeroBanner from "@/assets/etsuko-hero-banner.jpg";
 import etsukoLogo from "@/assets/etsuko-logo-new.png";
 import etsukoProducts from "@/assets/etsuko-products.jpg";
@@ -22,15 +24,141 @@ interface BrandPageElement {
 
 const EtsukoDynamic = () => {
   const [elements, setElements] = useState<BrandPageElement[]>([]);
+  const { currentLanguage } = useLanguage();
+
+  // Content for both languages
+  const content = {
+    vi: {
+      backToHome: "Quay lại trang chủ",
+      slogan: "Em bé hạnh phúc - Làn da khỏe mạnh",
+      heroDescription: "Mỗi em bé sinh ra đều mang trong mình một thế giới riêng biệt – với cá tính, cảm xúc và nhịp điệu rất riêng. Etsuko ra đời để nâng niu sự khác biệt ấy – như một cái ôm dịu dàng, vừa bảo vệ làn da con mỗi ngày, vừa âm thầm tôn trọng con theo cách con muốn được là chính mình.",
+      brandStory: "Câu chuyện thương hiệu",
+      nameOrigin: "Ý nghĩa tên gọi \"Etsuko\"",
+      nameDescription: "Lấy cảm hứng từ \"Etsuko\" – trong tiếng Nhật nghĩa là em bé hạnh phúc, chúng tôi tin rằng hạnh phúc không đến từ việc uốn mình theo chuẩn mực, mà từ việc được tự do thể hiện bản thân – dù là qua mùi hương con chọn mỗi sáng, hay sự thoải mái sau lần tắm cuối ngày.",
+      fromHeart: "Từ trái tim yêu thương trẻ em",
+      philosophy: "Triết lý thương hiệu",
+      philosophyItems: [
+        "Tôn trọng sự khác biệt của mỗi em bé",
+        "Bảo vệ làn da mỏng manh một cách dịu dàng",
+        "Mang lại niềm vui trong từng khoảnh khắc tắm gội"
+      ],
+      naturalIngredients: "Dưỡng chất thiên nhiên từ Nhật Bản",
+      ingredientsDescription: "Etsuko mang đến công thức chăm sóc từ 9 loại thảo dược quý của Nhật Bản, cùng các thành phần cấp ẩm và phục hồi tự nhiên, tạo nên lớp màng dịu lành cho làn da mỏng manh của trẻ nhỏ.",
+      featuredProducts: "SẢN PHẨM NỔI BẬT",
+      products: [
+        {
+          name: "Hương Dưa Lưới Nhật",
+          character: "Đại diện: Cáo Foxi",
+          description: "Thanh mát, dịu ngọt. Mùi hương mát lạnh như buổi sớm mùa hè."
+        },
+        {
+          name: "Táo Fuji Nhật",
+          character: "Đại diện: Nhím Hedi",
+          description: "Ngọt ngào, tươi mới. Hương thơm thanh mát như một vườn táo chín."
+        },
+        {
+          name: "Yuzu Quýt Nhật",
+          character: "Đại diện: Cú Owli",
+          description: "Năng động, lanh lợi. Mùi hương chua nhẹ, the mát."
+        },
+        {
+          name: "Mono Đào Nhật",
+          character: "Đại diện: Cú Owli",
+          description: "Điềm đạm, thông minh và yêu thích sự yên bình."
+        }
+      ],
+      carePhilosophy: "Triết lý chăm sóc",
+      careDescription: "Mỗi mùi hương là một sắc thái cảm xúc – là cách con nói lên điều mình thích, và tự chọn lấy thế giới mình thuộc về. Với Etsuko, mỗi lần tắm không chỉ là làm sạch – mà là một cách con kết nối với chính mình, theo cách tự nhiên và dịu dàng nhất.",
+      ourCommitment: "Cam kết của chúng tôi",
+      commitments: [
+        { title: "An toàn tuyệt đối", description: "Kiểm tra chất lượng nghiêm ngặt" },
+        { title: "Yêu thương chân thành", description: "Hiểu và tôn trọng từng em bé" },
+        { title: "Chất lượng hàng đầu", description: "Thành phần thiên nhiên từ Nhật Bản" }
+      ],
+      ctaTitle: "Cùng Etsuko chăm sóc bé yêu",
+      ctaDescription: "Để mỗi khoảnh khắc tắm gội trở thành niềm vui, mỗi làn da được bảo vệ dịu dàng, và mỗi em bé được tự do thể hiện bản thân theo cách riêng của mình.",
+      contactConsult: "Liên hệ tư vấn",
+      viewMoreProducts: "Xem thêm sản phẩm",
+      featuresTitle: "Đặc điểm nổi bật",
+      features: [
+        "Độ pH cân bằng, nhẹ dịu như nước mắt",
+        "Không chứa xà phòng mạnh",
+        "Không gây cay mắt",
+        "Phù hợp sử dụng hằng ngày"
+      ]
+    },
+    en: {
+      backToHome: "Back to Home",
+      slogan: "Happy Baby - Healthy Skin",
+      heroDescription: "Every baby is born with their own unique world – with distinct personality, emotions and rhythm. Etsuko was created to cherish that uniqueness – like a gentle embrace, protecting your child's skin every day, while quietly respecting their desire to be themselves.",
+      brandStory: "Brand Story",
+      nameOrigin: "Meaning of \"Etsuko\"",
+      nameDescription: "Inspired by \"Etsuko\" – which means happy baby in Japanese, we believe that happiness doesn't come from conforming to standards, but from being free to express yourself – whether through the fragrance your child chooses each morning, or the comfort after the last bath of the day.",
+      fromHeart: "From the heart of loving children",
+      philosophy: "Brand Philosophy",
+      philosophyItems: [
+        "Respect the uniqueness of each baby",
+        "Protect delicate skin gently",
+        "Bring joy to every bath time moment"
+      ],
+      naturalIngredients: "Natural Ingredients from Japan",
+      ingredientsDescription: "Etsuko brings a care formula from 9 precious Japanese herbs, along with natural moisturizing and restorative ingredients, creating a gentle protective layer for children's delicate skin.",
+      featuredProducts: "FEATURED PRODUCTS",
+      products: [
+        {
+          name: "Japanese Melon Fragrance",
+          character: "Representative: Foxi the Fox",
+          description: "Fresh and sweet. Cool fragrance like an early summer morning."
+        },
+        {
+          name: "Japanese Fuji Apple",
+          character: "Representative: Hedi the Hedgehog",
+          description: "Sweet and fresh. Fresh fragrance like a ripe apple orchard."
+        },
+        {
+          name: "Japanese Yuzu Citrus",
+          character: "Representative: Owli the Owl",
+          description: "Dynamic and clever. Lightly sour, refreshing fragrance."
+        },
+        {
+          name: "Japanese Peach Mono",
+          character: "Representative: Owli the Owl",
+          description: "Calm, intelligent and loves tranquility."
+        }
+      ],
+      carePhilosophy: "Care Philosophy",
+      careDescription: "Each fragrance is an emotional shade – a way for children to express what they like, and choose the world they belong to. With Etsuko, each bath is not just about cleaning – but a way for children to connect with themselves, in the most natural and gentle way.",
+      ourCommitment: "Our Commitment",
+      commitments: [
+        { title: "Absolute Safety", description: "Strict quality testing" },
+        { title: "Sincere Love", description: "Understanding and respecting each baby" },
+        { title: "Premium Quality", description: "Natural ingredients from Japan" }
+      ],
+      ctaTitle: "Care for Your Baby with Etsuko",
+      ctaDescription: "So that every bath time moment becomes a joy, every skin is gently protected, and every baby is free to express themselves in their own unique way.",
+      contactConsult: "Contact for Consultation",
+      viewMoreProducts: "View More Products",
+      featuresTitle: "Outstanding Features",
+      features: [
+        "Balanced pH, gentle as tears",
+        "No harsh soap",
+        "No eye irritation",
+        "Suitable for daily use"
+      ]
+    }
+  };
+
+  const t = content[currentLanguage as keyof typeof content] || content.vi;
 
   // Fetch brand info
   const { data: brand } = useQuery({
-    queryKey: ["brand", "etsuko"],
+    queryKey: ["brand", "etsuko", currentLanguage],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("brands")
         .select("*")
         .eq("slug", "etsuko")
+        .eq("language_code", currentLanguage)
         .single();
       
       if (error) throw error;
@@ -208,10 +336,13 @@ const EtsukoDynamic = () => {
         </div>
         
         <div className="relative container mx-auto px-6 py-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-700 hover:text-primary mb-6 transition-colors">
-            <ArrowLeft size={20} />
-            Quay lại trang chủ
-          </Link>
+          <div className="flex justify-between items-start mb-6">
+            <Link to="/" className="inline-flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
+              <ArrowLeft size={20} />
+              {t.backToHome}
+            </Link>
+            <LanguageSwitcher />
+          </div>
           
           <div className="flex flex-col lg:flex-row items-center gap-12 pt-16">
             <div className="flex-1 text-center lg:text-left">
@@ -220,12 +351,10 @@ const EtsukoDynamic = () => {
                 ETSUKO
               </h1>
               <p className="text-2xl text-green-700 font-medium mb-8 animate-fade-in">
-                Em bé hạnh phúc - Làn da khỏe mạnh
+                {t.slogan}
               </p>
               <p className="text-lg text-gray-700 leading-relaxed max-w-2xl animate-fade-in">
-                Mỗi em bé sinh ra đều mang trong mình một thế giới riêng biệt – với cá tính, cảm xúc và nhịp điệu rất riêng. 
-                Etsuko ra đời để nâng niu sự khác biệt ấy – như một cái ôm dịu dàng, vừa bảo vệ làn da con mỗi ngày, 
-                vừa âm thầm tôn trọng con theo cách con muốn được là chính mình.
+                {t.heroDescription}
               </p>
             </div>
             
@@ -240,36 +369,29 @@ const EtsukoDynamic = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center text-green-700 mb-16">Câu chuyện thương hiệu</h2>
+            <h2 className="text-4xl font-bold text-center text-green-700 mb-16">{t.brandStory}</h2>
             
             <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
               <div className="space-y-6">
-                <h3 className="text-2xl font-semibold text-orange-600">Ý nghĩa tên gọi "Etsuko"</h3>
+                <h3 className="text-2xl font-semibold text-orange-600">{t.nameOrigin}</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Lấy cảm hứng từ "Etsuko" – trong tiếng Nhật nghĩa là em bé hạnh phúc, chúng tôi tin rằng hạnh phúc không đến từ việc uốn mình theo chuẩn mực, 
-                  mà từ việc được tự do thể hiện bản thân – dù là qua mùi hương con chọn mỗi sáng, hay sự thoải mái sau lần tắm cuối ngày.
+                  {t.nameDescription}
                 </p>
                 <div className="flex items-center gap-4">
                   <Heart className="w-8 h-8 text-pink-500" />
-                  <span className="text-lg font-medium text-gray-800">Từ trái tim yêu thương trẻ em</span>
+                  <span className="text-lg font-medium text-gray-800">{t.fromHeart}</span>
                 </div>
               </div>
               
               <div className="bg-gradient-to-br from-green-50 to-yellow-50 rounded-2xl p-8">
-                <h4 className="text-xl font-semibold text-green-700 mb-4">Triết lý thương hiệu</h4>
+                <h4 className="text-xl font-semibold text-green-700 mb-4">{t.philosophy}</h4>
                 <ul className="space-y-3 text-gray-700">
-                  <li className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-yellow-500 mt-1 flex-shrink-0" />
-                    <span>Tôn trọng sự khác biệt của mỗi em bé</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-yellow-500 mt-1 flex-shrink-0" />
-                    <span>Bảo vệ làn da mỏng manh một cách dịu dàng</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Star className="w-5 h-5 text-yellow-500 mt-1 flex-shrink-0" />
-                    <span>Mang lại niềm vui trong từng khoảnh khắc tắm gội</span>
-                  </li>
+                  {t.philosophyItems.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <Star className="w-5 h-5 text-yellow-500 mt-1 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -281,10 +403,9 @@ const EtsukoDynamic = () => {
       <section className="py-16 bg-gradient-to-r from-green-50 to-yellow-50">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-green-700 mb-8">Dưỡng chất thiên nhiên từ Nhật Bản</h2>
+            <h2 className="text-4xl font-bold text-green-700 mb-8">{t.naturalIngredients}</h2>
             <p className="text-xl text-gray-700 mb-12 max-w-4xl mx-auto">
-              Etsuko mang đến công thức chăm sóc từ 9 loại thảo dược quý của Nhật Bản, cùng các thành phần cấp ẩm và phục hồi tự nhiên, 
-              tạo nên lớp màng dịu lành cho làn da mỏng manh của trẻ nhỏ.
+              {t.ingredientsDescription}
             </p>
             
             <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -308,27 +429,23 @@ const EtsukoDynamic = () => {
             </div>
             
             <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h4 className="text-2xl font-semibold text-green-700 mb-4">Đặc điểm nổi bật</h4>
+              <h4 className="text-2xl font-semibold text-green-700 mb-4">{t.featuresTitle}</h4>
               <div className="grid md:grid-cols-2 gap-6 text-left">
                 <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Độ pH cân bằng, nhẹ dịu như nước mắt</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Không chứa xà phòng mạnh</span>
-                  </li>
+                  {t.features.slice(0, 2).map((feature, index) => (
+                    <li key={index} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
                 <ul className="space-y-3">
-                  <li className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Không gây cay mắt</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Phù hợp sử dụng hằng ngày</span>
-                  </li>
+                  {t.features.slice(2).map((feature, index) => (
+                    <li key={index + 2} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -340,48 +457,38 @@ const EtsukoDynamic = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center text-orange-600 mb-16">SẢN PHẨM NỔI BẬT</h2>
+            <h2 className="text-4xl font-bold text-center text-orange-600 mb-16">{t.featuredProducts}</h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-              {/* Melon Product */}
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
-                <div className="w-20 h-20 bg-orange-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🦊</span>
+              {t.products.map((product, index) => (
+                <div key={index} className={`bg-gradient-to-br rounded-2xl p-6 text-center hover:shadow-lg transition-all ${
+                  index === 0 ? 'from-green-50 to-green-100' :
+                  index === 1 ? 'from-red-50 to-pink-100' :
+                  index === 2 ? 'from-yellow-50 to-orange-100' :
+                  'from-orange-50 to-red-100'
+                }`}>
+                  <div className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${
+                    index === 0 ? 'bg-orange-200' :
+                    index === 1 ? 'bg-pink-200' :
+                    index === 2 ? 'bg-yellow-200' :
+                    'bg-orange-200'
+                  }`}>
+                    <span className="text-2xl">
+                      {index === 0 ? '🦊' : index === 1 ? '🦔' : '🦉'}
+                    </span>
+                  </div>
+                  <h3 className={`text-lg font-semibold mb-2 ${
+                    index === 0 ? 'text-green-700' :
+                    index === 1 ? 'text-pink-700' :
+                    index === 2 ? 'text-yellow-700' :
+                    'text-orange-700'
+                  }`}>
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">{product.character}</p>
+                  <p className="text-sm text-gray-700">{product.description}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-green-700 mb-2">Hương Dưa Lưới Nhật</h3>
-                <p className="text-sm text-gray-600 mb-3">Đại diện: Cáo Foxi</p>
-                <p className="text-sm text-gray-700">Thanh mát, dịu ngọt. Mùi hương mát lạnh như buổi sớm mùa hè.</p>
-              </div>
-              
-              {/* Apple Product */}
-              <div className="bg-gradient-to-br from-red-50 to-pink-100 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
-                <div className="w-20 h-20 bg-pink-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🦔</span>
-                </div>
-                <h3 className="text-lg font-semibold text-pink-700 mb-2">Táo Fuji Nhật</h3>
-                <p className="text-sm text-gray-600 mb-3">Đại diện: Nhím Hedi</p>
-                <p className="text-sm text-gray-700">Ngọt ngão, tươi mới. Hương thơm thanh mát như một vườn táo chín.</p>
-              </div>
-              
-              {/* Yuzu Product */}
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-100 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
-                <div className="w-20 h-20 bg-yellow-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🦉</span>
-                </div>
-                <h3 className="text-lg font-semibold text-yellow-700 mb-2">Yuzu Quýt Nhật</h3>
-                <p className="text-sm text-gray-600 mb-3">Đại diện: Cú Owli</p>
-                <p className="text-sm text-gray-700">Năng động, lanh lợi. Mùi hương chua nhẹ, the mát.</p>
-              </div>
-              
-              {/* Peach Product */}
-              <div className="bg-gradient-to-br from-orange-50 to-red-100 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
-                <div className="w-20 h-20 bg-orange-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-2xl">🦉</span>
-                </div>
-                <h3 className="text-lg font-semibold text-orange-700 mb-2">Mono Đào Nhật</h3>
-                <p className="text-sm text-gray-600 mb-3">Đại diện: Cú Owli</p>
-                <p className="text-sm text-gray-700">Điềm đạm, thông minh và yêu thích sự yên bình.</p>
-              </div>
+              ))}
             </div>
             
             <div className="text-center">
@@ -395,35 +502,28 @@ const EtsukoDynamic = () => {
       <section className="py-16 bg-gradient-to-br from-orange-50 to-yellow-50">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-orange-600 mb-8">Triết lý chăm sóc</h2>
+            <h2 className="text-4xl font-bold text-orange-600 mb-8">{t.carePhilosophy}</h2>
             <p className="text-xl text-gray-700 leading-relaxed mb-8">
-              Mỗi mùi hương là một sắc thái cảm xúc – là cách con nói lên điều mình thích, và tự chọn lấy thế giới mình thuộc về. 
-              Với Etsuko, mỗi lần tắm không chỉ là làm sạch – mà là một cách con kết nối với chính mình, theo cách tự nhiên và dịu dàng nhất.
+              {t.careDescription}
             </p>
             <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h3 className="text-2xl font-semibold text-green-700 mb-6">Cam kết của chúng tôi</h3>
+              <h3 className="text-2xl font-semibold text-green-700 mb-6">{t.ourCommitment}</h3>
               <div className="grid md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <Shield className="w-8 h-8 text-green-600" />
+                {t.commitments.map((commitment, index) => (
+                  <div key={index} className="text-center">
+                    <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${
+                      index === 0 ? 'bg-green-100' :
+                      index === 1 ? 'bg-pink-100' :
+                      'bg-yellow-100'
+                    }`}>
+                      {index === 0 ? <Shield className="w-8 h-8 text-green-600" /> :
+                       index === 1 ? <Heart className="w-8 h-8 text-pink-600" /> :
+                       <Star className="w-8 h-8 text-yellow-600" />}
+                    </div>
+                    <h4 className="font-semibold text-gray-800 mb-2">{commitment.title}</h4>
+                    <p className="text-sm text-gray-600">{commitment.description}</p>
                   </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">An toàn tuyệt đối</h4>
-                  <p className="text-sm text-gray-600">Kiểm tra chất lượng nghiêm ngặt</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <Heart className="w-8 h-8 text-pink-600" />
-                  </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">Yêu thương chân thành</h4>
-                  <p className="text-sm text-gray-600">Hiểu và tôn trọng từng em bé</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-yellow-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <Star className="w-8 h-8 text-yellow-600" />
-                  </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">Chất lượng hàng đầu</h4>
-                  <p className="text-sm text-gray-600">Thành phần thiên nhiên từ Nhật Bản</p>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -433,23 +533,22 @@ const EtsukoDynamic = () => {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-green-600 to-green-700 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-6">Cùng Etsuko chăm sóc bé yêu</h2>
+          <h2 className="text-4xl font-bold mb-6">{t.ctaTitle}</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Để mỗi khoảnh khắc tắm gội trở thành niềm vui, mỗi làn da được bảo vệ dịu dàng, 
-            và mỗi em bé được tự do thể hiện bản thân theo cách riêng của mình.
+            {t.ctaDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               to="/contact" 
               className="inline-flex items-center px-8 py-4 bg-white text-green-600 font-semibold rounded-full hover:bg-gray-100 transition-colors"
             >
-              Liên hệ tư vấn
+              {t.contactConsult}
             </Link>
             <Link 
               to="/brands" 
               className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-green-600 transition-colors"
             >
-              Xem thêm sản phẩm
+              {t.viewMoreProducts}
             </Link>
           </div>
         </div>
