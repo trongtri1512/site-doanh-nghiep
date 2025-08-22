@@ -6,7 +6,9 @@ import { ArrowLeft, Heart, Sparkles, Star, Globe, Flower, Droplets } from "lucid
 import { Link } from "react-router-dom";
 import veritesLogo from "@/assets/logos/verites-official-logo.svg";
 import veritesHero from "@/assets/verites-hero-new.jpg";
-import veritesCollection from "@/assets/verites-collection-new.jpg";
+import veritesCollection1 from "@/assets/verites-collection-1.jpg";
+import veritesCollection2 from "@/assets/verites-collection-2.jpg";
+import veritesCollection3 from "@/assets/verites-collection-3.jpg";
 import veritesCraftsmanship from "@/assets/verites-craftsmanship.jpg";
 
 const VeritesDynamic = () => {
@@ -52,19 +54,19 @@ const VeritesDynamic = () => {
         subtitle: "Khám phá những mùi hương đặc biệt",
         items: [
           {
-            name: "Eau de Parfum Collection",
-            description: "Bộ sưu tập nước hoa cao cấp với độ lưu hương lâu dài",
-            image: veritesCollection
+            name: "CHASING CLOUD",
+            description: "Nước Hoa Unisex Verites với mùi hương đầy mê hoặc",
+            image: veritesCollection1
           },
           {
-            name: "Limited Edition",
-            description: "Phiên bản giới hạn với những mùi hương độc đáo",
-            image: veritesCollection
+            name: "DE CLUB",
+            description: "Nước hoa nam với phong cách sang trọng và quyến rũ",
+            image: veritesCollection2
           },
           {
-            name: "Signature Scents",
-            description: "Những mùi hương đặc trưng của thương hiệu",
-            image: veritesCollection
+            name: "STARSTRUCK",
+            description: "Nước hoa nữ với hương thơm ngọt ngào và lôi cuốn",
+            image: veritesCollection3
           }
         ]
       },
@@ -123,19 +125,19 @@ const VeritesDynamic = () => {
         subtitle: "Discover extraordinary fragrances",
         items: [
           {
-            name: "Eau de Parfum Collection",
-            description: "Premium perfume collection with long-lasting fragrance",
-            image: veritesCollection
+            name: "CHASING CLOUD",
+            description: "Unisex Verites perfume with enchanting fragrance",
+            image: veritesCollection1
           },
           {
-            name: "Limited Edition",
-            description: "Limited edition with unique fragrances",
-            image: veritesCollection
+            name: "DE CLUB",
+            description: "Men's perfume with luxurious and seductive style",
+            image: veritesCollection2
           },
           {
-            name: "Signature Scents",
-            description: "Distinctive fragrances of the brand",
-            image: veritesCollection
+            name: "STARSTRUCK",
+            description: "Women's perfume with sweet and alluring fragrance",
+            image: veritesCollection3
           }
         ]
       },
