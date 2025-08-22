@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Heart, Sparkles, Star, Globe } from "lucide-react";
+import { ArrowLeft, Heart, Sparkles, Star, Globe, Flower, Droplets } from "lucide-react";
 import { Link } from "react-router-dom";
-import veritesLogo from "@/assets/logos/verites-logo.png";
-import veritesBanner from "@/assets/verites-banner.jpg";
-import veritesProducts from "@/assets/verites-products.jpg";
-import veritesStory from "@/assets/verites-story.jpg";
+import veritesLogo from "@/assets/logos/verites-logo-new.png";
+import veritesHero from "@/assets/verites-hero-new.jpg";
+import veritesCollection from "@/assets/verites-collection-new.jpg";
+import veritesCraftsmanship from "@/assets/verites-craftsmanship.jpg";
 
 const VeritesDynamic = () => {
   const location = useLocation();
@@ -54,17 +54,17 @@ const VeritesDynamic = () => {
           {
             name: "Eau de Parfum Collection",
             description: "Bộ sưu tập nước hoa cao cấp với độ lưu hương lâu dài",
-            image: veritesProducts
+            image: veritesCollection
           },
           {
             name: "Limited Edition",
             description: "Phiên bản giới hạn với những mùi hương độc đáo",
-            image: veritesProducts
+            image: veritesCollection
           },
           {
             name: "Signature Scents",
             description: "Những mùi hương đặc trưng của thương hiệu",
-            image: veritesProducts
+            image: veritesCollection
           }
         ]
       },
@@ -125,17 +125,17 @@ const VeritesDynamic = () => {
           {
             name: "Eau de Parfum Collection",
             description: "Premium perfume collection with long-lasting fragrance",
-            image: veritesProducts
+            image: veritesCollection
           },
           {
             name: "Limited Edition",
             description: "Limited edition with unique fragrances",
-            image: veritesProducts
+            image: veritesCollection
           },
           {
             name: "Signature Scents",
             description: "Distinctive fragrances of the brand",
-            image: veritesProducts
+            image: veritesCollection
           }
         ]
       },
@@ -166,47 +166,62 @@ const VeritesDynamic = () => {
       
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/20 dark:to-orange-950/20 overflow-hidden">
+        <section className="relative min-h-screen overflow-hidden">
           <div className="absolute inset-0">
             <img 
-              src={veritesBanner} 
+              src={veritesHero} 
               alt="Verites Hero" 
-              className="w-full h-full object-cover opacity-60"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-900/30 to-orange-900/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-900/40 to-orange-900/30"></div>
           </div>
           
           <div className="relative container mx-auto px-6 py-20 min-h-screen flex items-center">
-            <div className="max-w-4xl mx-auto text-center text-white">
-              <div className="mb-8">
-                <img 
-                  src={veritesLogo} 
-                  alt="Verites Logo" 
-                  className="h-24 mx-auto mb-8 filter drop-shadow-lg"
-                />
+            <div className="max-w-5xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Left Content */}
+                <div className="text-white space-y-8">
+                  <div className="mb-8">
+                    <img 
+                      src={veritesLogo} 
+                      alt="Verites Logo" 
+                      className="h-20 filter drop-shadow-lg"
+                    />
+                  </div>
+                  
+                  <p className="text-2xl md:text-3xl font-light opacity-90 italic tracking-wide">
+                    {currentContent.hero.tagline}
+                  </p>
+                  
+                  <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent">
+                    {currentContent.hero.title}
+                  </h1>
+                </div>
+                
+                {/* Right Content Box */}
+                <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl">
+                  <p className="text-white/90 text-lg leading-relaxed mb-6">
+                    {currentContent.hero.subtitle}
+                  </p>
+                  
+                  <p className="text-white/80 text-base leading-relaxed mb-8">
+                    {currentContent.hero.description}
+                  </p>
+                  
+                  <button className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <Sparkles className="w-5 h-5" />
+                    {currentContent.hero.cta}
+                  </button>
+                </div>
               </div>
-              
-              <p className="text-xl md:text-2xl font-light mb-4 opacity-90 italic">
-                {currentContent.hero.tagline}
-              </p>
-              
-              <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent">
-                {currentContent.hero.title}
-              </h1>
-              
-              <p className="text-lg md:text-xl mb-8 leading-relaxed opacity-90 max-w-3xl mx-auto">
-                {currentContent.hero.subtitle}
-              </p>
-              
-              <p className="text-base md:text-lg mb-12 leading-relaxed opacity-80 max-w-4xl mx-auto">
-                {currentContent.hero.description}
-              </p>
-              
-              <button className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
-                <Sparkles className="w-5 h-5" />
-                {currentContent.hero.cta}
-              </button>
             </div>
+          </div>
+          
+          {/* Decorative Wave */}
+          <div className="absolute bottom-0 left-0 right-0">
+            <svg className="w-full h-20 fill-background" viewBox="0 0 1200 120" preserveAspectRatio="none">
+              <path d="M0,120 Q300,20 600,60 T1200,40 L1200,120 Z" />
+            </svg>
           </div>
         </section>
 
@@ -228,11 +243,14 @@ const VeritesDynamic = () => {
                 </div>
                 <div className="relative">
                   <img 
-                    src={veritesStory} 
-                    alt="Verites Story" 
+                    src={veritesCraftsmanship} 
+                    alt="Verites Craftsmanship" 
                     className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent rounded-2xl"></div>
+                  <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-full p-3">
+                    <Droplets className="w-6 h-6 text-amber-600" />
+                  </div>
                 </div>
               </div>
             </div>
