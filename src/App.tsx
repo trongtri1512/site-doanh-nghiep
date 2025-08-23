@@ -89,10 +89,12 @@ const App = () => (
           <Route path="/brands/instax-camera" element={<InstaxCameraDynamic />} />
           <Route path="/brands/etsuko" element={<EtsukoDynamic />} />
           <Route path="/brands/verites" element={<VeritesDynamic />} />
+          <Route path="/brands/fujifilm-image" element={<FujifilmImageDynamic />} />
           <Route path="/en/brands/astalift-en" element={<AstaliftDynamic />} />
           <Route path="/en/brands/instax-camera-en" element={<InstaxCameraDynamic />} />
           <Route path="/en/brands/etsuko-en" element={<EtsukoDynamic />} />
           <Route path="/en/brands/verites-en" element={<VeritesDynamic />} />
+          <Route path="/en/brands/fujifilm-image-en" element={<FujifilmImageDynamic />} />
           <Route path="/brands/astalift-dynamic" element={<AstaliftDynamic />} />
           
           {/* English routes with /en prefix */}
