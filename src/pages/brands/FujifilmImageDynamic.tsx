@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Camera, Printer, Cog, Zap, Shield, Users, Award, ChevronRight, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
-import fujifilmLogo from "@/assets/logos/fujifilm-logo-new.png";
+import fujifilmLogo from "@/assets/logos/fujifilm-logo-updated.png";
 import fujifilmMachine from "@/assets/fujifilm-frontier-machine.jpg";
 import fujifilmHero from "@/assets/fujifilm-photofinishing-hero.png";
 
