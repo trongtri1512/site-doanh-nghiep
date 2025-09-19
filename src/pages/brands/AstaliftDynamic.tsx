@@ -465,26 +465,16 @@ const AstaliftDynamic = () => {
               <p className="text-lg mb-8 opacity-80 max-w-4xl mx-auto animate-fade-in drop-shadow-md">
                 {content.description}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {content.primaryCTA && (
-                  <Button 
-                    size="lg" 
-                    className="px-8 py-4 text-lg bg-white text-amber-700 hover:bg-amber-50 animate-scale-in shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-amber-200"
-                    onClick={() => window.location.href = content.primaryCTA.link}
-                  >
-                    {content.primaryCTA.text}
-                  </Button>
-                )}
-                {content.secondaryCTA && (
-                  <Button 
-                    variant="outline"
-                    size="lg" 
-                    className="px-8 py-4 text-lg border-white text-white hover:bg-white/10 backdrop-blur-sm animate-scale-in shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => window.location.href = content.secondaryCTA.link}
-                  >
-                    {content.secondaryCTA.text}
-                  </Button>
-                )}
+              <div className="flex justify-center">
+                <a 
+                  href="https://astalift.com.vn/collections/all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg bg-white text-amber-700 hover:bg-amber-50 animate-scale-in shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-amber-200 rounded-lg font-semibold group"
+                >
+                  <ArrowRight className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                  {lang === 'en' ? 'Shop ASTALIFT' : 'Mua ASTALIFT'}
+                </a>
               </div>
             </div>
           </section>
