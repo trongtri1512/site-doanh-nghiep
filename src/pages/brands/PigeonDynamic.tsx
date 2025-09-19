@@ -24,7 +24,7 @@ import { useQuery } from "@tanstack/react-query";
 // Import images
 import pigeonSofTouchHero from "@/assets/pigeon-softouch-hero.jpg";
 import pigeonResearch from "@/assets/pigeon-research.jpg";
-import pigeonProductsModern from "@/assets/pigeon-products-modern.jpg";
+import pigeonProductsNew from "@/assets/pigeon-products-new.jpg";
 import pigeonLogo from "@/assets/logos/pigeon-logo.svg";
 
 const PigeonDynamic = () => {
@@ -382,7 +382,7 @@ const PigeonDynamic = () => {
               }
             </p>
             <img 
-              src={pigeonProductsModern} 
+              src={pigeonProductsNew} 
               alt="Pigeon Products" 
               className="w-full max-w-4xl mx-auto rounded-3xl shadow-2xl"
             />
