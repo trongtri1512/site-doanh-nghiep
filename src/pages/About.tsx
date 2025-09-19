@@ -154,16 +154,47 @@ const About = () => {
                 <div key={index} className="border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
                   <h3 className="text-xl font-semibold text-foreground mb-3">{brand.category}</h3>
                   <p className="text-muted-foreground mb-4">{brand.description}</p>
-                  <div className="space-y-2">
-                    {brand.items.map((item, itemIndex) => (
-                      <span 
-                        key={itemIndex}
-                        className="inline-block mr-2 mb-2 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+                   <div className="space-y-2">
+                     {brand.items.map((item, itemIndex) => {
+                       const getItemLink = (itemName: string) => {
+                         switch (itemName) {
+                           case "FUJIFILM Instax":
+                             return "https://instaxcamera.com.vn/";
+                           case "Pigeon":
+                             return "https://pigeon.com.vn/";
+                           case "Etsuko":
+                             return "https://www.facebook.com/etsukovietnam";
+                           case "ASTALIFT":
+                             return "https://astalift.com.vn/";
+                           case "Verites":
+                             return "http://verites.vn/";
+                           default:
+                             return null;
+                         }
+                       };
+
+                       const itemLink = getItemLink(item);
+                       
+                       return itemLink ? (
+                         <a
+                           key={itemIndex}
+                           href={itemLink}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="inline-block mr-2 mb-2 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full hover:bg-primary/20 transition-colors cursor-pointer"
+                         >
+                           {item}
+                         </a>
+                       ) : (
+                         <span 
+                           key={itemIndex}
+                           className="inline-block mr-2 mb-2 px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
+                         >
+                           {item}
+                         </span>
+                       );
+                     })}
+                   </div>
                 </div>
               ))}
             </div>
