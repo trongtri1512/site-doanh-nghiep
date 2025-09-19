@@ -22,7 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 // Import images
-import pigeonHeroModern from "@/assets/pigeon-hero-modern.jpg";
+import pigeonSofTouchHero from "@/assets/pigeon-softouch-hero.jpg";
 import pigeonResearch from "@/assets/pigeon-research.jpg";
 import pigeonProductsModern from "@/assets/pigeon-products-modern.jpg";
 import pigeonLogo from "@/assets/logos/pigeon-logo.svg";
@@ -193,9 +193,9 @@ const PigeonDynamic = () => {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img 
-            src={pigeonHeroModern} 
-            alt="Pigeon Heritage" 
-            className="w-full h-full object-cover"
+            src={pigeonSofTouchHero} 
+            alt="Pigeon SofTouch Collection" 
+            className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
         </div>
