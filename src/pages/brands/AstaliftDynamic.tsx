@@ -268,13 +268,21 @@ const AstaliftDynamic = () => {
                 
                 {/* CTAs */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white border-0 group px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                    onClick={() => window.open('https://astalift.com.vn/', '_blank')}
+                  >
+                    <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                    {content.cta_text || (lang === 'en' ? 'Discover Innovation' : 'Khám phá đổi mới')}
+                  </Button>
                   <a 
                     href="https://astalift.com.vn/collections/all"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white border-0 px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 rounded-lg group font-semibold"
+                    className="inline-flex items-center justify-center bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg border font-semibold group"
                   >
-                    <ArrowRight className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <ArrowRight className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
                     {lang === 'en' ? 'Shop ASTALIFT' : 'Mua ASTALIFT'}
                   </a>
                 </div>
