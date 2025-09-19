@@ -100,9 +100,10 @@ const Footer = () => {
             <p className="text-gray-300 text-sm mb-4">
               {section.content?.description || "IMV Vietnam - Nâng tầm cuộc sống, vững vàng tương lai"}
             </p>
-            <div className="flex space-x-4">
+            {/* Social links hidden as requested */}
+            {/* <div className="flex space-x-4">
               {getSocialIcons(section.content?.social_links || [])}
-            </div>
+            </div> */}
           </div>
         );
 
