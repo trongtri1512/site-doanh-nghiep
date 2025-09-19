@@ -273,6 +273,7 @@ const InstaxCameraDynamic = () => {
                   <button className="group inline-flex items-center gap-3 px-10 py-5 border-3 border-white text-white rounded-full hover:bg-white hover:text-gray-800 transition-all duration-300 font-bold text-lg backdrop-blur-sm">
                     <Play size={24} className="group-hover:scale-125 transition-transform duration-300" />
                     {lang === 'en' ? 'Watch Brand Story' : 'Xem Câu Chuyện'}
+                    onClick={() => window.open('https://www.youtube.com/watch?v=u8UmXaGIjcI', '_blank')}
                   </button>
                 </div>
 
