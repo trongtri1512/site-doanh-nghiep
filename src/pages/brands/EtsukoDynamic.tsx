@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import etsukoHeroBanner from "@/assets/etsuko-hero-banner.jpg";
 import etsukoLogo from "@/assets/etsuko-logo-new.png";
-import etsukoProducts from "@/assets/etsuko-products.jpg";
+import etsukoProducts from "@/assets/etsuko-products-new.jpg";
 import etsukoCharacters from "@/assets/etsuko-characters.png";
 
 interface BrandPageElement {
