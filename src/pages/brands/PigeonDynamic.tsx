@@ -245,7 +245,12 @@ const PigeonDynamic = () => {
                 <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                 {(heroContent as any)?.cta_primary || (detectedLanguage === 'en' ? 'Watch Our Story' : 'Xem câu chuyện của chúng tôi')}
               </Button>
-              <Button variant="outline" size="lg" className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                onClick={() => window.open('https://store.pigeon.com.vn/', '_blank')}
+              >
                 {(heroContent as any)?.cta_secondary || (detectedLanguage === 'en' ? 'Explore Products' : 'Khám phá sản phẩm')}
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
