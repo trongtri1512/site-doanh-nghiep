@@ -271,6 +271,7 @@ const AstaliftDynamic = () => {
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white border-0 group px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                    onClick={() => window.open('https://astalift.com.vn/', '_blank')}
                     onClick={() => {
                       const element = document.querySelector('#innovations');
                       element?.scrollIntoView({ behavior: 'smooth' });
@@ -283,7 +284,7 @@ const AstaliftDynamic = () => {
                     variant="outline"
                     size="lg" 
                     className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => window.open('https://astalift.com.vn/', '_blank')}
+                    onClick={() => window.open('https://astalift.com.vn/collections/all', '_blank')}
                   >
                     {lang === 'en' ? 'View Products' : 'Xem sản phẩm'}
                     <ArrowRight className="ml-2 w-4 h-4" />
