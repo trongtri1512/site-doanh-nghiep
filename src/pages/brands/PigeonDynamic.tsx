@@ -244,6 +244,7 @@ const PigeonDynamic = () => {
               <Button size="lg" className="bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white border-0 group">
                 <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
                 {(heroContent as any)?.cta_primary || (detectedLanguage === 'en' ? 'Watch Our Story' : 'Xem câu chuyện của chúng tôi')}
+              onClick={() => window.open('https://pigeon.com.sg/our-history/', '_blank')}
               </Button>
               <Button 
                 variant="outline" 
