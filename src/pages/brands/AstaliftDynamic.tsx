@@ -271,10 +271,6 @@ const AstaliftDynamic = () => {
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white border-0 group px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                    onClick={() => {
-                      const element = document.querySelector('#innovations');
-                      element?.scrollIntoView({ behavior: 'smooth' });
-                    }}
                     onClick={() => window.open('https://astalift.com.vn/', '_blank')}
                   >
                     <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />

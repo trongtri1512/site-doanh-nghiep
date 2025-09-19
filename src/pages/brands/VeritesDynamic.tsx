@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, Heart, Sparkles, Star, Globe, Flower, Droplets } from "lucide-react";
 import { Link } from "react-router-dom";
 import veritesLogo from "@/assets/logos/verites-official-logo.svg";
-import veritesHero from "@/assets/verites-hero-new.jpg";
+import veritesHero from "@/assets/verites-hero-brandnew.jpg";
 const veritesStarstruckBottle = "/lovable-uploads/87d106f5-93da-448d-89e7-c9a34a9ca288.png";
 import veritesCraftsmanship from "@/assets/verites-craftsmanship.jpg";
 
