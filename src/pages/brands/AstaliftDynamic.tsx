@@ -283,10 +283,7 @@ const AstaliftDynamic = () => {
                     variant="outline"
                     size="lg" 
                     className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => {
-                      const element = document.querySelector('#products');
-                      element?.scrollIntoView({ behavior: 'smooth' });
-                    }}
+                    onClick={() => window.open('https://astalift.com.vn/', '_blank')}
                   >
                     {lang === 'en' ? 'View Products' : 'Xem sản phẩm'}
                     <ArrowRight className="ml-2 w-4 h-4" />
